@@ -106,9 +106,9 @@ export function SwipeDeck({ filters }: { filters: Record<string, string> }) {
   const shareOnWhatsApp = () => {
     if (liked.length === 0) return;
 
-    const header = "🇮🇹 *Meu Match Acadêmico - UniMatch Italia* 🇮🇹\n\nCiao! Dá uma olhada nas universidades que eu mais gostei:\n\n";
+    const header = "🇮🇹 *Meu Match Acadêmico - UniMatch Italia* 🇮🇹\n\nCiao! Explorei as opções e estas são as universidades que deram match comigo. *Gostaria de receber mais informações sobre elas e como começar meu processo:*\n\n";
     const list = liked.map(u => `🏛️ *${u.name}*\n   📍 ${u.city} • 🎓 ${u.area_tag}\n`).join("\n");
-    const footer = "\n🔗 Encontre o seu match também em: https://vivendoafundo.com.br";
+    const footer = "\n💬 *Você pode me ajudar com mais detalhes sobre essas opções?*\n🔗 Descubra seu match em: https://vivendoafundo.com.br";
 
     const text = encodeURIComponent(header + list + footer);
     window.open(`https://wa.me/393516274752?text=${text}`, '_blank');
