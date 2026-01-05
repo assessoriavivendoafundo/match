@@ -111,7 +111,7 @@ export function SwipeDeck({ filters }: { filters: Record<string, string> }) {
     const footer = "\nEncontre o seu match também em: https://vivendoafundo.com.br";
 
     const text = encodeURIComponent(header + list + footer);
-    window.open(`https://wa.me/?text=${text}`, '_blank');
+    window.open(`https://wa.me/393516274752?text=${text}`, '_blank');
   };
 
   if (loading) {
