@@ -128,15 +128,73 @@ export function SwipeDeck({ filters }: { filters: Record<string, string> }) {
 
   if (deck.length === 0) {
       return (
-          <div className="flex flex-col items-center justify-center h-[60vh] bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-12 text-center max-w-lg mx-auto shadow-2xl">
-              <div className="w-24 h-24 bg-gradient-to-br from-purple-500/20 to-blue-500/20 rounded-full flex items-center justify-center mb-8 ring-1 ring-white/10">
-                <Sparkles className="w-12 h-12 text-purple-300" />
-              </div>
-              <h2 className="text-4xl font-bold text-white mb-4">Fim da Linha! 😮</h2>
-              <p className="text-blue-200/70 mb-8 text-lg leading-relaxed">Você já viu todas as universidades que selecionamos para o seu perfil.</p>
-              <Button onClick={() => window.location.reload()} className="bg-white text-blue-900 hover:bg-blue-50 font-bold px-10 py-6 rounded-xl text-lg">
-                Recomeçar Exploração
-              </Button>
+          <div className="flex flex-col h-[75vh] w-full max-w-2xl mx-auto bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden shadow-2xl relative">
+              
+              {liked.length > 0 ? (
+                <>
+                    {/* Header */}
+                    <div className="p-8 pb-4 text-center border-b border-white/10 bg-white/5">
+                        <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-green-500/20 ring-4 ring-white/10">
+                            <Heart className="w-10 h-10 text-white fill-white" />
+                        </div>
+                        <h2 className="text-3xl md:text-4xl font-black text-white mb-2">Sua Lista dos Sonhos 🇮🇹</h2>
+                        <p className="text-blue-200/70 text-lg">Você deu match com {liked.length} universidade{liked.length !== 1 && 's'}!</p>
+                    </div>
+
+                    {/* Scrollable List */}
+                    <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
+                        {liked.map(uni => (
+                            <motion.div 
+                                key={uni.id}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="flex flex-col sm:flex-row items-center gap-5 p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-colors group"
+                            >
+                                <img src={uni.image} alt={uni.name} className="w-full sm:w-24 h-32 sm:h-24 rounded-xl object-cover ring-1 ring-white/10 shadow-lg" />
+                                <div className="flex-1 text-center sm:text-left w-full">
+                                    <h4 className="font-bold text-white text-xl mb-1">{uni.name}</h4>
+                                    <p className="text-blue-300/80 flex items-center justify-center sm:justify-start gap-2 mb-2"><MapPin className="w-4 h-4"/> {uni.city}</p>
+                                    <div className="flex flex-wrap justify-center sm:justify-start gap-2">
+                                        <span className="text-xs font-bold px-2 py-1 rounded-lg bg-blue-500/20 text-blue-200 border border-blue-500/30">{uni.area_tag}</span>
+                                        <span className="text-xs font-bold px-2 py-1 rounded-lg bg-green-500/20 text-green-200 border border-green-500/30">{uni.budget_tag === 'low' ? 'Low Cost' : uni.budget_tag === 'medium' ? 'Médio Custo' : 'Alto Custo'}</span>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </div>
+
+                    {/* Footer Actions */}
+                    <div className="p-6 bg-white/5 border-t border-white/10 space-y-3">
+                        <Button 
+                            onClick={shareOnWhatsApp}
+                            className="w-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold h-14 rounded-xl text-lg flex items-center justify-center gap-2 shadow-lg shadow-green-500/20 transition-all hover:scale-[1.02]"
+                        >
+                            <Share2 className="w-5 h-5" />
+                            Compartilhar Lista no WhatsApp
+                        </Button>
+                        <Button 
+                            variant="ghost" 
+                            onClick={() => window.location.reload()} 
+                            className="w-full text-blue-300 hover:text-white hover:bg-white/10 h-12 rounded-xl text-base"
+                        >
+                            <RotateCcw className="w-4 h-4 mr-2" /> Recomeçar Exploração
+                        </Button>
+                    </div>
+                </>
+              ) : (
+                <div className="flex flex-col items-center justify-center h-full p-12 text-center">
+                    <div className="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center mb-8 ring-1 ring-white/10">
+                        <RotateCcw className="w-10 h-10 text-white/50" />
+                    </div>
+                    <h2 className="text-3xl font-bold text-white mb-4">Nenhum Match? 😢</h2>
+                    <p className="text-blue-200/70 mb-8 text-lg leading-relaxed max-w-md">
+                        Você passou por todas as opções e não curtiu nenhuma. Que tal tentar filtros diferentes ou dar uma segunda chance?
+                    </p>
+                    <Button onClick={() => window.location.reload()} className="bg-white text-blue-900 hover:bg-blue-50 font-bold px-10 py-6 rounded-xl text-lg shadow-lg hover:scale-105 transition-all">
+                        Tentar Novamente
+                    </Button>
+                </div>
+              )}
           </div>
       )
   }
