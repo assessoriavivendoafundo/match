@@ -227,7 +227,14 @@ export default function UniMatchPage() {
 
       </div>
 
-      <HowItWorksModal isOpen={showHowItWorks} onClose={() => setShowHowItWorks(false)} />
+      <HowItWorksModal 
+        isOpen={showHowItWorks} 
+        onClose={() => setShowHowItWorks(false)} 
+        onStartQuiz={() => {
+          setShowHowItWorks(false);
+          setStep('quiz');
+        }}
+      />
     </div>
   );
 }

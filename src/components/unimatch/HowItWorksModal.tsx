@@ -7,9 +7,10 @@ import { Button } from "@/components/ui/button";
 interface HowItWorksModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onStartQuiz: () => void;
 }
 
-export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
+export function HowItWorksModal({ isOpen, onClose, onStartQuiz }: HowItWorksModalProps) {
   const steps = [
     {
       icon: <GraduationCap className="w-6 h-6 text-yellow-400" />,
@@ -101,7 +102,7 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
 
               <div className="pt-4">
                 <Button 
-                  onClick={onClose}
+                  onClick={onStartQuiz}
                   className="w-full h-12 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold text-lg shadow-lg shadow-purple-500/20 transition-all active:scale-95"
                 >
                   Entendi, vamos lá!
