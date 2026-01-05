@@ -30,17 +30,6 @@ const questions: Question[] = [
     ],
   },
   {
-    id: "budget",
-    question: "Como estamos de Grana?",
-    description: "Custo de vida mensal estimado (Aluguel + Mercado + Lazer).",
-    options: [
-      { id: "low", label: "Econômico", subLabel: "Até €800/mês (Vida de estudante raiz)", icon: "🎒" },
-      { id: "medium", label: "Confortável", subLabel: "€800 - €1200/mês (Equilíbrio perfeito)", icon: "⚖️" },
-      { id: "high", label: "Sem Limites", subLabel: "Acima de €1200/mês (Dolce Vita)", icon: "🥂" },
-      { id: "any", label: "Tanto faz", subLabel: "O que importa é a experiência", icon: "💸" },
-    ],
-  },
-  {
     id: "region",
     question: "Onde você se imagina?",
     description: "Cada região tem um estilo de vida único!",
@@ -49,6 +38,17 @@ const questions: Question[] = [
       { id: "center", label: "Centro", subLabel: "Roma, Florença • História, Arte & Clássicos", icon: "🏛️" },
       { id: "south", label: "Sul", subLabel: "Nápoles, Bari • Praias, Calor & Gastronomia", icon: "🍋" },
       { id: "any", label: "Tanto faz", subLabel: "Quero conhecer a Itália toda", icon: "🇮🇹" },
+    ],
+  },
+  {
+    id: "budget",
+    question: "Como estamos de Grana?",
+    description: "Custo de vida mensal estimado (Aluguel + Mercado + Lazer).",
+    options: [
+      { id: "low", label: "Econômico", subLabel: "Até €800/mês (Vida de estudante raiz)", icon: "🎒" },
+      { id: "medium", label: "Confortável", subLabel: "€800 - €1200/mês (Equilíbrio perfeito)", icon: "⚖️" },
+      { id: "high", label: "Sem Limites", subLabel: "Acima de €1200/mês (Dolce Vita)", icon: "🥂" },
+      { id: "any", label: "Tanto faz", subLabel: "O que importa é a experiência", icon: "💸" },
     ],
   },
 ];
