@@ -5,12 +5,14 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Quiz } from "@/components/unimatch/Quiz";
 import { SwipeDeck } from "@/components/unimatch/SwipeDeck";
+import { HowItWorksModal } from "@/components/unimatch/HowItWorksModal";
 import { motion, AnimatePresence } from "framer-motion";
 import { GraduationCap, MapPin, Heart, Plane, Sparkles } from "lucide-react";
 
 export default function UniMatchPage() {
   const [step, setStep] = useState<'intro' | 'quiz' | 'deck'>('intro');
   const [filters, setFilters] = useState<Record<string, string>>({});
+  const [showHowItWorks, setShowHowItWorks] = useState(false);
 
   const handleQuizComplete = (answers: Record<string, string>) => {
     setFilters(answers);
@@ -116,7 +118,11 @@ export default function UniMatchPage() {
                           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:animate-shimmer z-20" />
                         </Button>
                         
-                        <Button variant="ghost" className="text-blue-300 hover:text-white hover:bg-white/5 h-16 px-6 rounded-2xl text-lg font-medium transition-colors">
+                        <Button 
+                          variant="ghost" 
+                          onClick={() => setShowHowItWorks(true)}
+                          className="text-blue-300 hover:text-white hover:bg-white/5 h-16 px-6 rounded-2xl text-lg font-medium transition-colors"
+                        >
                           Como funciona?
                         </Button>
                       </div>
@@ -220,6 +226,8 @@ export default function UniMatchPage() {
         </AnimatePresence>
 
       </div>
+
+      <HowItWorksModal isOpen={showHowItWorks} onClose={() => setShowHowItWorks(false)} />
     </div>
   );
 }

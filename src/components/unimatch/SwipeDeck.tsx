@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { motion, useMotionValue, useTransform, PanInfo, AnimatePresence } from "framer-motion";
 import { University, getUniversities } from "@/lib/data";
-import { X, Heart, RotateCcw, MapPin, GraduationCap, Wallet, Loader2, ChevronUp, Sparkles } from "lucide-react";
+import { X, Heart, RotateCcw, MapPin, GraduationCap, Wallet, Loader2, ChevronUp, Sparkles, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -101,6 +101,17 @@ export function SwipeDeck({ filters }: { filters: Record<string, string> }) {
     const text = EXCLAMATIONS[Math.floor(Math.random() * EXCLAMATIONS.length)];
     setExclamation({ text, id: Date.now(), rotation: Math.random() * 20 - 10 });
     setTimeout(() => setExclamation(null), 1500);
+  };
+
+  const shareOnWhatsApp = () => {
+    if (liked.length === 0) return;
+
+    const header = "🇮🇹 *Minha Lista de Universidades - UniMatch Italia* 🇮🇹\n\nOlha só as universidades que eu gostei:\n\n";
+    const list = liked.map(u => `📍 *${u.name}* (${u.city})\n   🎓 ${u.area_tag}\n`).join("\n");
+    const footer = "\nEncontre o seu match também em: https://vivendoafundo.com.br";
+
+    const text = encodeURIComponent(header + list + footer);
+    window.open(`https://wa.me/?text=${text}`, '_blank');
   };
 
   if (loading) {
@@ -223,16 +234,28 @@ export function SwipeDeck({ filters }: { filters: Record<string, string> }) {
                            <p className="text-blue-300/50 text-xl">Nenhum match ainda... continue deslizando! 🤞</p>
                         </div>
                     ) : (
-                        liked.map(uni => (
-                            <div key={uni.id} className="flex items-center gap-5 p-4 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/10 transition-colors group">
-                                <img src={uni.image} alt={uni.name} className="w-20 h-20 rounded-xl object-cover ring-1 ring-white/10" />
-                                <div className="flex-1">
-                                    <h4 className="font-bold text-white text-lg group-hover:text-blue-300 transition-colors">{uni.name}</h4>
-                                    <p className="text-blue-300/60 flex items-center gap-1"><MapPin className="w-3 h-3"/> {uni.city}</p>
+                        <>
+                            {liked.map(uni => (
+                                <div key={uni.id} className="flex items-center gap-5 p-4 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/10 transition-colors group">
+                                    <img src={uni.image} alt={uni.name} className="w-20 h-20 rounded-xl object-cover ring-1 ring-white/10" />
+                                    <div className="flex-1">
+                                        <h4 className="font-bold text-white text-lg group-hover:text-blue-300 transition-colors">{uni.name}</h4>
+                                        <p className="text-blue-300/60 flex items-center gap-1"><MapPin className="w-3 h-3"/> {uni.city}</p>
+                                    </div>
+                                    <Button className="bg-white/10 hover:bg-white text-white hover:text-blue-900 rounded-xl">Ver Detalhes</Button>
                                 </div>
-                                <Button className="bg-white/10 hover:bg-white text-white hover:text-blue-900 rounded-xl">Ver Detalhes</Button>
+                            ))}
+                            
+                            <div className="sticky bottom-0 pt-4 bg-gradient-to-t from-[#0F172A] to-transparent">
+                                <Button 
+                                    onClick={shareOnWhatsApp}
+                                    className="w-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold h-14 rounded-xl text-lg flex items-center justify-center gap-2 shadow-lg shadow-green-500/20 transition-all hover:scale-[1.02]"
+                                >
+                                    <Share2 className="w-5 h-5" />
+                                    Compartilhar no WhatsApp
+                                </Button>
                             </div>
-                        ))
+                        </>
                     )}
                  </motion.div>
               )}
