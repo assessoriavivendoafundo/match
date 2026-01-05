@@ -1,0 +1,1 @@
+generate-prp @INITIAL.md
