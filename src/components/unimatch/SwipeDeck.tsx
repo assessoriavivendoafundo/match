@@ -111,7 +111,7 @@ export function SwipeDeck({ filters }: { filters: Record<string, string> }) {
     const footer = "\n💬 *Você pode me ajudar com mais detalhes sobre essas opções?*\n🔗 Descubra seu match em: https://vivendoafundo.com.br";
 
     const text = encodeURIComponent(header + list + footer);
-    window.open(`https://wa.me/393516274752?text=${text}`, '_blank');
+    window.open(`https://api.whatsapp.com/send?phone=393516274752&text=${text}`, '_blank');
   };
 
   if (loading) {
