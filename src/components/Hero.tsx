@@ -24,13 +24,13 @@ export function Hero() {
         </svg>
       </div>
 
-      <div className="relative z-10 container mx-auto px-4 text-center text-white max-w-5xl pt-20">
-        <h1 className="text-4xl md:text-5xl lg:text-7xl font-display font-bold mb-6 leading-tight drop-shadow-xl">
-          Chegou a hora de viver o <br />
+      <div className="relative z-10 container mx-auto px-4 text-center text-white max-w-5xl pt-10 md:pt-20">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-display font-bold mb-4 md:mb-6 leading-tight drop-shadow-xl">
+          Chegou a hora de viver o <br className="hidden sm:block" />
           sonho de estudar na ITÁLIA
         </h1>
         
-        <p className="text-base md:text-lg lg:text-xl font-sans font-light mb-10 max-w-3xl mx-auto drop-shadow-md">
+        <p className="text-sm md:text-lg lg:text-xl font-sans font-light mb-8 md:mb-10 max-w-3xl mx-auto drop-shadow-md px-2">
           <span className="font-bold">Com mais de 5 anos de experiência</span>, nós conhecemos cada passo para sua aprovação. 
           De forma personalizada, simplificamos o processo e garantimos que você esteja 
           preparado para estudar e viver na Itália, <span className="font-bold">transformando seu sonho em realidade!</span>

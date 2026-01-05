@@ -2,6 +2,7 @@ import Image from "next/image";
 
 export function HallOfFame() {
   const students = [
+    // ... same students ...
     {
       name: "Vanessa M.",
       course: "Master Marketing and...",
@@ -35,10 +36,10 @@ export function HallOfFame() {
   ];
 
   return (
-    <section className="py-20 bg-primary text-white">
+    <section className="py-12 md:py-20 bg-primary text-white">
       <div className="container mx-auto px-4 text-center">
-        <h3 className="text-accent text-xs font-bold uppercase tracking-widest mb-3">HALL DOS APROVADOS</h3>
-        <h2 className="text-3xl md:text-4xl font-display font-bold mb-12">
+        <h3 className="text-accent text-[10px] md:text-xs font-bold uppercase tracking-widest mb-3">HALL DOS APROVADOS</h3>
+        <h2 className="text-2xl md:text-4xl font-display font-bold mb-8 md:mb-12">
           Conheça quem já conquistou sua vaga em <br className="hidden md:block"/>
           universidades italianas com a nossa ajuda
         </h2>

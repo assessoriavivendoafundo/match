@@ -23,9 +23,9 @@ export default function Home() {
       <About />
 
       {/* E-book CTA - Rounded Container */}
-      <section className="py-20 bg-[#F0F4F8]"> {/* Light blueish background for contrast */}
+      <section className="py-12 md:py-20 bg-[#F0F4F8]"> {/* Light blueish background for contrast */}
         <div className="container mx-auto px-4">
-            <div className="bg-primary rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-center gap-12 relative overflow-hidden shadow-2xl max-w-5xl mx-auto">
+            <div className="bg-primary rounded-3xl p-6 md:p-12 flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12 relative overflow-hidden shadow-2xl max-w-5xl mx-auto">
                 <div className="w-full md:w-1/3 max-w-[280px] relative aspect-[3/4] rotate-[-5deg] hover:rotate-0 transition-transform duration-500 z-10">
                     <Image 
                     src="https://static.wixstatic.com/media/633a67_cc0c51e69de1406ea65a371bd7ed4e22~mv2.png" 
@@ -55,9 +55,9 @@ export default function Home() {
       </section>
 
       {/* Blog & Footer Illustration */}
-      <section className="py-24 bg-white relative overflow-hidden">
+      <section className="py-12 md:py-24 bg-white relative overflow-hidden">
         <div className="container mx-auto px-4 text-center">
-           <div className="mb-16">
+           <div className="mb-10 md:mb-16">
              <h3 className="text-accent text-xs font-bold uppercase tracking-widest mb-3">BLOG MORAR NA ITÁLIA - POR VIVENDO A FUNDO</h3>
              <h2 className="text-2xl md:text-3xl font-display font-bold text-[#457B9D] mb-10 max-w-3xl mx-auto">
                Descubra nossos insights valiosos, guias práticos e experiências reais para tornar sua vida na Itália mais fácil e incrível.

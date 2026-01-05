@@ -49,36 +49,36 @@ const benefitsBrazil = [
 
 export function Benefits() {
   return (
-    <section className="py-16 container mx-auto px-4 relative">
+    <section className="py-12 md:py-16 container mx-auto px-4 relative">
       {/* Logos Section */}
-      <div className="mb-24 text-center">
-        <h2 className="text-3xl md:text-4xl font-display font-bold text-primary mb-12">
+      <div className="mb-16 md:mb-24 text-center">
+        <h2 className="text-2xl md:text-4xl font-display font-bold text-primary mb-10 md:mb-12">
           +500 alunos e mentorados aprovados!
         </h2>
         {/* Logos Strip - Styled to mimic reference */}
-        <div className="flex flex-wrap justify-center items-center gap-12 md:gap-20 opacity-50 grayscale mix-blend-multiply">
+        <div className="flex flex-wrap justify-center items-center gap-8 md:gap-20 opacity-50 grayscale mix-blend-multiply px-4">
            <div className="flex flex-col items-center">
-             <span className="text-sm font-serif uppercase tracking-widest text-primary font-bold">Politecnico</span>
-             <span className="text-xs font-serif uppercase tracking-widest text-primary">Di Milano</span>
+             <span className="text-[10px] md:text-sm font-serif uppercase tracking-widest text-primary font-bold">Politecnico</span>
+             <span className="text-[8px] md:text-xs font-serif uppercase tracking-widest text-primary">Di Milano</span>
            </div>
-           <div className="flex flex-col items-center border-l-2 border-gray-300 pl-8">
-             <span className="text-sm font-serif uppercase tracking-widest text-primary font-bold">Alma Mater Studiorum</span>
-             <span className="text-xs font-serif uppercase tracking-widest text-primary">Università di Bologna</span>
+           <div className="flex flex-col items-center border-l md:border-l-2 border-gray-300 pl-4 md:pl-8">
+             <span className="text-[10px] md:text-sm font-serif uppercase tracking-widest text-primary font-bold">Alma Mater Studiorum</span>
+             <span className="text-[8px] md:text-xs font-serif uppercase tracking-widest text-primary">Università di Bologna</span>
            </div>
-           <div className="flex flex-col items-center border-l-2 border-gray-300 pl-8">
-             <span className="text-sm font-serif uppercase tracking-widest text-primary font-bold">Sapienza</span>
-             <span className="text-xs font-serif uppercase tracking-widest text-primary">Università di Roma</span>
+           <div className="flex flex-col items-center border-l md:border-l-2 border-gray-300 pl-4 md:pl-8">
+             <span className="text-[10px] md:text-sm font-serif uppercase tracking-widest text-primary font-bold">Sapienza</span>
+             <span className="text-[8px] md:text-xs font-serif uppercase tracking-widest text-primary">Università di Roma</span>
            </div>
-           <div className="flex flex-col items-center border-l-2 border-gray-300 pl-8">
-             <span className="text-sm font-serif uppercase tracking-widest text-primary font-bold">Università</span>
-             <span className="text-xs font-serif uppercase tracking-widest text-primary">Di Firenze</span>
+           <div className="flex flex-col items-center border-l md:border-l-2 border-gray-300 pl-4 md:pl-8">
+             <span className="text-[10px] md:text-sm font-serif uppercase tracking-widest text-primary font-bold">Università</span>
+             <span className="text-[8px] md:text-xs font-serif uppercase tracking-widest text-primary">Di Firenze</span>
            </div>
         </div>
       </div>
 
       {/* Vertical Line Container */}
       <div className="relative vertical-line-container">
-        <div className="grid md:grid-cols-2 gap-16 items-center mb-32">
+        <div className="grid md:grid-cols-2 gap-10 md:gap-16 items-center mb-20 md:mb-32">
           {/* Left Column - Illustration (Swapped to Right in content flow, but Visual Left in Ref) */}
           {/* Wait, Ref shows Illustration on Left for "Por que estudar..."?
               Ref: Top block: Italy Illustration (Left) + Text (Right).

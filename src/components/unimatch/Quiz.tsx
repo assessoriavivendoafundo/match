@@ -127,7 +127,9 @@ export function Quiz({ onComplete }: { onComplete: (answers: Record<string, stri
                                 "relative w-full text-left p-5 rounded-xl border transition-all duration-300 group overflow-hidden",
                                 answers[currentQ.id] === option.id 
                                     ? "bg-white/10 border-purple-400/50 shadow-[0_0_20px_rgba(168,85,247,0.2)]" 
-                                    : "bg-white/5 border-white/10 hover:border-white/20"
+                                    : option.id === "any"
+                                        ? "bg-white/15 border-white/30 shadow-[0_0_15px_rgba(255,255,255,0.05)] hover:bg-white/20 hover:border-white/40"
+                                        : "bg-white/5 border-white/10 hover:border-white/20"
                             )}
                         >
                              {/* Selection Glow Background */}
@@ -144,7 +146,9 @@ export function Quiz({ onComplete }: { onComplete: (answers: Record<string, stri
                                     "w-12 h-12 flex-shrink-0 rounded-full flex items-center justify-center text-2xl transition-transform duration-300 shadow-inner",
                                     answers[currentQ.id] === option.id 
                                         ? "bg-gradient-to-br from-purple-500 to-blue-500 scale-110" 
-                                        : "bg-white/5 border border-white/5 group-hover:scale-105"
+                                        : option.id === "any"
+                                            ? "bg-white/20 border border-white/20 group-hover:scale-105"
+                                            : "bg-white/5 border border-white/5 group-hover:scale-105"
                                 )}>
                                     {option.icon}
                                 </div>

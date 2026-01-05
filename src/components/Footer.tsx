@@ -10,7 +10,7 @@ export function Footer() {
            <span className="font-display font-bold text-lg">ACADEMITALY</span>
         </div>
         
-        <p className="text-xs text-gray-300 text-center">
+        <p className="text-[10px] md:text-xs text-gray-300 text-center">
           Copyright © 2026 Vivendo a Fundo - Todos os direitos reservados
         </p>
 

@@ -61,11 +61,11 @@ const services = [
 
 export function Services() {
   return (
-    <section className="py-20 bg-[#FAFAFA] relative">
+    <section className="py-12 md:py-20 bg-[#FAFAFA] relative">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h3 className="text-xs font-bold text-accent uppercase tracking-widest mb-3">NOSSOS SERVIÇOS</h3>
-          <h2 className="text-3xl md:text-4xl font-display font-bold text-primary max-w-2xl mx-auto leading-tight">
+        <div className="text-center mb-10 md:mb-16">
+          <h3 className="text-[10px] md:text-xs font-bold text-accent uppercase tracking-widest mb-3">NOSSOS SERVIÇOS</h3>
+          <h2 className="text-2xl md:text-4xl font-display font-bold text-primary max-w-2xl mx-auto leading-tight">
             Nós te ajudamos em cada etapa do processo, da forma que você preferir
           </h2>
         </div>

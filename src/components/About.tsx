@@ -3,18 +3,18 @@ import { Button } from "@/components/ui/button";
 
 export function About() {
   return (
-    <section className="py-24 bg-notebook relative overflow-hidden vertical-line-container">
+    <section className="py-12 md:py-24 bg-notebook relative overflow-hidden vertical-line-container">
       <div className="container mx-auto px-4 relative z-10">
-        <div className="text-center mb-16">
-          <h3 className="text-accent text-xs font-bold uppercase tracking-widest mb-3">QUEM SOMOS</h3>
-          <h2 className="text-3xl md:text-4xl font-display font-extrabold text-primary">
+        <div className="text-center mb-10 md:mb-16">
+          <h3 className="text-accent text-[10px] md:text-xs font-bold uppercase tracking-widest mb-3">QUEM SOMOS</h3>
+          <h2 className="text-2xl md:text-4xl font-display font-extrabold text-primary">
             Jacque e Gil, fundadores do Vivendo a Fundo e Academitaly
           </h2>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-12 items-center max-w-5xl mx-auto">
+        <div className="flex flex-col md:flex-row gap-10 md:gap-12 items-center max-w-5xl mx-auto">
           {/* Photo Polaroid */}
-          <div className="w-full md:w-5/12 relative group">
+          <div className="w-full md:w-5/12 relative group px-4 md:px-0">
             <div className="relative transform -rotate-2 transition-transform duration-500 group-hover:rotate-0 bg-white p-3 shadow-xl">
                <div className="relative aspect-[4/5] w-full overflow-hidden">
                 <Image 

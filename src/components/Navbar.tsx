@@ -32,12 +32,7 @@ export function Navbar() {
               height={60}
               className="object-contain"
             />
-             {/* The logo in the URL is just an icon, the text is likely separate or the image is cropped. 
-                 The HTML shows a complex SVG/Image combo. I'll use a placeholder text next to it if the image is just the shield.
-                 Actually the crop URL seems to show a shield. I'll add the text "Vivendo a Fundo" if needed.
-                 The reference HTML shows an image `Blue and White Simple Education Logo`.
-             */}
-             <span className="absolute left-14 top-1/2 -translate-y-1/2 text-xl font-bold text-primary whitespace-nowrap hidden lg:block">
+             <span className="absolute left-14 top-1/2 -translate-y-1/2 text-lg md:text-xl font-bold text-primary whitespace-nowrap">
                ACADEMITALY
              </span>
           </div>
@@ -83,28 +78,42 @@ export function Navbar() {
         <button
           className="lg:hidden text-primary p-2"
           onClick={() => setIsOpen(!isOpen)}
+          aria-label="Toggle Menu"
         >
-          {isOpen ? <X /> : <Menu />}
+          {isOpen ? <X className="w-8 h-8" /> : <Menu className="w-8 h-8" />}
         </button>
       </div>
 
       {/* Mobile Nav */}
       {isOpen && (
-        <div className="lg:hidden bg-white border-t border-gray-100 p-4 absolute w-full shadow-lg">
-          <nav className="flex flex-col gap-4">
+        <div className="lg:hidden bg-white border-t border-gray-100 p-6 absolute top-24 left-0 w-full shadow-2xl z-[100] animate-in fade-in slide-in-from-top-4 duration-300">
+          <nav className="flex flex-col gap-6">
             {navItems.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
-                className="text-primary hover:text-secondary text-base font-medium"
+                className="text-primary hover:text-secondary text-lg font-medium transition-colors"
                 onClick={() => setIsOpen(false)}
               >
                 {item.name}
               </Link>
             ))}
-             <div className="flex items-center gap-4 mt-4 pt-4 border-t border-gray-100">
-               <Instagram className="w-5 h-5 text-primary" />
-               <Youtube className="w-5 h-5 text-primary" />
+            
+            <Link href="/unimatch" onClick={() => setIsOpen(false)}>
+              <Button 
+                className="w-full bg-gradient-to-r from-green-400 via-yellow-400 to-blue-500 text-blue-900 hover:scale-[1.02] font-black text-sm uppercase tracking-widest py-6 rounded-full shadow-md border border-white/20 transition-all"
+              >
+                🇮🇹 UniMatch 🇧🇷
+              </Button>
+            </Link>
+
+             <div className="flex items-center gap-6 mt-4 pt-6 border-t border-gray-100">
+               <Link href="#" className="text-primary hover:text-secondary p-2 border rounded-full">
+                 <Instagram className="w-6 h-6" />
+               </Link>
+               <Link href="#" className="text-primary hover:text-secondary p-2 border rounded-full">
+                 <Youtube className="w-6 h-6" />
+               </Link>
              </div>
           </nav>
         </div>
