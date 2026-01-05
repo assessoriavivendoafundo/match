@@ -10,6 +10,7 @@ import { Button } from "./ui/button";
 const navItems = [
   { name: "Home", href: "/" },
   { name: "Estudar na Itália", href: "#" },
+  { name: "Gift Card", href: "/gift-card" },
   { name: "Blog", href: "#" },
   { name: "Nossa História", href: "#" },
   { name: "Contato", href: "#" },

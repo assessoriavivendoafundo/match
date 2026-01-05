@@ -10,7 +10,8 @@
 - [x] Add "How It Works" modal to Unimatch page <!-- id: 4 -->
 - [x] Add "WhatsApp Export" to UniMatch Wishlist (2026-01-05)
 - [x] Show "Dream List" summary at the end of swiping (2026-01-05)
-- [ ] Add "Gift Card" purchase flow <!-- id: 5 -->
+- [x] Add "Tanto faz" (wildcard) option to Quiz filters (2026-01-05)
+- [x] Add "Gift Card" purchase flow <!-- id: 5 -->
 
 ## Bug Fixes & Maintenance
 - [x] Fix duplicate universities bug in Unimatch SwipeDeck (2026-01-05)
