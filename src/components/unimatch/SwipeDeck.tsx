@@ -41,11 +41,11 @@ export function SwipeDeck({ filters }: { filters: Record<string, string> }) {
         if (!uni.id) return false;
 
         // Strict Filtering for Region and Area
-        if (filters.region && uni.region !== filters.region) return false;
-        if (filters.area && uni.area_tag !== filters.area) return false;
+        if (filters.region && filters.region !== 'any' && uni.region !== filters.region) return false;
+        if (filters.area && filters.area !== 'any' && uni.area_tag !== filters.area) return false;
 
         // Cumulative Filtering for Budget
-        if (filters.budget) {
+        if (filters.budget && filters.budget !== 'any') {
           if (filters.budget === 'low' && uni.budget_tag !== 'low') return false;
           if (filters.budget === 'medium' && (uni.budget_tag === 'high')) return false;
           // if filters.budget === 'high', all options ('low', 'medium', 'high') are valid

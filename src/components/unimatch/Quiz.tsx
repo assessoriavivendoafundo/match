@@ -26,6 +26,7 @@ const questions: Question[] = [
       { id: "creative", label: "Criatividade & Design", subLabel: "Moda, Artes, Arquitetura", icon: "🎨" },
       { id: "tech", label: "Tech & Exatas", subLabel: "Engenharia, TI, Economia", icon: "💻" },
       { id: "health", label: "Saúde & Biológicas", subLabel: "Medicina, Psicologia, Biologia", icon: "🧬" },
+      { id: "any", label: "Tanto faz", subLabel: "Estou aberto a novas experiências", icon: "✨" },
     ],
   },
   {
@@ -36,6 +37,7 @@ const questions: Question[] = [
       { id: "low", label: "Econômico", subLabel: "Até €800/mês (Vida de estudante raiz)", icon: "🎒" },
       { id: "medium", label: "Confortável", subLabel: "€800 - €1200/mês (Equilíbrio perfeito)", icon: "⚖️" },
       { id: "high", label: "Sem Limites", subLabel: "Acima de €1200/mês (Dolce Vita)", icon: "🥂" },
+      { id: "any", label: "Tanto faz", subLabel: "O que importa é a experiência", icon: "💸" },
     ],
   },
   {
@@ -46,6 +48,7 @@ const questions: Question[] = [
       { id: "north", label: "Norte", subLabel: "Milão, Turim • Business, Frio & Agito", icon: "🏔️" },
       { id: "center", label: "Centro", subLabel: "Roma, Florença • História, Arte & Clássicos", icon: "🏛️" },
       { id: "south", label: "Sul", subLabel: "Nápoles, Bari • Praias, Calor & Gastronomia", icon: "🍋" },
+      { id: "any", label: "Tanto faz", subLabel: "Quero conhecer a Itália toda", icon: "🇮🇹" },
     ],
   },
 ];
