@@ -10,9 +10,15 @@ export function Footer() {
            <span className="font-display font-bold text-lg">ACADEMITALY</span>
         </div>
         
-        <p className="text-[10px] md:text-xs text-gray-300 text-center">
-          Copyright © 2026 Vivendo a Fundo - Todos os direitos reservados
-        </p>
+        <div className="flex flex-col items-center gap-2">
+          <p className="text-[10px] md:text-xs text-gray-300 text-center">
+            Copyright © 2026 Vivendo a Fundo - Todos os direitos reservados
+          </p>
+          <div className="flex gap-4 text-[10px] uppercase tracking-widest text-gray-400">
+            <Link href="#" className="hover:text-white transition-colors">Política de Privacidade</Link>
+            <Link href="#" className="hover:text-white transition-colors">Termos de Uso</Link>
+          </div>
+        </div>
 
         <div className="flex gap-4">
           <Link href="#" className="hover:text-accent transition-colors">

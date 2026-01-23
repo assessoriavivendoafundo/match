@@ -8,7 +8,8 @@ import { Quiz } from "@/components/unimatch/Quiz";
 import { SwipeDeck } from "@/components/unimatch/SwipeDeck";
 import { HowItWorksModal } from "@/components/unimatch/HowItWorksModal";
 import { motion, AnimatePresence } from "framer-motion";
-import { GraduationCap, MapPin, Heart, Plane, Sparkles } from "lucide-react";
+import { GraduationCap, MapPin, Heart, Plane, Sparkles, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function UniMatchPage() {
   const [step, setStep] = useState<'intro' | 'quiz' | 'deck'>('intro');
@@ -40,41 +41,50 @@ export default function UniMatchPage() {
       <div className="w-full max-w-5xl z-10 relative flex flex-col min-h-screen pt-12 pb-20">
         
         {/* --- Header Section --- */}
-        <header className="text-center mb-12 relative flex flex-col items-center gap-2">
-            <div className="flex flex-col items-center select-none">
+        <header className={cn(
+          "transition-all duration-500 ease-in-out relative z-50",
+          step !== 'intro' 
+            ? "w-full max-w-[95%] mx-auto px-8 py-4 mb-10 rounded-full border border-white/10 bg-[#0F172A]/40 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.2)]" 
+            : "text-center mb-12 flex flex-col items-center gap-2"
+        )}>
+            {/* Title & Logo Wrapper */}
+            <div className={cn(
+                "flex items-center transition-all duration-500", 
+                step !== 'intro' ? "w-full justify-start gap-8" : "flex-col"
+            )}>
               {/* Main Glass Title */}
               <motion.h1 
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.6, ease: "easeOut" }}
-                className="text-6xl md:text-8xl font-black tracking-tighter p-2 text-center relative z-10 cursor-default"
+                layout
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className={cn(
+                  "font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-white/70 to-white/20 drop-shadow-2xl transition-all duration-500 relative z-10 cursor-default",
+                  step !== 'intro' ? "text-3xl md:text-5xl pr-2 pb-1" : "text-6xl md:text-8xl p-2 text-center"
+                )}
+                style={{ WebkitTextStroke: step !== 'intro' ? '1px rgba(255,255,255,0.7)' : '1.5px rgba(255,255,255,0.7)' }}
               >
-                <span className="block text-transparent bg-clip-text bg-gradient-to-b from-white via-white/70 to-white/20 drop-shadow-2xl"
-                      style={{ WebkitTextStroke: '1.5px rgba(255,255,255,0.7)' }}>
-                  Match Universitário
-                </span>
+                Match Universitário
               </motion.h1>
               
               {/* Logo Attribution */}
-              <div className="flex flex-col items-center gap-3 mt-2">
+              <div className={cn("flex items-center gap-3 transition-all duration-500", step !== 'intro' ? "flex-row mt-1" : "flex-col mt-2")}>
                 <motion.span 
-                  initial={{ opacity: 0 }}
+                  initial={false}
                   animate={{ opacity: 0.4 }}
-                  transition={{ delay: 0.3 }}
-                  className="text-xs md:text-sm font-medium text-white tracking-[0.3em] uppercase select-none"
+                  className="text-[10px] md:text-xs font-medium text-white tracking-[0.3em] uppercase select-none whitespace-nowrap"
                 >
                   Um projeto de
                 </motion.span>
                 <Link href="/">
                   <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    whileHover={{ scale: 1.05, backgroundColor: "rgba(255, 255, 255, 0.08)", boxShadow: "0 20px 40px rgba(0,0,0,0.3)" }}
+                    layout
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    whileHover={{ scale: 1.05 }}
                     transition={{ duration: 0.3 }}
-                    className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl px-6 py-3 shadow-2xl transition-all cursor-pointer group"
+                    className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl px-4 py-2 md:px-6 md:py-3 shadow-2xl transition-all cursor-pointer group"
                   >
-                    <div className="relative w-40 h-8 md:w-48 md:h-10">
+                    <div className={cn("relative transition-all duration-500", step !== 'intro' ? "w-32 h-6 md:w-40 md:h-8" : "w-40 h-8 md:w-48 md:h-10")}>
                       <Image 
                         src="/LOGO HORIZONTAL BRANCO - ACDY.svg" 
                         alt="AcademItaly Logo" 
@@ -88,25 +98,30 @@ export default function UniMatchPage() {
               </div>
             </div>
            
-           <motion.div
-             initial={{ opacity: 0, scale: 0.9 }}
-             animate={{ opacity: 1, scale: 1 }}
-             transition={{ delay: 0.6, duration: 1 }}
-             className="mt-8"
-           >
-             <div className="relative group">
-                {/* Decorative Blur Background */}
-                <div className="absolute inset-0 bg-blue-500/10 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
-                
-                <p className="relative text-blue-100/90 font-sans text-sm md:text-base tracking-[0.4em] uppercase font-light bg-gradient-to-r from-transparent via-white/5 to-transparent px-12 py-3 border-y border-white/10 backdrop-blur-sm">
-                  As Universidades Estatais Italianas
-                </p>
-                
-                {/* Glow Points */}
-                <div className="absolute top-1/2 left-0 -translate-y-1/2 w-1 h-1 bg-blue-400 rounded-full shadow-[0_0_10px_#60a5fa] animate-pulse" />
-                <div className="absolute top-1/2 right-0 -translate-y-1/2 w-1 h-1 bg-blue-400 rounded-full shadow-[0_0_10px_#60a5fa] animate-pulse" />
-             </div>
-           </motion.div>
+           <AnimatePresence>
+             {step === 'intro' && (
+               <motion.div
+                 initial={{ opacity: 0, y: -20 }}
+                 animate={{ opacity: 1, y: 0 }}
+                 exit={{ opacity: 0, y: -20 }}
+                 transition={{ duration: 0.5, delay: 0.2 }}
+                 className="mt-8"
+               >
+                 <div className="relative group">
+                    {/* Decorative Blur Background */}
+                    <div className="absolute inset-0 bg-blue-500/10 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+                    
+                    <p className="relative text-blue-100/90 font-sans text-sm md:text-base tracking-[0.4em] uppercase font-light bg-gradient-to-r from-transparent via-white/5 to-transparent px-12 py-3 border-y border-white/10 backdrop-blur-sm">
+                      As Universidades Estatais Italianas
+                    </p>
+                    
+                    {/* Glow Points */}
+                    <div className="absolute top-1/2 left-0 -translate-y-1/2 w-1 h-1 bg-blue-400 rounded-full shadow-[0_0_10px_#60a5fa] animate-pulse" />
+                    <div className="absolute top-1/2 right-0 -translate-y-1/2 w-1 h-1 bg-blue-400 rounded-full shadow-[0_0_10px_#60a5fa] animate-pulse" />
+                 </div>
+               </motion.div>
+             )}
+           </AnimatePresence>
         </header>
 
         {/* --- Main Content Area --- */}
@@ -204,10 +219,10 @@ export default function UniMatchPage() {
                           rotate: [12, 25, 10, 20, 12]
                         }}
                         transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-                        style={{ transform: "translateZ(50px)" }}
-                        className="absolute -top-5 -right-5 w-14 h-14 bg-gradient-to-br from-green-400 to-emerald-600 rounded-2xl flex items-center justify-center shadow-xl z-20 border border-white/20"
+                        style={{ transform: "translateZ(60px)" }}
+                        className="absolute -top-6 -right-6 w-18 h-18 bg-gradient-to-br from-green-400 to-emerald-600 rounded-2xl flex items-center justify-center shadow-2xl z-20 border border-white/20"
                       >
-                        <GraduationCap className="text-white w-7 h-7" />
+                        <GraduationCap className="text-white w-9 h-9 stroke-[3]" />
                       </motion.div>
                       
                       <motion.div 
@@ -216,10 +231,10 @@ export default function UniMatchPage() {
                           rotate: [-6, -18, -4, -12, -6]
                         }}
                         transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
-                        style={{ transform: "translateZ(40px)" }}
-                        className="absolute -bottom-3 -left-3 w-11 h-11 bg-gradient-to-br from-rose-400 to-red-600 rounded-xl flex items-center justify-center shadow-xl z-20 border border-white/20"
+                        style={{ transform: "translateZ(100px)" }}
+                        className="absolute -bottom-6 -left-6 w-16 h-16 bg-gradient-to-br from-rose-400 to-red-600 rounded-xl flex items-center justify-center shadow-2xl z-30 border border-white/20"
                       >
-                        <Heart className="text-white w-5 h-5" />
+                        <X className="text-white w-8 h-8 stroke-[3]" />
                       </motion.div>
 
                       {/* Content Preview */}

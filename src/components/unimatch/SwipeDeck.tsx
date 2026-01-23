@@ -1,28 +1,14 @@
 "use client";
 
 import { useState, useEffect, useRef, useMemo } from "react";
-import { motion, useMotionValue, useTransform, PanInfo, AnimatePresence } from "framer-motion";
+import { motion, useMotionValue, useTransform, PanInfo } from "framer-motion";
 import { University, getUniversities } from "@/lib/data";
 import { X, Heart, GraduationCap, RotateCcw, MapPin, Wallet, Loader2, ChevronUp, Sparkles, Share2, Mail, Palette, TrendingUp, Stethoscope, Atom } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-// Vibrant Brazilian exclamations for "Like"
-const LIKE_EXCLAMATIONS = [
-  "Aí sim! 🚀", 
-  "Que sonho! ✨", 
-  "Já tô lá! 🇮🇹", 
-  "Curti muito! 💚", 
-  "Essa é Top! 🤩", 
-  "Mamma Mia! 🍝", 
-  "Sensacional! 🔥", 
-  "Perfeito! 🎯",
-  "Partiu Itália! ✈️",
-  "Vibe Incrível! 😎"
-];
-
-const NOPE_LABELS = ["Ah não...", "Próxima", "Passo", "Nem...", "Hum...", "Tchau!"];
-const LIKE_LABELS = ["MATCH", "AMEI", "UAU!", "SIM!", "BORA!", "TOP"];
+const NOPE_LABELS = ["nope"];
+const LIKE_LABELS = ["match"];
 
 export function SwipeDeck({ filters }: { filters: Record<string, string> }) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -31,7 +17,6 @@ export function SwipeDeck({ filters }: { filters: Record<string, string> }) {
   const [history, setHistory] = useState<University[]>([]); // For Undo
   const [liked, setLiked] = useState<University[]>([]);
   const [loading, setLoading] = useState(true);
-  const [exclamation, setExclamation] = useState<{ text: string; id: number; rotation: number; scale: number } | null>(null);
   const [wishlistOpen, setWishlistOpen] = useState(false);
   const swipeRef = useRef<string | null>(null);
 
@@ -86,7 +71,6 @@ export function SwipeDeck({ filters }: { filters: Record<string, string> }) {
         if (prev.some(u => u.id === id)) return prev;
         return [...prev, currentCard];
       });
-      showExclamation();
     }
     setHistory(prev => [...prev, currentCard]);
   };
@@ -107,21 +91,12 @@ export function SwipeDeck({ filters }: { filters: Record<string, string> }) {
     setDeck(prev => [...prev, lastCard]);
   };
 
-  const showExclamation = () => {
-    const text = LIKE_EXCLAMATIONS[Math.floor(Math.random() * LIKE_EXCLAMATIONS.length)];
-    setExclamation({ 
-        text, 
-        id: Date.now(), 
-        rotation: Math.random() * 20 - 10,
-        scale: 0.8 + Math.random() * 0.4
-    });
-    setTimeout(() => setExclamation(null), 1800);
-  };
-
   const shareOnWhatsApp = () => {
     if (liked.length === 0) return;
 
-    const header = "🇮🇹 *Meu Match Universitário* 🇮🇹\n\nCiao! Explorei as opções e estas são as universidades que deram match comigo. *Gostaria de receber mais informações sobre elas e como começar meu processo:*\n\n";
+    const fullName = filters.userName && filters.userSurname ? `${filters.userName} ${filters.userSurname}` : filters.userName || "Estudante";
+    const firstName = filters.userName || "Estudante";
+    const header = `🇮🇹 *Match Universitário - ${fullName}* 🇮🇹\n\nCiao! Me chamo ${firstName}, explorei as opções e estas são as universidades que deram match comigo. *Gostaria de receber mais informações sobre elas e como começar meu processo:*\n\n`;
     const list = liked.map(u => `🏛️ *${u.name}*\n   📍 ${u.city}\n`).join("\n");
     const footer = "\n💬 *Você pode me ajudar com mais detalhes sobre essas opções?*\n🔗 Descubra seu match em: https://vivendoafundo.com.br";
 
@@ -132,8 +107,10 @@ export function SwipeDeck({ filters }: { filters: Record<string, string> }) {
   const shareOnEmail = () => {
     if (liked.length === 0) return;
 
-    const subject = "Meu Match Universitário";
-    const header = "Ciao! Explorei as opções e estas são as universidades que deram match comigo.\n\nGostaria de receber mais informações sobre elas e como começar meu processo:\n\n";
+    const fullName = filters.userName && filters.userSurname ? `${filters.userName} ${filters.userSurname}` : filters.userName || "Estudante";
+    const firstName = filters.userName || "Estudante";
+    const subject = `Meu Match Universitário - ${fullName}`;
+    const header = `Ciao! Me chamo ${firstName}, explorei as opções e estas são as universidades que deram match comigo.\n\nGostaria de receber mais informações sobre elas e como começar meu processo:\n\n`;
     const list = liked.map(u => `🏛️ ${u.name}\n   📍 ${u.city}\n`).join("\n");
     const footer = "\n\nVocê pode me ajudar com mais detalhes sobre essas opções?\n\n🔗 Descubra seu match em: https://vivendoafundo.com.br";
 
@@ -155,34 +132,36 @@ export function SwipeDeck({ filters }: { filters: Record<string, string> }) {
 
   if (deck.length === 0) {
       return (
-          <div className="flex flex-col h-[75vh] w-full max-w-2xl mx-auto bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden shadow-2xl relative">
+          <div className="flex flex-col h-[85vh] w-full max-w-2xl mx-auto bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden shadow-2xl relative">
               
               {liked.length > 0 ? (
                 <>
                     {/* Header */}
-                    <div className="p-8 pb-4 text-center border-b border-white/10 bg-white/5">
-                        <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-green-500/20 ring-4 ring-white/10">
-                            <GraduationCap className="w-10 h-10 text-white fill-white" />
+                    <div className="p-6 pb-4 text-center border-b border-white/10 bg-white/5">
+                        <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg shadow-green-500/20 ring-4 ring-white/10">
+                            <GraduationCap className="w-8 h-8 text-white fill-white" />
                         </div>
-                        <h2 className="text-3xl md:text-4xl font-black text-white mb-2">Sua Lista dos Sonhos 🇮🇹</h2>
-                        <p className="text-blue-200/70 text-lg">Você deu match com {liked.length} universidade{liked.length !== 1 && 's'}!</p>
+                        <h2 className="text-2xl md:text-4xl font-black text-white mb-1">
+                          Lista dos Sonhos {filters.userName ? `de ${filters.userName}` : ''} 🇮🇹
+                        </h2>
+                        <p className="text-blue-200/70 text-base">Você deu match com {liked.length} universidade{liked.length !== 1 && 's'}!</p>
                     </div>
 
                     {/* Scrollable List */}
-                    <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
+                    <div className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
                         {liked.map(uni => (
                             <motion.div 
                                 key={uni.id}
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className="flex flex-col sm:flex-row items-center gap-5 p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-colors group"
+                                className="flex items-center gap-4 p-3 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-colors group"
                             >
-                                <div className={cn("w-full sm:w-24 h-32 sm:h-24 rounded-xl shadow-lg flex items-center justify-center bg-gradient-to-br text-3xl", getGradient(uni.id))}>
+                                <div className={cn("w-16 h-16 rounded-xl shadow-lg flex items-center justify-center bg-gradient-to-br text-2xl flex-shrink-0", getGradient(uni.id))}>
                                     🏛️
                                 </div>
-                                <div className="flex-1 text-center sm:text-left w-full">
-                                    <h4 className="font-bold text-white text-xl mb-1">{uni.name}</h4>
-                                    <p className="text-blue-300/80 flex items-center justify-center sm:justify-start gap-2 mb-2"><MapPin className="w-4 h-4"/> {uni.city}</p>
+                                <div className="flex-1 min-w-0">
+                                    <h4 className="font-bold text-white text-lg mb-0.5 truncate">{uni.name}</h4>
+                                    <p className="text-blue-300/80 flex items-center gap-1.5 text-sm"><MapPin className="w-3.5 h-3.5"/> {uni.city}</p>
                                 </div>
                             </motion.div>
                         ))}
@@ -207,9 +186,9 @@ export function SwipeDeck({ filters }: { filters: Record<string, string> }) {
                         <Button 
                             variant="ghost" 
                             onClick={() => window.location.reload()} 
-                            className="w-full text-blue-300 hover:text-white hover:bg-white/10 h-12 rounded-xl text-base"
+                            className="w-full text-blue-300 hover:text-white hover:bg-white/10 h-14 rounded-xl text-lg font-semibold border border-white/5 hover:border-white/10 transition-all group"
                         >
-                            <RotateCcw className="w-4 h-4 mr-2" /> Recomeçar Exploração
+                            <RotateCcw className="w-5 h-5 mr-2 group-hover:rotate-[-120deg] transition-transform duration-500" /> Recomeçar Exploração
                         </Button>
                     </div>
                 </>
@@ -222,7 +201,11 @@ export function SwipeDeck({ filters }: { filters: Record<string, string> }) {
                     <p className="text-blue-200/70 mb-8 text-lg leading-relaxed max-w-md">
                         Você passou por todas as opções e não curtiu nenhuma. Que tal tentar filtros diferentes ou dar uma segunda chance?
                     </p>
-                    <Button onClick={() => window.location.reload()} className="bg-white text-blue-900 hover:bg-blue-50 font-bold px-10 py-6 rounded-xl text-lg shadow-lg hover:scale-105 transition-all">
+                    <Button 
+                        onClick={() => window.location.reload()} 
+                        className="group relative bg-white text-[#1D3557] hover:bg-white hover:scale-105 font-bold px-10 py-7 rounded-2xl text-xl shadow-[0_20px_50px_rgba(255,255,255,0.1)] transition-all overflow-hidden"
+                    >
+                        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-blue-400/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity translate-x-[-100%] group-hover:translate-x-[100%] duration-1000" />
                         Tentar Novamente
                     </Button>
                 </div>
@@ -234,56 +217,6 @@ export function SwipeDeck({ filters }: { filters: Record<string, string> }) {
   return (
     <div className="relative w-full max-w-md md:max-w-lg lg:max-w-xl mx-auto h-[80vh] flex flex-col items-center justify-center">
       
-      {/* Exclamation Popups - Morphing from Card Overlay */}
-      <AnimatePresence mode="popLayout">
-        {exclamation && (
-            <motion.div
-                layoutId="match-feedback-morph"
-                key={exclamation.id}
-                initial={{ opacity: 0, scale: 0.5, rotate: exclamation.rotation + 20, y: 100 }}
-                animate={{ 
-                    opacity: 1, 
-                    scale: exclamation.scale, 
-                    rotate: exclamation.rotation,
-                    y: -150, 
-                    transition: { 
-                        type: "spring", 
-                        damping: 15,
-                        stiffness: 300,
-                        mass: 0.8
-                    }
-                }}
-                exit={{ 
-                    opacity: 0, 
-                    scale: 1.5,
-                    y: -250, 
-                    transition: { duration: 0.3 } 
-                }}
-                className="absolute z-[100] flex items-center justify-center pointer-events-none w-full"
-            >
-                <div className="relative">
-                    {/* Glow behind */}
-                    <div className="absolute inset-0 bg-yellow-400 blur-3xl opacity-30 animate-pulse rounded-full" />
-                    
-                    <div className="relative bg-black/40 backdrop-blur-md border-2 border-yellow-400/50 px-12 py-8 rounded-[3rem] shadow-[0_20px_60px_rgba(250,204,21,0.2)] flex items-center justify-center text-center transform hover:scale-105 transition-transform">
-                        <span className="text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-100 to-yellow-400 drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)] tracking-tighter" style={{ WebkitTextStroke: '1px rgba(255,255,255,0.2)' }}>
-                            {exclamation.text}
-                        </span>
-                    </div>
-                    
-                    {/* Decorative particles */}
-                    <motion.div 
-                        animate={{ y: [-10, 10, -10], opacity: [0.5, 1, 0.5] }} 
-                        transition={{ duration: 2, repeat: Infinity }}
-                        className="absolute -top-4 -right-4 text-4xl"
-                    >
-                        ✨
-                    </motion.div>
-                </div>
-            </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Card Stack - LARGER CONTAINER */}
       <div className="relative w-full h-[65vh] md:h-[70vh] perspective-1000 mb-8">
         {deck.map((uni, index) => (
@@ -302,27 +235,32 @@ export function SwipeDeck({ filters }: { filters: Record<string, string> }) {
         <Button 
             size="icon" 
             variant="ghost" 
-            className="w-16 h-16 rounded-full bg-white/5 backdrop-blur-md border border-white/10 text-yellow-400 hover:bg-yellow-400/20 hover:scale-110 transition-all shadow-[0_0_20px_rgba(250,204,21,0.1)]"
+            className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-yellow-400 hover:bg-yellow-400 hover:text-black hover:scale-110 transition-all shadow-[0_0_30px_rgba(250,204,21,0.2)] disabled:opacity-30 disabled:hover:scale-100 relative overflow-hidden group"
             onClick={undoSwipe}
             disabled={history.length === 0}
         >
-            <RotateCcw className="w-7 h-7" />
+            <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/10 to-white/30 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <RotateCcw className="w-7 h-7 relative z-10" />
         </Button>
         
         <Button 
             size="icon" 
-            className="w-20 h-20 rounded-full bg-black/20 backdrop-blur-xl border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white hover:border-red-500 hover:scale-110 transition-all shadow-[0_0_20px_rgba(239,68,68,0.15)] group"
+            className="w-20 h-20 rounded-full bg-gradient-to-br from-red-500/10 to-red-600/30 backdrop-blur-2xl border border-red-500/40 text-red-500 hover:from-red-500 hover:to-red-600 hover:text-white hover:scale-110 hover:shadow-[0_0_50px_rgba(239,68,68,0.6)] transition-all shadow-[0_10px_40px_rgba(239,68,68,0.25)] relative overflow-hidden group active:scale-95"
             onClick={() => removeCard(deck[deck.length - 1].id, 'nope')}
         >
-            <X className="w-10 h-10 stroke-[3] group-hover:rotate-90 transition-transform duration-300" />
+            <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/30 to-white/50 opacity-40" />
+            <div className="absolute inset-0 bg-red-400 blur-2xl opacity-0 group-hover:opacity-60 transition-opacity duration-500" />
+            <X className="w-10 h-10 stroke-[3] group-hover:rotate-90 transition-transform duration-300 relative z-10 drop-shadow-md" />
         </Button>
 
         <Button 
             size="icon" 
-            className="w-20 h-20 rounded-full bg-black/20 backdrop-blur-xl border border-green-500/30 text-green-500 hover:bg-green-500 hover:text-white hover:border-green-500 hover:scale-110 transition-all shadow-[0_0_20px_rgba(34,197,94,0.15)] group"
+            className="w-20 h-20 rounded-full bg-gradient-to-br from-green-500/10 to-green-600/30 backdrop-blur-2xl border border-green-500/40 text-green-500 hover:from-green-500 hover:to-green-600 hover:text-white hover:scale-110 hover:shadow-[0_0_50px_rgba(34,197,94,0.6)] transition-all shadow-[0_10px_40px_rgba(34,197,94,0.25)] relative overflow-hidden group active:scale-95"
             onClick={() => removeCard(deck[deck.length - 1].id, 'like')}
         >
-            <GraduationCap className="w-10 h-10 stroke-[3] group-hover:-rotate-12 group-hover:scale-110 transition-transform duration-300" />
+            <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/30 to-white/50 opacity-40" />
+            <div className="absolute inset-0 bg-emerald-300 blur-2xl opacity-0 group-hover:opacity-70 transition-opacity duration-500" />
+            <GraduationCap className="w-10 h-10 stroke-[3] group-hover:-rotate-12 group-hover:scale-110 transition-transform duration-300 relative z-10 drop-shadow-md" />
         </Button>
       </div>
 
@@ -420,25 +358,45 @@ function getGradient(id: string) {
 // Disciplines Grid Component
 function DisciplinesGrid({ data }: { data: University }) {
     return (
-        <div className="bg-white/10 backdrop-blur-md rounded-2xl p-2 grid grid-cols-2 gap-2 border border-white/10 shadow-lg">
+        <div className="bg-white/20 backdrop-blur-xl rounded-2xl p-2.5 grid grid-cols-2 gap-2.5 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] ring-1 ring-white/20">
             {/* Top Left: Humanities */}
-            <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center transition-opacity duration-300", data.humanities ? "bg-pink-500/20 text-pink-200" : "bg-white/5 text-white/10")}>
-                <Palette className="w-4 h-4" />
+            <div className={cn(
+                "w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-500", 
+                data.humanities 
+                    ? "bg-pink-500/40 text-white shadow-[0_0_15px_rgba(236,72,153,0.4)] border border-pink-400/30" 
+                    : "bg-black/20 text-white/10"
+            )}>
+                <Palette className={cn("w-5 h-5", data.humanities && "drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]")} />
             </div>
             
             {/* Top Right: Social */}
-            <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center transition-opacity duration-300", data.social ? "bg-orange-500/20 text-orange-200" : "bg-white/5 text-white/10")}>
-                <TrendingUp className="w-4 h-4" />
+            <div className={cn(
+                "w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-500", 
+                data.social 
+                    ? "bg-orange-500/40 text-white shadow-[0_0_15px_rgba(249,115,22,0.4)] border border-orange-400/30" 
+                    : "bg-black/20 text-white/10"
+            )}>
+                <TrendingUp className={cn("w-5 h-5", data.social && "drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]")} />
             </div>
 
             {/* Bottom Left: Health */}
-            <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center transition-opacity duration-300", data.health ? "bg-emerald-500/20 text-emerald-200" : "bg-white/5 text-white/10")}>
-                <Stethoscope className="w-4 h-4" />
+            <div className={cn(
+                "w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-500", 
+                data.health 
+                    ? "bg-emerald-500/40 text-white shadow-[0_0_15px_rgba(16,185,129,0.4)] border border-emerald-400/30" 
+                    : "bg-black/20 text-white/10"
+            )}>
+                <Stethoscope className={cn("w-5 h-5", data.health && "drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]")} />
             </div>
 
             {/* Bottom Right: STEM */}
-            <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center transition-opacity duration-300", data.stem ? "bg-cyan-500/20 text-cyan-200" : "bg-white/5 text-white/10")}>
-                <Atom className="w-4 h-4" />
+            <div className={cn(
+                "w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-500", 
+                data.stem 
+                    ? "bg-cyan-500/40 text-white shadow-[0_0_15px_rgba(6,182,212,0.4)] border border-cyan-400/30" 
+                    : "bg-black/20 text-white/10"
+            )}>
+                <Atom className={cn("w-5 h-5", data.stem && "drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]")} />
             </div>
         </div>
     );
@@ -466,8 +424,8 @@ function Card({ data, active, removeCard, index }: {
     const randomExitX = randomVal > 0.5 ? 800 : -800;
     
     const bgGradient = useMemo(() => getGradient(data.id), [data.id]);
-    const likeLabel = useMemo(() => LIKE_LABELS[Math.floor(randomVal * LIKE_LABELS.length)], [randomVal]);
-    const nopeLabel = useMemo(() => NOPE_LABELS[Math.floor(randomVal * NOPE_LABELS.length)], [randomVal]);
+    const likeLabel = LIKE_LABELS[0];
+    const nopeLabel = NOPE_LABELS[0];
 
     const handleDragEnd = (_: unknown, info: PanInfo) => {
         if (!active) return;
@@ -503,16 +461,16 @@ function Card({ data, active, removeCard, index }: {
                 <>
                     <motion.div style={{ opacity: likeOpacity }} className="absolute top-12 left-8 z-30 pointer-events-none">
                          <div 
-                            className="border-[6px] border-green-400 text-green-500 rounded-2xl px-8 py-2 -rotate-12 bg-black/10 backdrop-blur-sm shadow-[0_10px_30px_rgba(34,197,94,0.3)]"
+                            className="border-[6px] border-green-500/50 text-green-600 rounded-3xl px-8 py-4 -rotate-12 bg-white/90 backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.3)] ring-1 ring-black/5"
                          >
-                             <motion.span layoutId="match-feedback-morph" className="font-black text-5xl md:text-6xl tracking-tighter uppercase drop-shadow-sm">
+                             <span className="font-black text-6xl md:text-7xl tracking-tighter uppercase drop-shadow-sm">
                                 {likeLabel}
-                             </motion.span>
+                             </span>
                          </div>
                     </motion.div>
                     <motion.div style={{ opacity: nopeOpacity }} className="absolute top-12 right-8 z-30 pointer-events-none">
-                         <div className="border-[6px] border-red-500 text-red-500 rounded-2xl px-8 py-2 rotate-12 bg-black/10 backdrop-blur-sm shadow-[0_10px_30px_rgba(239,68,68,0.3)]">
-                             <span className="font-black text-5xl md:text-6xl tracking-tighter uppercase drop-shadow-sm">
+                         <div className="border-[6px] border-red-500/50 text-red-600 rounded-3xl px-8 py-4 rotate-12 bg-white/90 backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.3)] ring-1 ring-black/5">
+                             <span className="font-black text-6xl md:text-7xl tracking-tighter uppercase drop-shadow-sm">
                                 {nopeLabel}
                              </span>
                          </div>

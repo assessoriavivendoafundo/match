@@ -1,5 +1,8 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
+import { motion } from "framer-motion";
 
 const services = [
   {
@@ -64,17 +67,35 @@ export function Services() {
     <section className="py-12 md:py-20 bg-[#FAFAFA] relative">
       <div className="container mx-auto px-4">
         <div className="text-center mb-10 md:mb-16">
-          <h3 className="text-[10px] md:text-xs font-bold text-accent uppercase tracking-widest mb-3">NOSSOS SERVIÇOS</h3>
-          <h2 className="text-2xl md:text-4xl font-display font-bold text-primary max-w-2xl mx-auto leading-tight">
+          <motion.h3 
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-[10px] md:text-xs font-bold text-accent uppercase tracking-widest mb-3"
+          >
+            NOSSOS SERVIÇOS
+          </motion.h3>
+          <motion.h2 
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="text-2xl md:text-4xl font-display font-bold text-primary max-w-2xl mx-auto leading-tight"
+          >
             Nós te ajudamos em cada etapa do processo, da forma que você preferir
-          </h2>
+          </motion.h2>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 items-start">
           {services.map((service, index) => (
-            <div 
+            <motion.div 
               key={index} 
-              className="bg-white p-6 pb-8 rounded-xl shadow-sm hover:shadow-md transition-shadow flex flex-col relative h-full"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.05 + 0.1, duration: 0.4 }}
+              whileHover={{ y: -5, transition: { duration: 0.2 } }}
+              className="bg-white p-6 pb-8 rounded-xl shadow-sm hover:shadow-xl transition-all flex flex-col relative h-full"
             >
               {service.tag && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-sm">
@@ -104,7 +125,7 @@ export function Services() {
                   </div>
                 ))}
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>

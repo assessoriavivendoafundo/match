@@ -1,5 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 const benefitsGlobal = [
   {
@@ -47,16 +50,42 @@ const benefitsBrazil = [
   }
 ];
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0 }
+};
+
 export function Benefits() {
   return (
     <section className="py-12 md:py-16 container mx-auto px-4 relative">
       {/* Logos Section */}
       <div className="mb-16 md:mb-24 text-center">
-        <h2 className="text-2xl md:text-4xl font-display font-bold text-primary mb-10 md:mb-12">
+        <motion.h2 
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-2xl md:text-4xl font-display font-bold text-primary mb-10 md:mb-12"
+        >
           +500 alunos e mentorados aprovados!
-        </h2>
+        </motion.h2>
         {/* Logos Strip - Styled to mimic reference */}
-        <div className="flex flex-wrap justify-center items-center gap-8 md:gap-20 opacity-50 grayscale mix-blend-multiply px-4">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.98 }}
+          whileInView={{ opacity: 0.5, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="flex flex-wrap justify-center items-center gap-8 md:gap-20 grayscale mix-blend-multiply px-4"
+        >
            <div className="flex flex-col items-center">
              <span className="text-[10px] md:text-sm font-serif uppercase tracking-widest text-primary font-bold">Politecnico</span>
              <span className="text-[8px] md:text-xs font-serif uppercase tracking-widest text-primary">Di Milano</span>
@@ -73,78 +102,103 @@ export function Benefits() {
              <span className="text-[10px] md:text-sm font-serif uppercase tracking-widest text-primary font-bold">Università</span>
              <span className="text-[8px] md:text-xs font-serif uppercase tracking-widest text-primary">Di Firenze</span>
            </div>
-        </div>
+        </motion.div>
       </div>
 
       {/* Vertical Line Container */}
       <div className="relative vertical-line-container">
         <div className="grid md:grid-cols-2 gap-10 md:gap-16 items-center mb-20 md:mb-32">
-          {/* Left Column - Illustration (Swapped to Right in content flow, but Visual Left in Ref) */}
-          {/* Wait, Ref shows Illustration on Left for "Por que estudar..."?
-              Ref: Top block: Italy Illustration (Left) + Text (Right).
-              Bottom block: Text (Left) + Food Illustration (Right).
-          */}
           
-          <div className="flex justify-center md:justify-end order-2 md:order-1 relative">
-             {/* The red line is actually on the left of the page content? 
-                 In the ref, there is a red line running down the LEFT side of the entire content block.
-                 My `vertical-line-container` handles this.
-             */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="flex justify-center md:justify-end order-2 md:order-1 relative"
+          >
             <Image 
               src="https://static.wixstatic.com/media/0b51a1_985532c0da614c5e8cf8bb72a639c3b0~mv2.png/v1/fill/w_455,h_338,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/italy-watercolor-composition-1.png" 
               alt="Italy Illustration" 
               width={455} 
               height={338} 
-              className="w-full max-w-md h-auto object-contain"
+              className="w-full max-w-md h-auto object-contain hover:scale-105 transition-transform duration-500"
             />
-          </div>
+          </motion.div>
 
           {/* Right Column - Text */}
           <div className="space-y-10 order-1 md:order-2 pl-4 md:pl-0">
-            <h3 className="text-2xl md:text-3xl font-display font-bold text-secondary"> {/* Blue title in ref */}
+            <motion.h3 
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-2xl md:text-3xl font-display font-bold text-secondary"
+            >
               Por que estudar na Itália e na Europa é uma oportunidade única?
-            </h3>
-            <div className="space-y-8">
+            </motion.h3>
+            <motion.div 
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="space-y-8"
+            >
               {benefitsGlobal.map((item, i) => (
-                <div key={i} className="flex gap-5 items-start">
+                <motion.div variants={itemVariants} key={i} className="flex gap-5 items-start">
                   <Image src={item.icon} alt="" width={40} height={40} className="flex-shrink-0 opacity-80" />
                   <p className="text-primary text-sm leading-relaxed">
                     <span className="font-bold block mb-1">{item.title}</span> {item.description}
                   </p>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
         </div>
 
         <div className="grid md:grid-cols-2 gap-16 items-center">
           {/* Left Column - Text */}
           <div className="space-y-10 pl-4 md:pl-0">
-            <h3 className="text-2xl md:text-3xl font-display font-bold text-secondary">
+            <motion.h3 
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-2xl md:text-3xl font-display font-bold text-secondary"
+            >
               Quais são as vantagens para brasileiros?
-            </h3>
-            <div className="space-y-8">
+            </motion.h3>
+            <motion.div 
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="space-y-8"
+            >
               {benefitsBrazil.map((item, i) => (
-                <div key={i} className="flex gap-5 items-start">
+                <motion.div variants={itemVariants} key={i} className="flex gap-5 items-start">
                   <Image src={item.icon} alt="" width={40} height={40} className="flex-shrink-0 opacity-80" />
                   <p className="text-primary text-sm leading-relaxed">
                     <span className="font-bold block mb-1">{item.title}</span> {item.description}
                   </p>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
 
           {/* Right Column - Illustration */}
-          <div className="flex justify-center md:justify-start">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="flex justify-center md:justify-start"
+          >
             <Image 
               src="https://static.wixstatic.com/media/0b51a1_1ab3b90c6e5247b7b3f43f9cd1585587~mv2.png/v1/fill/w_437,h_345,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/italy-watercolor-composition-2.png" 
               alt="Italy Food Illustration" 
               width={437} 
               height={345} 
-              className="w-full max-w-md h-auto object-contain"
+              className="w-full max-w-md h-auto object-contain hover:scale-105 transition-transform duration-500"
             />
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>
