@@ -1,7 +1,7 @@
 # Project Tasks
 
-## UniMatch Italia Feature
-- [x] Add "UniMatch Italia" button to Hero section (2026-01-05)
+## Match Universitario Feature
+- [x] Add "Match Universitario" button to Hero section (2026-01-05)
 - [x] Create basic UniMatch landing page route (2026-01-05)
 - [x] Implement "Skim Quiz" logic (2026-01-05)
 - [x] Create `/data/universities.csv` structure (2026-01-05)

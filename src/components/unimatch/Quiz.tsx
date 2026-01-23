@@ -19,36 +19,36 @@ type Question = {
 
 const questions: Question[] = [
   {
+    id: "region",
+    question: "De onde parte a nossa viagem?",
+    description: "Selecione a área geográfica dos seus sonhos... mas lembre-se que você também pode escolher todas!",
+    options: [
+      { id: "north", label: "Norte", subLabel: "Milão, Turim, Veneza...", icon: "🏔️" },
+      { id: "center", label: "Centro", subLabel: "Roma, Florença, Bolonha...", icon: "🏛️" },
+      { id: "south", label: "Sul e Ilhas", subLabel: "Nápoles, Palermo, Cagliari...", icon: "🍋" },
+      { id: "any", label: "Todas as regiões", subLabel: "A Itália é toda linda!", icon: "🇮🇹" },
+    ],
+  },
+  {
+    id: "citySize",
+    question: "Metrópole ou Borgo?",
+    description: "O ritmo da cidade faz toda a diferença na sua experiência.",
+    options: [
+      { id: "big", label: "Cidade Grande", subLabel: "Caos, networking & vida noturna sem fim", icon: "🏙️" },
+      { id: "small", label: "Média ou Pequena", subLabel: "Charme, comunidade & imersão cultural", icon: "🏡" },
+      { id: "any", label: "Tanto faz", subLabel: "Me adapto a qualquer cenário", icon: "🌍" },
+    ],
+  },
+  {
     id: "area",
-    question: "Qual é a sua vibe?",
+    question: "Qual é a sua vocação?",
     description: "Para te mostrarmos as universidades que brilham na sua área.",
     options: [
-      { id: "creative", label: "Criatividade & Design", subLabel: "Moda, Artes, Arquitetura", icon: "🎨" },
-      { id: "tech", label: "Tech & Exatas", subLabel: "Engenharia, TI, Economia", icon: "💻" },
-      { id: "health", label: "Saúde & Biológicas", subLabel: "Medicina, Psicologia, Biologia", icon: "🧬" },
-      { id: "any", label: "Tanto faz", subLabel: "Estou aberto a novas experiências", icon: "✨" },
-    ],
-  },
-  {
-    id: "region",
-    question: "Onde você se imagina?",
-    description: "Cada região tem um estilo de vida único!",
-    options: [
-      { id: "north", label: "Norte", subLabel: "Milão, Turim • Business, Frio & Agito", icon: "🏔️" },
-      { id: "center", label: "Centro", subLabel: "Roma, Florença • História, Arte & Clássicos", icon: "🏛️" },
-      { id: "south", label: "Sul", subLabel: "Nápoles, Bari • Praias, Calor & Gastronomia", icon: "🍋" },
-      { id: "any", label: "Tanto faz", subLabel: "Quero conhecer a Itália toda", icon: "🇮🇹" },
-    ],
-  },
-  {
-    id: "budget",
-    question: "Como estamos de Grana?",
-    description: "Custo de vida mensal estimado (Aluguel + Mercado + Lazer).",
-    options: [
-      { id: "low", label: "Econômico", subLabel: "Até €800/mês (Vida de estudante raiz)", icon: "🎒" },
-      { id: "medium", label: "Confortável", subLabel: "€800 - €1200/mês (Equilíbrio perfeito)", icon: "⚖️" },
-      { id: "high", label: "Sem Limites", subLabel: "Acima de €1200/mês (Dolce Vita)", icon: "🥂" },
-      { id: "any", label: "Tanto faz", subLabel: "O que importa é a experiência", icon: "💸" },
+      { id: "humanities", label: "Artística, Literária e Educação", subLabel: "Artes, Letras, Pedagogia...", icon: "🎨" },
+      { id: "social", label: "Econômica, Jurídica e Social", subLabel: "Direito, Economia, Ciências Políticas...", icon: "📈" },
+      { id: "health", label: "Saúde e Agro-Veterinária", subLabel: "Medicina, Agronomia, Veterinária...", icon: "🧬" },
+      { id: "stem", label: "STEM", subLabel: "Ciência, Tecnologia, Engenharia e Matemática", icon: "🚀" },
+      { id: "any", label: "Ainda não sei", subLabel: "Estou aberto a tudo", icon: "✨" },
     ],
   },
 ];
@@ -79,9 +79,8 @@ export function Quiz({ onComplete }: { onComplete: (answers: Record<string, stri
         <div className="mb-8">
             {/* Header / Progress */}
             <div className="flex items-center justify-between mb-6 text-blue-200/60 text-sm font-medium tracking-wide uppercase">
-                <span>Passo {currentStep + 1} de {questions.length}</span>
-                <span className="flex items-center gap-1"><Sparkles className="w-3 h-3 text-yellow-400" /> Personalizando</span>
-            </div>
+                                                <span>Passo {currentStep + 1} de {questions.length}</span>
+                                                <span className="flex items-center gap-1"><Sparkles className="w-3 h-3 text-yellow-400" /> Personalizando...</span>            </div>
             
             {/* Neon Progress Bar */}
             <div className="h-1.5 bg-white/5 rounded-full overflow-hidden backdrop-blur-sm border border-white/5">

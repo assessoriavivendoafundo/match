@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { motion, useMotionValue, useTransform, PanInfo, AnimatePresence } from "framer-motion";
 import { University, getUniversities } from "@/lib/data";
-import { X, Heart, RotateCcw, MapPin, GraduationCap, Wallet, Loader2, ChevronUp, Sparkles, Share2 } from "lucide-react";
+import { X, Heart, GraduationCap, RotateCcw, MapPin, Wallet, Loader2, ChevronUp, Sparkles, Share2, Mail, Palette, TrendingUp, Stethoscope, Atom } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -42,13 +42,19 @@ export function SwipeDeck({ filters }: { filters: Record<string, string> }) {
 
         // Strict Filtering for Region and Area
         if (filters.region && filters.region !== 'any' && uni.region !== filters.region) return false;
-        if (filters.area && filters.area !== 'any' && uni.area_tag !== filters.area) return false;
+        
+        // Disciplinary Area Filtering
+        if (filters.area && filters.area !== 'any') {
+           if (filters.area === 'humanities' && !uni.humanities) return false;
+           if (filters.area === 'social' && !uni.social) return false;
+           if (filters.area === 'health' && !uni.health) return false;
+           if (filters.area === 'stem' && !uni.stem) return false;
+        }
 
-        // Cumulative Filtering for Budget
-        if (filters.budget && filters.budget !== 'any') {
-          if (filters.budget === 'low' && uni.budget_tag !== 'low') return false;
-          if (filters.budget === 'medium' && (uni.budget_tag === 'high')) return false;
-          // if filters.budget === 'high', all options ('low', 'medium', 'high') are valid
+        // City Size Filtering
+        if (filters.citySize && filters.citySize !== 'any') {
+            if (filters.citySize === 'big' && !uni.is_big_city) return false;
+            if (filters.citySize === 'small' && uni.is_big_city) return false;
         }
 
         return true;
@@ -106,12 +112,24 @@ export function SwipeDeck({ filters }: { filters: Record<string, string> }) {
   const shareOnWhatsApp = () => {
     if (liked.length === 0) return;
 
-    const header = "🇮🇹 *Meu Match Acadêmico - UniMatch Italia* 🇮🇹\n\nCiao! Explorei as opções e estas são as universidades que deram match comigo. *Gostaria de receber mais informações sobre elas e como começar meu processo:*\n\n";
-    const list = liked.map(u => `🏛️ *${u.name}*\n   📍 ${u.city} • 🎓 ${u.area_tag}\n`).join("\n");
+    const header = "🇮🇹 *Meu Match Universitário* 🇮🇹\n\nCiao! Explorei as opções e estas são as universidades que deram match comigo. *Gostaria de receber mais informações sobre elas e como começar meu processo:*\n\n";
+    const list = liked.map(u => `🏛️ *${u.name}*\n   📍 ${u.city}\n`).join("\n");
     const footer = "\n💬 *Você pode me ajudar com mais detalhes sobre essas opções?*\n🔗 Descubra seu match em: https://vivendoafundo.com.br";
 
     const text = encodeURIComponent(header + list + footer);
     window.open(`https://api.whatsapp.com/send?phone=393516274752&text=${text}`, '_blank');
+  };
+
+  const shareOnEmail = () => {
+    if (liked.length === 0) return;
+
+    const subject = "Meu Match Universitário";
+    const header = "Ciao! Explorei as opções e estas são as universidades que deram match comigo.\n\nGostaria de receber mais informações sobre elas e como começar meu processo:\n\n";
+    const list = liked.map(u => `🏛️ ${u.name}\n   📍 ${u.city}\n`).join("\n");
+    const footer = "\n\nVocê pode me ajudar com mais detalhes sobre essas opções?\n\n🔗 Descubra seu match em: https://vivendoafundo.com.br";
+
+    const body = encodeURIComponent(header + list + footer);
+    window.open(`mailto:assessoria@vivendoafundo.com.br?subject=${encodeURIComponent(subject)}&body=${body}`, '_blank');
   };
 
   if (loading) {
@@ -135,7 +153,7 @@ export function SwipeDeck({ filters }: { filters: Record<string, string> }) {
                     {/* Header */}
                     <div className="p-8 pb-4 text-center border-b border-white/10 bg-white/5">
                         <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-green-500/20 ring-4 ring-white/10">
-                            <Heart className="w-10 h-10 text-white fill-white" />
+                            <GraduationCap className="w-10 h-10 text-white fill-white" />
                         </div>
                         <h2 className="text-3xl md:text-4xl font-black text-white mb-2">Sua Lista dos Sonhos 🇮🇹</h2>
                         <p className="text-blue-200/70 text-lg">Você deu match com {liked.length} universidade{liked.length !== 1 && 's'}!</p>
@@ -150,14 +168,12 @@ export function SwipeDeck({ filters }: { filters: Record<string, string> }) {
                                 animate={{ opacity: 1, y: 0 }}
                                 className="flex flex-col sm:flex-row items-center gap-5 p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-colors group"
                             >
-                                <img src={uni.image} alt={uni.name} className="w-full sm:w-24 h-32 sm:h-24 rounded-xl object-cover ring-1 ring-white/10 shadow-lg" />
+                                <div className={cn("w-full sm:w-24 h-32 sm:h-24 rounded-xl shadow-lg flex items-center justify-center bg-gradient-to-br text-3xl", getGradient(uni.id))}>
+                                    🏛️
+                                </div>
                                 <div className="flex-1 text-center sm:text-left w-full">
                                     <h4 className="font-bold text-white text-xl mb-1">{uni.name}</h4>
                                     <p className="text-blue-300/80 flex items-center justify-center sm:justify-start gap-2 mb-2"><MapPin className="w-4 h-4"/> {uni.city}</p>
-                                    <div className="flex flex-wrap justify-center sm:justify-start gap-2">
-                                        <span className="text-xs font-bold px-2 py-1 rounded-lg bg-blue-500/20 text-blue-200 border border-blue-500/30">{uni.area_tag}</span>
-                                        <span className="text-xs font-bold px-2 py-1 rounded-lg bg-green-500/20 text-green-200 border border-green-500/30">{uni.budget_tag === 'low' ? 'Low Cost' : uni.budget_tag === 'medium' ? 'Médio Custo' : 'Alto Custo'}</span>
-                                    </div>
                                 </div>
                             </motion.div>
                         ))}
@@ -171,6 +187,13 @@ export function SwipeDeck({ filters }: { filters: Record<string, string> }) {
                         >
                             <Share2 className="w-5 h-5" />
                             Compartilhar Lista no WhatsApp
+                        </Button>
+                        <Button 
+                            onClick={shareOnEmail}
+                            className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold h-14 rounded-xl text-lg flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20 transition-all hover:scale-[1.02]"
+                        >
+                            <Mail className="w-5 h-5" />
+                            Enviar por E-mail
                         </Button>
                         <Button 
                             variant="ghost" 
@@ -202,19 +225,27 @@ export function SwipeDeck({ filters }: { filters: Record<string, string> }) {
   return (
     <div className="relative w-full max-w-md md:max-w-lg lg:max-w-xl mx-auto h-[80vh] flex flex-col items-center justify-center">
       
-      {/* Exclamation Popups */}
-      <AnimatePresence>
+      {/* Exclamation Popups - Morphing from Card Overlay */}
+      <AnimatePresence mode="popLayout">
         {exclamation && (
             <motion.div
-                key={exclamation.id}
-                initial={{ opacity: 0, scale: 0.5, y: 0, x: "-50%" }}
-                animate={{ opacity: 1, scale: 1.2, y: -50, x: "-50%", rotate: exclamation.rotation }}
-                exit={{ opacity: 0, scale: 1.5, filter: "blur(10px)" }}
-                className="absolute top-[15%] left-1/2 z-[60] pointer-events-none whitespace-nowrap"
+                layoutId="match-feedback-morph"
+                key="exclamation-box"
+                initial={{ opacity: 0, scale: 0.8, y: -250 }}
+                animate={{ 
+                    opacity: 1, 
+                    scale: 1, 
+                    y: -320, 
+                    transition: { type: "spring", stiffness: 200, damping: 20 }
+                }}
+                exit={{ opacity: 0, scale: 0.8, y: -350, transition: { duration: 0.2 } }}
+                className="absolute bottom-20 z-[60] flex items-center justify-center pointer-events-none"
             >
-                <span className="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-amber-500 drop-shadow-[0_4px_20px_rgba(251,191,36,0.5)] stroke-black bg-black/40 backdrop-blur-md px-8 py-4 rounded-full border border-yellow-500/30">
-                    {exclamation.text}
-                </span>
+                <div className="bg-white/20 backdrop-blur-3xl border border-white/20 px-12 py-6 rounded-full shadow-[0_20px_60px_rgba(0,0,0,0.3)] flex items-center justify-center text-center border-t-white/30">
+                    <span className="text-4xl md:text-6xl font-black text-yellow-400 drop-shadow-[0_2px_10px_rgba(250,204,21,0.4)] tracking-tight">
+                        {exclamation.text}
+                    </span>
+                </div>
             </motion.div>
         )}
       </AnimatePresence>
@@ -246,18 +277,18 @@ export function SwipeDeck({ filters }: { filters: Record<string, string> }) {
         
         <Button 
             size="icon" 
-            className="w-20 h-20 rounded-full bg-black/40 backdrop-blur-md border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white hover:scale-110 transition-all shadow-[0_0_30px_rgba(239,68,68,0.2)] group"
+            className="w-20 h-20 rounded-full bg-black/20 backdrop-blur-xl border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white hover:border-red-500 hover:scale-110 transition-all shadow-[0_0_20px_rgba(239,68,68,0.15)] group"
             onClick={() => removeCard(deck[deck.length - 1].id, 'nope')}
         >
-            <X className="w-10 h-10 stroke-[3] group-hover:rotate-90 transition-transform" />
+            <X className="w-10 h-10 stroke-[3] group-hover:rotate-90 transition-transform duration-300" />
         </Button>
 
         <Button 
             size="icon" 
-            className="w-20 h-20 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 text-white hover:scale-110 transition-all shadow-[0_0_40px_rgba(16,185,129,0.4)] border border-green-400/50"
+            className="w-20 h-20 rounded-full bg-black/20 backdrop-blur-xl border border-green-500/30 text-green-500 hover:bg-green-500 hover:text-white hover:border-green-500 hover:scale-110 transition-all shadow-[0_0_20px_rgba(34,197,94,0.15)] group"
             onClick={() => removeCard(deck[deck.length - 1].id, 'like')}
         >
-            <Heart className="w-10 h-10 fill-current animate-pulse" />
+            <GraduationCap className="w-10 h-10 stroke-[3] group-hover:-rotate-12 group-hover:scale-110 transition-transform duration-300" />
         </Button>
       </div>
 
@@ -274,7 +305,7 @@ export function SwipeDeck({ filters }: { filters: Record<string, string> }) {
               <div className="flex items-center justify-between px-8 pb-4">
                   <div className="flex items-center gap-4">
                       <div className="bg-gradient-to-br from-pink-500 to-rose-600 p-2 rounded-xl shadow-lg shadow-pink-500/20">
-                          <Heart className="w-5 h-5 text-white fill-white" />
+                          <GraduationCap className="w-5 h-5 text-white fill-white" />
                       </div>
                       <p className="font-bold text-white text-lg">Lista de Sonhos <span className="text-white/50 text-sm ml-2">({liked.length})</span></p>
                   </div>
@@ -295,12 +326,14 @@ export function SwipeDeck({ filters }: { filters: Record<string, string> }) {
                         <>
                             {liked.map(uni => (
                                 <div key={uni.id} className="flex items-center gap-5 p-4 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/10 transition-colors group">
-                                    <img src={uni.image} alt={uni.name} className="w-20 h-20 rounded-xl object-cover ring-1 ring-white/10" />
+                                    <div className={cn("w-20 h-20 rounded-xl shadow-lg flex items-center justify-center bg-gradient-to-br text-2xl flex-shrink-0", getGradient(uni.id))}>
+                                        🏛️
+                                    </div>
                                     <div className="flex-1">
-                                        <h4 className="font-bold text-white text-lg group-hover:text-blue-300 transition-colors">{uni.name}</h4>
+                                        <h4 className="font-bold text-white text-lg group-hover:text-blue-300 transition-colors line-clamp-2">{uni.name}</h4>
                                         <p className="text-blue-300/60 flex items-center gap-1"><MapPin className="w-3 h-3"/> {uni.city}</p>
                                     </div>
-                                    <Button className="bg-white/10 hover:bg-white text-white hover:text-blue-900 rounded-xl">Ver Detalhes</Button>
+                                    <Button className="bg-white/10 hover:bg-white text-white hover:text-blue-900 rounded-xl h-10 px-4">Ver</Button>
                                 </div>
                             ))}
                             
@@ -334,6 +367,49 @@ function pseudoRandom(seed: string) {
     return (Math.abs(hash) % 1000) / 1000;
 }
 
+// Helper to get a consistent gradient based on ID
+function getGradient(id: string) {
+    const gradients = [
+        "from-[#1D3557] to-[#112240]", // Navy Brand
+        "from-[#0F172A] to-[#334155]", // Slate
+        "from-[#312E81] to-[#4338CA]", // Indigo
+        "from-[#BE123C] to-[#881337]", // Rose
+        "from-[#047857] to-[#065F46]", // Emerald
+        "from-[#7C3AED] to-[#5B21B6]", // Violet
+        "from-[#C2410C] to-[#9A3412]", // Orange
+    ];
+    // Simple hash of the numeric ID or string
+    const index = Math.abs(id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)) % gradients.length;
+    return gradients[index];
+}
+
+// Disciplines Grid Component
+function DisciplinesGrid({ data }: { data: University }) {
+    return (
+        <div className="bg-white/10 backdrop-blur-md rounded-2xl p-2 grid grid-cols-2 gap-2 border border-white/10 shadow-lg">
+            {/* Top Left: Humanities */}
+            <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center transition-opacity duration-300", data.humanities ? "bg-pink-500/20 text-pink-200" : "bg-white/5 text-white/10")}>
+                <Palette className="w-4 h-4" />
+            </div>
+            
+            {/* Top Right: Social */}
+            <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center transition-opacity duration-300", data.social ? "bg-orange-500/20 text-orange-200" : "bg-white/5 text-white/10")}>
+                <TrendingUp className="w-4 h-4" />
+            </div>
+
+            {/* Bottom Left: Health */}
+            <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center transition-opacity duration-300", data.health ? "bg-emerald-500/20 text-emerald-200" : "bg-white/5 text-white/10")}>
+                <Stethoscope className="w-4 h-4" />
+            </div>
+
+            {/* Bottom Right: STEM */}
+            <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center transition-opacity duration-300", data.stem ? "bg-cyan-500/20 text-cyan-200" : "bg-white/5 text-white/10")}>
+                <Atom className="w-4 h-4" />
+            </div>
+        </div>
+    );
+}
+
 // Single Card Component - FULL SIZE
 function Card({ data, active, removeCard, index }: { 
     data: University; 
@@ -350,10 +426,12 @@ function Card({ data, active, removeCard, index }: {
     const likeOpacity = useTransform(x, [0, 100], [0, 1]);
     const nopeOpacity = useTransform(x, [-100, 0], [1, 0]);
 
-    // Use deterministic random values based on ID to avoid hydration mismatches
+    // Use deterministic random values based on ID
     const randomVal = useMemo(() => pseudoRandom(data.id), [data.id]);
     const randomRotate = (randomVal * 4) - 2; 
     const randomExitX = randomVal > 0.5 ? 800 : -800;
+    
+    const bgGradient = useMemo(() => getGradient(data.id), [data.id]);
 
     const handleDragEnd = (_: unknown, info: PanInfo) => {
         if (!active) return;
@@ -388,88 +466,84 @@ function Card({ data, active, removeCard, index }: {
             {active && (
                 <>
                     <motion.div style={{ opacity: likeOpacity }} className="absolute top-10 left-10 z-30 pointer-events-none">
-                         <div className="border-[6px] border-green-500 text-green-500 font-black text-6xl px-6 py-2 rounded-2xl -rotate-12 uppercase tracking-widest bg-white/80 backdrop-blur-md shadow-2xl transform -translate-x-4 -translate-y-4">
-                             LIKE
+                         <div 
+                            className="bg-white/20 backdrop-blur-3xl border border-white/20 text-green-400 shadow-[0_20px_50px_rgba(0,0,0,0.2)] rounded-full px-10 py-4 -rotate-12 border-t-white/30"
+                         >
+                             <motion.span layoutId="match-feedback-morph" className="font-black text-5xl tracking-widest uppercase">MATCH</motion.span>
                          </div>
                     </motion.div>
                     <motion.div style={{ opacity: nopeOpacity }} className="absolute top-10 right-10 z-30 pointer-events-none">
-                         <div className="border-[6px] border-red-500 text-red-500 font-black text-6xl px-6 py-2 rounded-2xl rotate-12 uppercase tracking-widest bg-white/80 backdrop-blur-md shadow-2xl transform translate-x-4 -translate-y-4">
-                             NOPE
+                         <div className="bg-white/20 backdrop-blur-3xl border border-white/20 text-red-500 shadow-[0_20px_50px_rgba(0,0,0,0.2)] rounded-full px-10 py-4 rotate-12 border-t-white/30">
+                             <span className="font-black text-5xl tracking-widest uppercase">NOPE</span>
                          </div>
                     </motion.div>
                 </>
             )}
 
-            {/* FULL HEIGHT IMAGE with Gradient Overlay */}
-            <div className="h-full w-full relative group">
-                <img 
-                    src={data.image} 
-                    alt={data.name} 
-                    className="w-full h-full object-cover pointer-events-none transition-transform duration-1000 group-hover:scale-105" 
-                    draggable="false"
-                />
+            {/* Content Container with Dynamic Gradient */}
+            <div className={cn("h-full w-full relative flex flex-col p-8 bg-gradient-to-br", bgGradient)}>
                 
-                {/* Gradient for Text Readability */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent" />
-                
-                {/* Top Badges */}
-                <div className="absolute top-6 right-6 flex flex-col items-end gap-3 z-10">
-                    <div className="bg-white/10 backdrop-blur-md text-white font-bold px-4 py-2 rounded-full shadow-lg border border-white/10 flex items-center gap-2">
-                        <Sparkles className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                        <span>{data.match_score}% Match</span>
-                    </div>
-                </div>
+                {/* Abstract Decorative Circles */}
+                <div className="absolute top-[-20%] right-[-20%] w-[300px] h-[300px] bg-white/5 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute bottom-[-10%] left-[-10%] w-[250px] h-[250px] bg-black/20 rounded-full blur-3xl pointer-events-none" />
 
-                {/* Bottom Content Area - Overlay style */}
-                <div className="absolute bottom-0 left-0 right-0 p-8 text-white z-20 pb-24"> {/* Added padding bottom for visual balance */}
-                    
-                    <div className="flex items-end justify-between mb-3">
-                        <div>
-                             <h2 className="text-4xl md:text-5xl font-black drop-shadow-lg leading-tight mb-2">{data.name}</h2>
-                             <div className="flex items-center gap-3 text-white/90">
-                                <div className="bg-white/20 backdrop-blur-md p-2 rounded-lg">
-                                    <MapPin className="w-5 h-5" />
-                                </div>
-                                <span className="text-xl md:text-2xl font-medium tracking-wide">{data.city}</span>
-                            </div>
+                {/* Header Row: Title/Location (Left) & Radar (Right) */}
+                <div className="flex justify-between items-start z-20 mb-6 flex-shrink-0">
+                    <div className="flex-1 pr-6">
+                        {/* Location Label - moved above title for hierarchy or keep below? User liked title legible. */}
+                        <div className="flex items-center gap-2 text-blue-200/80 mb-3 uppercase tracking-wider font-semibold text-xs">
+                            <MapPin className="w-3 h-3" />
+                            <span>{data.city} • {data.region === 'north' ? 'Norte' : data.region === 'center' ? 'Centro' : 'Sul'}</span>
                         </div>
+                        
+                        {/* BIG TITLE */}
+                        <h2 className="text-3xl md:text-4xl font-black text-white leading-[1.05] drop-shadow-md">
+                            {data.name}
+                        </h2>
                     </div>
 
-                    <div className="h-px w-full bg-white/20 my-5" />
-
-                    <div className="flex gap-3 flex-wrap mb-5">
-                        <Badge icon={<GraduationCap className="w-4 h-4"/>} text={data.area_tag} color="blue" />
-                        <Badge icon={<Wallet className="w-4 h-4"/>} text={data.budget_tag} color="green" />
-                        <Badge icon={<MapPin className="w-4 h-4"/>} text={data.region} color="purple" />
-                    </div>
-
-                    <p className="text-gray-200 line-clamp-3 text-lg leading-relaxed font-normal opacity-90 max-w-xl">
-                        {data.description}
-                    </p>
-                    
-                     {/* Floating Tuition Tag */}
-                    <div className="absolute bottom-8 right-8 bg-white text-blue-900 font-bold px-5 py-3 rounded-xl shadow-xl flex flex-col items-center leading-none">
-                         <span className="text-[10px] uppercase tracking-widest text-blue-400 mb-1">Tuition</span>
-                         <span className="text-xl">{data.tuition}</span>
+                    {/* Radar - Top Right */}
+                    <div className="flex-shrink-0 pt-1">
+                        <DisciplinesGrid data={data} />
                     </div>
                 </div>
+
+                {/* Main Content Area - Scrollable Description */}
+                <div className="flex-1 min-h-0 z-10 relative">
+                     {/* Scrollable Description */}
+                    <div 
+                        className="h-full pl-4 border-l-2 border-white/20 overflow-y-auto custom-scrollbar pr-2"
+                        onPointerDown={(e) => e.stopPropagation()}
+                    >
+                         <p className="text-blue-50/90 text-lg md:text-xl leading-relaxed font-normal pb-4">
+                            {data.description.split(/(Curiosidade:?)/g).map((part, i) => 
+                                part.match(/Curiosidade:?/)? <><br/><br/><strong key={i} className="text-white font-bold">{part}</strong></> : part
+                            )}
+                        </p>
+                    </div>
+                </div>
+
+                {/* Bottom - Empty or Decorative Footer Line */}
+                <div className="h-px w-full bg-gradient-to-r from-transparent via-white/20 to-transparent mt-4 flex-shrink-0" />
             </div>
         </motion.div>
     );
 }
 
 function Badge({ text, icon, color }: { text: string; icon: React.ReactNode; color: string }) {
-    // Glassmorphic badges
     const styles = {
-        blue: "bg-blue-500/30 text-blue-100 border-blue-400/30",
-        green: "bg-green-500/30 text-green-100 border-green-400/30",
-        purple: "bg-purple-500/30 text-purple-100 border-purple-400/30",
+        blue: "bg-blue-500/20 text-blue-100 border-blue-400/20",
+        green: "bg-emerald-500/20 text-emerald-100 border-emerald-400/20",
+        purple: "bg-purple-500/20 text-purple-100 border-purple-400/20",
+        pink: "bg-pink-500/20 text-pink-100 border-pink-400/20",
+        orange: "bg-orange-500/20 text-orange-100 border-orange-400/20",
+        cyan: "bg-cyan-500/20 text-cyan-100 border-cyan-400/20",
     };
-    // @ts-expect-error - color is a string but might not match keys exactly, though it should.
+    // @ts-expect-error - color is a string
     const activeStyle = styles[color] || styles.blue;
 
     return (
-        <span className={cn("px-4 py-2 rounded-xl text-sm font-bold uppercase tracking-wide flex items-center gap-2 border backdrop-blur-md shadow-sm", activeStyle)}>
+        <span className={cn("px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wide flex items-center gap-1.5 border backdrop-blur-md", activeStyle)}>
             {icon} {text}
         </span>
     );

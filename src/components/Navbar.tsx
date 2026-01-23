@@ -54,7 +54,7 @@ export function Navbar() {
               size="sm" 
               className="bg-gradient-to-r from-green-400 via-yellow-400 to-blue-500 text-blue-900 hover:scale-105 font-black text-xs uppercase tracking-widest px-4 py-1 rounded-full shadow-md border border-white/20 hover:shadow-lg transition-transform ml-2"
             >
-              🇮🇹 UniMatch 🇧🇷
+              Match Universitario
             </Button>
           </Link>
         </nav>
@@ -103,7 +103,7 @@ export function Navbar() {
               <Button 
                 className="w-full bg-gradient-to-r from-green-400 via-yellow-400 to-blue-500 text-blue-900 hover:scale-[1.02] font-black text-sm uppercase tracking-widest py-6 rounded-full shadow-md border border-white/20 transition-all"
               >
-                🇮🇹 UniMatch 🇧🇷
+                Match Universitario
               </Button>
             </Link>
 

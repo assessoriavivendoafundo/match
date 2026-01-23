@@ -103,9 +103,17 @@ export function HowItWorksModal({ isOpen, onClose, onStartQuiz }: HowItWorksModa
               <div className="pt-4">
                 <Button 
                   onClick={onStartQuiz}
-                  className="w-full h-12 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold text-lg shadow-lg shadow-purple-500/20 transition-all active:scale-95"
+                  className="group relative overflow-hidden w-full h-14 rounded-2xl bg-white text-blue-900 hover:text-white font-black text-xl shadow-[0_0_30px_rgba(255,255,255,0.1)] hover:shadow-[0_0_50px_rgba(168,85,247,0.3)] transition-all duration-500 hover:-translate-y-1 active:scale-95 border-none"
                 >
-                  Entendi, vamos lá!
+                  {/* Hover Gradient Layer */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  
+                  <span className="relative z-10">
+                    Entendi, vamos lá!
+                  </span>
+                  
+                  {/* Shimmer Effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:animate-shimmer z-20" />
                 </Button>
               </div>
             </div>
