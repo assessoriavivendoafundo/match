@@ -37,20 +37,22 @@ export function Hero() {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+          <Link href="/unimatch" className="w-full sm:w-auto">
+            <Button 
+              variant="default" 
+              size="lg" 
+              className="w-full bg-gradient-to-r from-green-500 via-yellow-500 to-blue-600 text-white hover:scale-105 font-black text-sm md:text-base uppercase tracking-widest px-10 py-7 rounded-full shadow-[0_0_30px_rgba(250,204,21,0.3)] border-2 border-white/20 transition-all duration-300 animate-pulse-slow"
+            >
+              🚀 Descubra seu Match
+            </Button>
+          </Link>
+          
           <Button 
             variant="outline" 
             size="lg" 
             className="bg-transparent text-white border-2 border-white hover:bg-white hover:text-primary font-bold text-sm uppercase tracking-widest px-8 py-6 rounded-full w-full sm:w-auto transition-all"
           >
             CONHECER OS SERVIÇOS
-          </Button>
-          
-          <Button 
-            variant="default" 
-            size="lg" 
-            className="bg-[#91C4E8] text-primary hover:bg-[#7AB0D8] font-bold text-sm uppercase tracking-widest px-8 py-6 rounded-full w-full sm:w-auto transition-all shadow-lg"
-          >
-            ENTRAR EM CONTATO
           </Button>
         </div>
       </div>

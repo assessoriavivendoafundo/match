@@ -11,6 +11,7 @@
 - [x] Add "WhatsApp Export" to UniMatch Wishlist (2026-01-05)
 - [x] Show "Dream List" summary at the end of swiping (2026-01-05)
 - [x] Add "Tanto faz" (wildcard) option to Quiz filters (2026-01-05)
+- [x] Polish UniMatch visuals & copy (Brazilian Vibe, Liquid Glass) (2026-01-23)
 - [x] Add "Gift Card" purchase flow <!-- id: 5 -->
 
 ## Bug Fixes & Maintenance

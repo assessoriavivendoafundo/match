@@ -7,18 +7,22 @@ import { X, Heart, GraduationCap, RotateCcw, MapPin, Wallet, Loader2, ChevronUp,
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-// Random Brazilian exclamations
-const EXCLAMATIONS = [
-  "Partiu Itália! 🇮🇹", 
-  "Que sonho!", 
-  "Imagina eu lá!", 
-  "Gostei!", 
-  "Top!", 
-  "Mamma Mia!", 
-  "Show de bola!", 
-  "Belíssimo!",
-  "Andiamo!"
+// Vibrant Brazilian exclamations for "Like"
+const LIKE_EXCLAMATIONS = [
+  "Aí sim! 🚀", 
+  "Que sonho! ✨", 
+  "Já tô lá! 🇮🇹", 
+  "Curti muito! 💚", 
+  "Essa é Top! 🤩", 
+  "Mamma Mia! 🍝", 
+  "Sensacional! 🔥", 
+  "Perfeito! 🎯",
+  "Partiu Itália! ✈️",
+  "Vibe Incrível! 😎"
 ];
+
+const NOPE_LABELS = ["Ah não...", "Próxima", "Passo", "Nem...", "Hum...", "Tchau!"];
+const LIKE_LABELS = ["MATCH", "AMEI", "UAU!", "SIM!", "BORA!", "TOP"];
 
 export function SwipeDeck({ filters }: { filters: Record<string, string> }) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -27,7 +31,7 @@ export function SwipeDeck({ filters }: { filters: Record<string, string> }) {
   const [history, setHistory] = useState<University[]>([]); // For Undo
   const [liked, setLiked] = useState<University[]>([]);
   const [loading, setLoading] = useState(true);
-  const [exclamation, setExclamation] = useState<{ text: string; id: number; rotation: number } | null>(null);
+  const [exclamation, setExclamation] = useState<{ text: string; id: number; rotation: number; scale: number } | null>(null);
   const [wishlistOpen, setWishlistOpen] = useState(false);
   const swipeRef = useRef<string | null>(null);
 
@@ -104,9 +108,14 @@ export function SwipeDeck({ filters }: { filters: Record<string, string> }) {
   };
 
   const showExclamation = () => {
-    const text = EXCLAMATIONS[Math.floor(Math.random() * EXCLAMATIONS.length)];
-    setExclamation({ text, id: Date.now(), rotation: Math.random() * 20 - 10 });
-    setTimeout(() => setExclamation(null), 1500);
+    const text = LIKE_EXCLAMATIONS[Math.floor(Math.random() * LIKE_EXCLAMATIONS.length)];
+    setExclamation({ 
+        text, 
+        id: Date.now(), 
+        rotation: Math.random() * 20 - 10,
+        scale: 0.8 + Math.random() * 0.4
+    });
+    setTimeout(() => setExclamation(null), 1800);
   };
 
   const shareOnWhatsApp = () => {
@@ -230,21 +239,46 @@ export function SwipeDeck({ filters }: { filters: Record<string, string> }) {
         {exclamation && (
             <motion.div
                 layoutId="match-feedback-morph"
-                key="exclamation-box"
-                initial={{ opacity: 0, scale: 0.8, y: -250 }}
+                key={exclamation.id}
+                initial={{ opacity: 0, scale: 0.5, rotate: exclamation.rotation + 20, y: 100 }}
                 animate={{ 
                     opacity: 1, 
-                    scale: 1, 
-                    y: -320, 
-                    transition: { type: "spring", stiffness: 200, damping: 20 }
+                    scale: exclamation.scale, 
+                    rotate: exclamation.rotation,
+                    y: -150, 
+                    transition: { 
+                        type: "spring", 
+                        damping: 15,
+                        stiffness: 300,
+                        mass: 0.8
+                    }
                 }}
-                exit={{ opacity: 0, scale: 0.8, y: -350, transition: { duration: 0.2 } }}
-                className="absolute bottom-20 z-[60] flex items-center justify-center pointer-events-none"
+                exit={{ 
+                    opacity: 0, 
+                    scale: 1.5,
+                    y: -250, 
+                    transition: { duration: 0.3 } 
+                }}
+                className="absolute z-[100] flex items-center justify-center pointer-events-none w-full"
             >
-                <div className="bg-white/20 backdrop-blur-3xl border border-white/20 px-12 py-6 rounded-full shadow-[0_20px_60px_rgba(0,0,0,0.3)] flex items-center justify-center text-center border-t-white/30">
-                    <span className="text-4xl md:text-6xl font-black text-yellow-400 drop-shadow-[0_2px_10px_rgba(250,204,21,0.4)] tracking-tight">
-                        {exclamation.text}
-                    </span>
+                <div className="relative">
+                    {/* Glow behind */}
+                    <div className="absolute inset-0 bg-yellow-400 blur-3xl opacity-30 animate-pulse rounded-full" />
+                    
+                    <div className="relative bg-black/40 backdrop-blur-md border-2 border-yellow-400/50 px-12 py-8 rounded-[3rem] shadow-[0_20px_60px_rgba(250,204,21,0.2)] flex items-center justify-center text-center transform hover:scale-105 transition-transform">
+                        <span className="text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-100 to-yellow-400 drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)] tracking-tighter" style={{ WebkitTextStroke: '1px rgba(255,255,255,0.2)' }}>
+                            {exclamation.text}
+                        </span>
+                    </div>
+                    
+                    {/* Decorative particles */}
+                    <motion.div 
+                        animate={{ y: [-10, 10, -10], opacity: [0.5, 1, 0.5] }} 
+                        transition={{ duration: 2, repeat: Infinity }}
+                        className="absolute -top-4 -right-4 text-4xl"
+                    >
+                        ✨
+                    </motion.div>
                 </div>
             </motion.div>
         )}
@@ -432,6 +466,8 @@ function Card({ data, active, removeCard, index }: {
     const randomExitX = randomVal > 0.5 ? 800 : -800;
     
     const bgGradient = useMemo(() => getGradient(data.id), [data.id]);
+    const likeLabel = useMemo(() => LIKE_LABELS[Math.floor(randomVal * LIKE_LABELS.length)], [randomVal]);
+    const nopeLabel = useMemo(() => NOPE_LABELS[Math.floor(randomVal * NOPE_LABELS.length)], [randomVal]);
 
     const handleDragEnd = (_: unknown, info: PanInfo) => {
         if (!active) return;
@@ -465,16 +501,20 @@ function Card({ data, active, removeCard, index }: {
             {/* Feedback Overlays */}
             {active && (
                 <>
-                    <motion.div style={{ opacity: likeOpacity }} className="absolute top-10 left-10 z-30 pointer-events-none">
+                    <motion.div style={{ opacity: likeOpacity }} className="absolute top-12 left-8 z-30 pointer-events-none">
                          <div 
-                            className="bg-white/20 backdrop-blur-3xl border border-white/20 text-green-400 shadow-[0_20px_50px_rgba(0,0,0,0.2)] rounded-full px-10 py-4 -rotate-12 border-t-white/30"
+                            className="border-[6px] border-green-400 text-green-500 rounded-2xl px-8 py-2 -rotate-12 bg-black/10 backdrop-blur-sm shadow-[0_10px_30px_rgba(34,197,94,0.3)]"
                          >
-                             <motion.span layoutId="match-feedback-morph" className="font-black text-5xl tracking-widest uppercase">MATCH</motion.span>
+                             <motion.span layoutId="match-feedback-morph" className="font-black text-5xl md:text-6xl tracking-tighter uppercase drop-shadow-sm">
+                                {likeLabel}
+                             </motion.span>
                          </div>
                     </motion.div>
-                    <motion.div style={{ opacity: nopeOpacity }} className="absolute top-10 right-10 z-30 pointer-events-none">
-                         <div className="bg-white/20 backdrop-blur-3xl border border-white/20 text-red-500 shadow-[0_20px_50px_rgba(0,0,0,0.2)] rounded-full px-10 py-4 rotate-12 border-t-white/30">
-                             <span className="font-black text-5xl tracking-widest uppercase">NOPE</span>
+                    <motion.div style={{ opacity: nopeOpacity }} className="absolute top-12 right-8 z-30 pointer-events-none">
+                         <div className="border-[6px] border-red-500 text-red-500 rounded-2xl px-8 py-2 rotate-12 bg-black/10 backdrop-blur-sm shadow-[0_10px_30px_rgba(239,68,68,0.3)]">
+                             <span className="font-black text-5xl md:text-6xl tracking-tighter uppercase drop-shadow-sm">
+                                {nopeLabel}
+                             </span>
                          </div>
                     </motion.div>
                 </>
