@@ -13,10 +13,10 @@ import { cn } from "@/lib/utils";
 
 export default function UniMatchPage() {
   const [step, setStep] = useState<'intro' | 'quiz' | 'deck'>('intro');
-  const [filters, setFilters] = useState<Record<string, string>>({});
+  const [filters, setFilters] = useState<Record<string, string | string[]>>({});
   const [showHowItWorks, setShowHowItWorks] = useState(false);
 
-  const handleQuizComplete = (answers: Record<string, string>) => {
+  const handleQuizComplete = (answers: Record<string, string | string[]>) => {
     setFilters(answers);
     setStep('deck');
   };

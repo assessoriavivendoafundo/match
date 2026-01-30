@@ -13,6 +13,9 @@
 - [x] Add "Tanto faz" (wildcard) option to Quiz filters (2026-01-05)
 - [x] Polish UniMatch visuals & copy (Brazilian Vibe, Liquid Glass) (2026-01-23)
 - [x] Add "Gift Card" purchase flow <!-- id: 5 -->
+- [x] Implement Multi-selection & Manual Navigation in UniMatch Quiz (2026-01-30)
+- [x] Refine "Select All" button UI & Logic (sync with specific options) (2026-01-30)
+- [x] Implement focus-shift UI: "Any" becomes primary when all selected, others recede (2026-01-30)
 
 ## Bug Fixes & Maintenance
 - [x] Fix duplicate universities bug in Unimatch SwipeDeck (2026-01-05)

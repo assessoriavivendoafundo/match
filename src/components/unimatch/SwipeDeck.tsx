@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 const NOPE_LABELS = ["nope"];
 const LIKE_LABELS = ["match"];
 
-export function SwipeDeck({ filters }: { filters: Record<string, string> }) {
+export function SwipeDeck({ filters }: { filters: Record<string, string | string[]> }) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [universities, setUniversities] = useState<University[]>([]);
   const [deck, setDeck] = useState<University[]>([]);
@@ -29,21 +29,34 @@ export function SwipeDeck({ filters }: { filters: Record<string, string> }) {
         // Basic validity check
         if (!uni.id) return false;
 
-        // Strict Filtering for Region and Area
-        if (filters.region && filters.region !== 'any' && uni.region !== filters.region) return false;
+        // --- Region Filtering ---
+        const regionFilter = Array.isArray(filters.region) ? filters.region : (filters.region ? [filters.region] : []);
+        if (regionFilter.length > 0 && !regionFilter.includes('any')) {
+            if (!regionFilter.includes(uni.region)) return false;
+        }
         
-        // Disciplinary Area Filtering
-        if (filters.area && filters.area !== 'any') {
-           if (filters.area === 'humanities' && !uni.humanities) return false;
-           if (filters.area === 'social' && !uni.social) return false;
-           if (filters.area === 'health' && !uni.health) return false;
-           if (filters.area === 'stem' && !uni.stem) return false;
+        // --- Disciplinary Area Filtering ---
+        const areaFilter = Array.isArray(filters.area) ? filters.area : (filters.area ? [filters.area] : []);
+        if (areaFilter.length > 0 && !areaFilter.includes('any')) {
+           const matchesArea = areaFilter.some(area => {
+               if (area === 'humanities') return uni.humanities;
+               if (area === 'social') return uni.social;
+               if (area === 'health') return uni.health;
+               if (area === 'stem') return uni.stem;
+               return false;
+           });
+           if (!matchesArea) return false;
         }
 
-        // City Size Filtering
-        if (filters.citySize && filters.citySize !== 'any') {
-            if (filters.citySize === 'big' && !uni.is_big_city) return false;
-            if (filters.citySize === 'small' && uni.is_big_city) return false;
+        // --- City Size Filtering ---
+        const citySizeFilter = Array.isArray(filters.citySize) ? filters.citySize : (filters.citySize ? [filters.citySize] : []);
+        if (citySizeFilter.length > 0 && !citySizeFilter.includes('any')) {
+            const matchesSize = citySizeFilter.some(size => {
+                if (size === 'big') return uni.is_big_city;
+                if (size === 'small') return !uni.is_big_city;
+                return false;
+            });
+            if (!matchesSize) return false;
         }
 
         return true;
@@ -94,8 +107,10 @@ export function SwipeDeck({ filters }: { filters: Record<string, string> }) {
   const shareOnWhatsApp = () => {
     if (liked.length === 0) return;
 
-    const fullName = filters.userName && filters.userSurname ? `${filters.userName} ${filters.userSurname}` : filters.userName || "Estudante";
-    const firstName = filters.userName || "Estudante";
+    const uName = filters.userName as string;
+    const uSurname = filters.userSurname as string;
+    const fullName = uName && uSurname ? `${uName} ${uSurname}` : uName || "Estudante";
+    const firstName = uName || "Estudante";
     const header = `🇮🇹 *Match Universitário - ${fullName}* 🇮🇹\n\nCiao! Me chamo ${firstName}, explorei as opções e estas são as universidades que deram match comigo. *Gostaria de receber mais informações sobre elas e como começar meu processo:*\n\n`;
     const list = liked.map(u => `🏛️ *${u.name}*\n   📍 ${u.city}\n`).join("\n");
     const footer = "\n💬 *Você pode me ajudar com mais detalhes sobre essas opções?*\n🔗 Descubra seu match em: https://vivendoafundo.com.br";
@@ -107,8 +122,10 @@ export function SwipeDeck({ filters }: { filters: Record<string, string> }) {
   const shareOnEmail = () => {
     if (liked.length === 0) return;
 
-    const fullName = filters.userName && filters.userSurname ? `${filters.userName} ${filters.userSurname}` : filters.userName || "Estudante";
-    const firstName = filters.userName || "Estudante";
+    const uName = filters.userName as string;
+    const uSurname = filters.userSurname as string;
+    const fullName = uName && uSurname ? `${uName} ${uSurname}` : uName || "Estudante";
+    const firstName = uName || "Estudante";
     const subject = `Meu Match Universitário - ${fullName}`;
     const header = `Ciao! Me chamo ${firstName}, explorei as opções e estas são as universidades que deram match comigo.\n\nGostaria de receber mais informações sobre elas e como começar meu processo:\n\n`;
     const list = liked.map(u => `🏛️ ${u.name}\n   📍 ${u.city}\n`).join("\n");

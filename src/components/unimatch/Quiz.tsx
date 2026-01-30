@@ -53,10 +53,10 @@ const questions: Question[] = [
   },
 ];
 
-export function Quiz({ onComplete }: { onComplete: (answers: Record<string, string>) => void }) {
+export function Quiz({ onComplete }: { onComplete: (answers: Record<string, string | string[]>) => void }) {
   const [phase, setPhase] = useState<'details' | 'questions'>('details');
   const [currentStep, setCurrentStep] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [answers, setAnswers] = useState<Record<string, string[]>>({});
   const [userData, setUserData] = useState({ name: '', surname: '', privacy: false });
 
   const handleDetailsSubmit = (e: React.FormEvent) => {
@@ -68,24 +68,69 @@ export function Quiz({ onComplete }: { onComplete: (answers: Record<string, stri
 
   const handleSelect = (optionId: string) => {
     const currentQuestion = questions[currentStep];
-    const newAnswers = { ...answers, [currentQuestion.id]: optionId };
-    setAnswers(newAnswers);
-    
-    // Small delay to show selection before moving next
-    setTimeout(() => {
-      if (currentStep < questions.length - 1) {
-        setCurrentStep((prev) => prev + 1);
+    const currentSelection = answers[currentQuestion.id] || [];
+    const specificOptions = currentQuestion.options
+        .filter(opt => opt.id !== "any")
+        .map(opt => opt.id);
+
+    let newSelection: string[];
+
+    if (optionId === "any") {
+      // Toggle "Any": If already selected (or partially selected), deselect all. 
+      // If not selected, select ALL specific options + "any".
+      // Wait, standard behavior for "Select All" button:
+      // If "Any" is strictly in the list, clicking it removes everything.
+      // If "Any" is NOT in the list, clicking it adds everything + "Any".
+      
+      const isAnySelected = currentSelection.includes("any");
+      
+      if (isAnySelected) {
+          newSelection = [];
       } else {
-        onComplete({
-          ...newAnswers,
-          userName: userData.name,
-          userSurname: userData.surname
-        });
+          newSelection = [...specificOptions, "any"];
       }
-    }, 400);
+    } else {
+      // Specific Option Logic
+      const isSelected = currentSelection.includes(optionId);
+      let nextSpecifics: string[];
+
+      if (isSelected) {
+         // Remove option
+         nextSpecifics = currentSelection.filter(id => id !== optionId && id !== "any");
+      } else {
+         // Add option
+         // Filter out "any" first to be safe, then add new ID
+         nextSpecifics = [...currentSelection.filter(id => id !== "any"), optionId];
+      }
+
+      // Check if ALL specific options are now selected
+      const allSelected = specificOptions.every(id => nextSpecifics.includes(id));
+      
+      if (allSelected) {
+          newSelection = [...nextSpecifics, "any"];
+      } else {
+          newSelection = nextSpecifics;
+      }
+    }
+
+    setAnswers({ ...answers, [currentQuestion.id]: newSelection });
+  };
+
+  const handleNext = () => {
+    if (currentStep < questions.length - 1) {
+      setCurrentStep((prev) => prev + 1);
+    } else {
+      onComplete({
+        ...answers,
+        userName: userData.name,
+        userSurname: userData.surname
+      });
+    }
   };
 
   const currentQ = questions[currentStep];
+  const currentSelection = answers[currentQ?.id] || [];
+  const hasSelection = currentSelection.length > 0;
 
   return (
     <div className="w-full relative px-2">
@@ -229,72 +274,130 @@ export function Quiz({ onComplete }: { onComplete: (answers: Record<string, stri
                   </div>
 
                   {/* Options Grid */}
-                  <div className="grid gap-4">
-                      {currentQ.options.map((option) => (
-                          <motion.button
-                              key={option.id}
-                              onClick={() => handleSelect(option.id)}
-                              whileHover={{ scale: 1.02, backgroundColor: "rgba(255, 255, 255, 0.12)" }}
-                              whileTap={{ scale: 0.98 }}
-                              className={cn(
-                                  "relative w-full text-left p-6 rounded-2xl border transition-all duration-300 group overflow-hidden backdrop-blur-md",
-                                  answers[currentQ.id] === option.id 
-                                      ? "bg-white/15 border-purple-400 shadow-[0_0_30px_rgba(168,85,247,0.25)]" 
-                                      : option.id === "any"
-                                          ? "bg-gradient-to-r from-white/10 to-white/5 border-white/30 hover:border-white/50 shadow-lg"
-                                          : "bg-gradient-to-r from-white/10 to-transparent border-white/10 hover:border-white/30 hover:bg-white/10"
-                              )}
-                          >
-                               {/* Selection Glow Background */}
-                               {answers[currentQ.id] === option.id && (
-                                  <motion.div 
-                                      layoutId="glow"
-                                      className="absolute inset-0 bg-gradient-to-r from-purple-600/30 to-blue-600/30 z-0" 
-                                  />
-                               )}
+                  <div className="grid gap-3">
+                      {currentQ.options.map((option) => {
+                          const isSelected = currentSelection.includes(option.id);
+                          const isAnyOption = option.id === "any";
+                          const isAllSelected = currentSelection.includes("any");
+                          
+                          // Focus logic: 
+                          // If all are selected, the "any" button is the main focus.
+                          // Otherwise, specific buttons are the main focus.
+                          const isFocused = isAnyOption ? isAllSelected : (isSelected && !isAllSelected);
+                          const shouldShrink = isAllSelected && !isAnyOption;
 
-                              <div className="relative z-10 flex items-center gap-6">
-                                  {/* Icon Container - Larger & More styled */}
-                                  <div className={cn(
-                                      "w-14 h-14 flex-shrink-0 rounded-2xl flex items-center justify-center text-3xl transition-all duration-300 shadow-lg ring-1 ring-white/10",
-                                      answers[currentQ.id] === option.id 
-                                          ? "bg-gradient-to-br from-purple-500 to-blue-600 scale-110 rotate-3 ring-offset-2 ring-offset-purple-500/30" 
-                                          : option.id === "any"
-                                              ? "bg-white/20 group-hover:scale-105 group-hover:bg-white/30"
-                                              : "bg-white/10 group-hover:scale-105 group-hover:bg-white/20"
-                                  )}>
-                                      {option.icon}
-                                  </div>
+                          return (
+                            <motion.button
+                                key={option.id}
+                                layout
+                                onClick={() => handleSelect(option.id)}
+                                whileHover={{ scale: isFocused ? 1.02 : 1 }}
+                                whileTap={{ scale: 0.98 }}
+                                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                className={cn(
+                                    "relative w-full text-left rounded-2xl border transition-all duration-500 group overflow-hidden backdrop-blur-md",
+                                    // Sizing & Padding
+                                    (isAnyOption && !isAllSelected) || shouldShrink ? "p-3 px-5" : "p-6",
+                                    // Spacing
+                                    isAnyOption && "mt-2",
+                                    // Borders & Backgrounds
+                                    isSelected
+                                        ? "bg-white/15 border-purple-400/50 shadow-[0_0_30px_rgba(168,85,247,0.15)]" 
+                                        : isAnyOption
+                                            ? "border-dashed border-white/20 bg-white/5 hover:bg-white/10"
+                                            : "bg-gradient-to-r from-white/10 to-transparent border-white/10 hover:border-white/30 hover:bg-white/10",
+                                    // Evidence Logic
+                                    !isFocused && isSelected && "opacity-60 scale-[0.98] grayscale-[0.3]"
+                                )}
+                            >
+                                {/* Selection Glow Background */}
+                                {isSelected && (
+                                    <motion.div 
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
+                                        className={cn(
+                                            "absolute inset-0 z-0 transition-opacity duration-500",
+                                            isFocused ? "bg-gradient-to-r from-purple-600/30 to-blue-600/30 opacity-100" : "bg-white/5 opacity-50"
+                                        )}
+                                    />
+                                )}
 
-                                  <div className="flex-1">
-                                      <div className="flex items-center justify-between">
-                                          <span className={cn(
-                                              "font-bold text-xl transition-colors",
-                                              answers[currentQ.id] === option.id ? "text-white" : "text-white/95"
-                                          )}>
-                                              {option.label}
-                                          </span>
-                                          {answers[currentQ.id] === option.id && (
-                                              <motion.div initial={{ scale: 0, rotate: -45 }} animate={{ scale: 1, rotate: 0 }}>
-                                                  <div className="bg-green-500 rounded-full p-1 shadow-[0_0_10px_rgba(34,197,94,0.5)]">
-                                                      <Check className="w-4 h-4 text-white" strokeWidth={4} />
-                                                  </div>
-                                              </motion.div>
-                                          )}
-                                      </div>
-                                      {option.subLabel && (
-                                          <p className={cn(
-                                              "text-base mt-1 font-medium tracking-wide transition-colors",
-                                              answers[currentQ.id] === option.id ? "text-blue-100" : "text-blue-200/60"
-                                          )}>
-                                              {option.subLabel}
-                                          </p>
-                                      )}
-                                  </div>
-                              </div>
-                          </motion.button>
-                      ))}
+                                <div className="relative z-10 flex items-center gap-5">
+                                    {/* Icon Container */}
+                                    <motion.div 
+                                        layout
+                                        className={cn(
+                                        "flex-shrink-0 rounded-2xl flex items-center justify-center transition-all duration-500 shadow-lg ring-1 ring-white/10",
+                                        (isAnyOption && !isAllSelected) || shouldShrink ? "w-10 h-10 text-xl" : "w-14 h-14 text-3xl",
+                                        isSelected
+                                            ? "bg-gradient-to-br from-purple-500 to-blue-600 ring-offset-2 ring-offset-purple-500/30" 
+                                            : "bg-white/10 group-hover:bg-white/20"
+                                    )}>
+                                        {option.icon}
+                                    </motion.div>
+
+                                    <div className="flex-1">
+                                        <div className="flex items-center justify-between">
+                                            <motion.span 
+                                                layout
+                                                className={cn(
+                                                "font-bold transition-all duration-500",
+                                                (isAnyOption && !isAllSelected) || shouldShrink ? "text-base text-white/70" : "text-xl text-white/95",
+                                                isSelected && "text-white"
+                                            )}>
+                                                {option.label}
+                                            </motion.span>
+                                            {isSelected && (
+                                                <motion.div initial={{ scale: 0, rotate: -45 }} animate={{ scale: 1, rotate: 0 }}>
+                                                    <div className={cn(
+                                                        "rounded-full p-1 shadow-lg transition-all duration-500",
+                                                        isFocused ? "bg-green-500 shadow-green-500/20" : "bg-white/20 shadow-none"
+                                                    )}>
+                                                        <Check className="w-3.5 h-3.5 text-white" strokeWidth={4} />
+                                                    </div>
+                                                </motion.div>
+                                            )}
+                                        </div>
+                                        {option.subLabel && !shouldShrink && (
+                                            <motion.p 
+                                                initial={{ opacity: 0, height: 0 }}
+                                                animate={{ opacity: 1, height: "auto" }}
+                                                className={cn(
+                                                "font-medium tracking-wide transition-all duration-500",
+                                                isAnyOption ? "text-xs text-blue-200/40 mt-0.5" : "text-sm mt-1 text-blue-200/60",
+                                                isSelected && "text-blue-100/80"
+                                            )}>
+                                                {option.subLabel}
+                                            </motion.p>
+                                        )}
+                                    </div>
+                                </div>
+                            </motion.button>
+                        );
+                      })}
                   </div>
+
+                  {/* Navigation Button */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="pt-4"
+                  >
+                    <button
+                        onClick={handleNext}
+                        disabled={!hasSelection}
+                        className={cn(
+                            "w-full py-4 rounded-2xl font-black text-xl flex items-center justify-center gap-3 transition-all duration-300 shadow-xl",
+                            hasSelection
+                                ? "bg-white text-blue-950 hover:scale-[1.02] shadow-white/20"
+                                : "bg-white/5 text-white/20 border border-white/5 cursor-not-allowed"
+                        )}
+                    >
+                        <span>{currentStep < questions.length - 1 ? "Próximo Passo" : "Ver meus Matches!"}</span>
+                        <ArrowRight className={cn("w-6 h-6", hasSelection && "animate-pulse")} />
+                    </button>
+                  </motion.div>
               </motion.div>
             )}
         </AnimatePresence>
