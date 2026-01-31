@@ -531,9 +531,17 @@ function Card({ data, active, removeCard, index }: {
                         onPointerDown={(e) => e.stopPropagation()}
                     >
                          <p className="text-blue-50/90 text-lg md:text-xl leading-relaxed font-normal pb-4">
-                            {data.description.split(/(Curiosidade:?)/g).map((part, i) => 
-                                part.match(/Curiosidade:?/)? <><br/><br/><strong key={i} className="text-white font-bold">{part}</strong></> : part
-                            )}
+                            {data.description.split(/(Curiosidade:?)/g).map((part, i) => {
+                                if (part.match(/Curiosidade:?/)) {
+                                    return <><br/><br/><strong key={i} className="text-white font-bold">{part}</strong></>;
+                                }
+                                return part.split(/(\*\*.*?\*\*)/g).map((subPart, j) => {
+                                    if (subPart.startsWith('**') && subPart.endsWith('**')) {
+                                        return <strong key={`${i}-${j}`} className="text-white font-bold">{subPart.slice(2, -2)}</strong>;
+                                    }
+                                    return subPart;
+                                });
+                            })}
                         </p>
                     </div>
                 </div>
