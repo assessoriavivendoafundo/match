@@ -4,10 +4,13 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { Gift, GraduationCap, Plane, Star, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Navbar } from "@/components/Navbar";
 
 export default function GiftCardPage() {
   return (
-    <div className="min-h-screen bg-slate-50 pt-12 pb-24">
+    <div className="min-h-screen bg-slate-50">
+      <Navbar />
+      <div className="pt-12 pb-24">
       {/* Hero Section */}
       <section className="container mx-auto px-4 mb-20 text-center">
         <motion.div
@@ -129,6 +132,7 @@ export default function GiftCardPage() {
              <span className="text-xl font-bold text-slate-300">Mastercard</span>
         </div>
       </section>
+      </div>
     </div>
   );
 }

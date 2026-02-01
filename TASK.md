@@ -16,6 +16,9 @@
 - [x] Implement Multi-selection & Manual Navigation in UniMatch Quiz (2026-01-30)
 - [x] Refine "Select All" button UI & Logic (sync with specific options) (2026-01-30)
 - [x] Implement focus-shift UI: "Any" becomes primary when all selected, others recede (2026-01-30)
+- [x] Remove live wishlist drawer from SwipeDeck (2026-02-01)
+- [x] Center swiping card page and include title box on load (2026-02-01)
+- [x] Center final list vertical alignment in SwipeDeck (2026-02-01)
 
 ## Bug Fixes & Maintenance
 - [x] Fix duplicate universities bug in Unimatch SwipeDeck (2026-01-05)

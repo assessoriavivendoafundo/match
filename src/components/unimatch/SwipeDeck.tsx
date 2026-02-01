@@ -3,22 +3,59 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { motion, useMotionValue, useTransform, PanInfo } from "framer-motion";
 import { University, getUniversities } from "@/lib/data";
-import { X, Heart, GraduationCap, RotateCcw, MapPin, Wallet, Loader2, ChevronUp, Sparkles, Share2, Mail, Palette, TrendingUp, Stethoscope, Atom } from "lucide-react";
+import { X, GraduationCap, RotateCcw, MapPin, Loader2, Share2, Mail, Palette, TrendingUp, Stethoscope, Atom } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const NOPE_LABELS = ["nope"];
 const LIKE_LABELS = ["match"];
 
-export function SwipeDeck({ filters }: { filters: Record<string, string | string[]> }) {
+const THEMES = [
+    { gradient: "from-[#8C2E1F] to-[#E76F51]", highlight: "text-[#FDE68A]" }, // Warm Red -> Cream
+    { gradient: "from-[#182335] to-[#567190]", highlight: "text-[#7DD3FC]" }, // Navy -> Sky Blue
+    { gradient: "from-[#1E3E2F] to-[#52B788]", highlight: "text-[#A7F3D0]" }, // Forest -> Emerald
+    { gradient: "from-[#182335] to-[#8C4A4A]", highlight: "text-[#FECACA]" }, // Navy -> Rose
+    { gradient: "from-[#3E5C76] to-[#182335]", highlight: "text-[#BAE6FD]" }, // Steel -> Sky Blue
+    { gradient: "from-[#BF402A] to-[#182335]", highlight: "text-[#FFEDD5]" }, // Red -> Light Orange
+    { gradient: "from-[#182335] to-[#2A7F62]", highlight: "text-[#99F6E4]" }, // Navy -> Teal
+];
+
+// Using 4 diagonal directions (coprime to 7 colors) ensures 28 unique combinations
+const DIRECTIONS = [
+    "bg-gradient-to-br", // Bottom Right
+    "bg-gradient-to-bl", // Bottom Left
+    "bg-gradient-to-tr", // Top Right
+    "bg-gradient-to-tl", // Top Left
+];
+
+interface UniversityWithGradient extends University {
+    gradient: string;
+    highlight: string;
+}
+
+export function SwipeDeck({ filters, onRestart }: { filters: Record<string, string | string[]>; onRestart: () => void }) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [universities, setUniversities] = useState<University[]>([]);
-  const [deck, setDeck] = useState<University[]>([]);
-  const [history, setHistory] = useState<University[]>([]); // For Undo
-  const [liked, setLiked] = useState<University[]>([]);
+  const [universities, setUniversities] = useState<UniversityWithGradient[]>([]);
+  const [deck, setDeck] = useState<UniversityWithGradient[]>([]);
+  const [history, setHistory] = useState<UniversityWithGradient[]>([]); // For Undo
+  const [liked, setLiked] = useState<UniversityWithGradient[]>([]);
   const [loading, setLoading] = useState(true);
-  const [wishlistOpen, setWishlistOpen] = useState(false);
   const swipeRef = useRef<string | null>(null);
+  const deckRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+
+      // Scroll ONLY when loading finishes (initial entry), not after every swipe
+
+      /* 
+
+         Auto-scroll removed per user request. 
+
+         The page will be generated directly in the correct position via parent control.
+
+      */
+
+    }, [loading]);
 
   // Load and Filter Data
   useEffect(() => {
@@ -60,7 +97,17 @@ export function SwipeDeck({ filters }: { filters: Record<string, string | string
         }
 
         return true;
-      }).sort(() => Math.random() - 0.5);
+      })
+      .sort(() => Math.random() - 0.5)
+      .map((uni, index) => {
+          const theme = THEMES[index % THEMES.length];
+          return {
+            ...uni,
+            // Cycle through directions and colors with different periods to maximize variety
+            gradient: `${DIRECTIONS[index % DIRECTIONS.length]} ${theme.gradient}`,
+            highlight: theme.highlight
+          };
+      });
 
       setUniversities(filtered);
       setDeck(filtered);
@@ -137,31 +184,31 @@ export function SwipeDeck({ filters }: { filters: Record<string, string | string
 
   if (loading) {
      return (
-        <div className="flex flex-col items-center justify-center h-[60vh] text-white">
+        <div ref={deckRef} className="flex flex-col items-center justify-center h-[60vh] text-white">
            <div className="relative">
-             <div className="absolute inset-0 bg-blue-500 blur-xl opacity-20 animate-pulse"></div>
-             <Loader2 className="w-16 h-16 animate-spin mb-4 relative z-10 text-blue-400" />
+             <div className="absolute inset-0 bg-[#BF402A] blur-xl opacity-20 animate-pulse"></div>
+             <Loader2 className="w-16 h-16 animate-spin mb-4 relative z-10 text-[#BF402A]" />
            </div>
-           <p className="font-medium text-xl text-blue-200/80 animate-pulse">Preparando as malas...</p>
+           <p className="font-medium text-xl text-[#567190] animate-pulse">Preparando as malas...</p>
         </div>
      )
   }
 
   if (deck.length === 0) {
       return (
-          <div className="flex flex-col h-[85vh] w-full max-w-2xl mx-auto bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden shadow-2xl relative">
+          <div ref={deckRef} className="flex flex-col h-auto max-h-[85vh] w-full max-w-2xl mx-auto bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden shadow-2xl relative mb-12">
               
               {liked.length > 0 ? (
                 <>
                     {/* Header */}
                     <div className="p-6 pb-4 text-center border-b border-white/10 bg-white/5">
-                        <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg shadow-green-500/20 ring-4 ring-white/10">
+                        <div className="w-16 h-16 bg-gradient-to-br from-[#2C5C44] to-[#1E3E2F] rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg shadow-[#2C5C44]/20 ring-4 ring-white/10">
                             <GraduationCap className="w-8 h-8 text-white fill-white" />
                         </div>
                         <h2 className="text-2xl md:text-4xl font-black text-white mb-1">
                           Lista dos Sonhos {filters.userName ? `de ${filters.userName}` : ''} 🇮🇹
                         </h2>
-                        <p className="text-blue-200/70 text-base">Você deu match com {liked.length} universidade{liked.length !== 1 && 's'}!</p>
+                        <p className="text-white/60 text-base">Você deu match com {liked.length} universidade{liked.length !== 1 && 's'}!</p>
                     </div>
 
                     {/* Scrollable List */}
@@ -171,14 +218,17 @@ export function SwipeDeck({ filters }: { filters: Record<string, string | string
                                 key={uni.id}
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className="flex items-center gap-4 p-3 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-colors group"
+                                className="relative flex items-center gap-4 p-3 rounded-2xl overflow-hidden group border border-white/10"
                             >
-                                <div className={cn("w-16 h-16 rounded-xl shadow-lg flex items-center justify-center bg-gradient-to-br text-2xl flex-shrink-0", getGradient(uni.id))}>
+                                {/* Subtle Gradient Background */}
+                                <div className={cn("absolute inset-0 opacity-20 transition-opacity group-hover:opacity-30", uni.gradient)} />
+                                
+                                <div className={cn("relative z-10 w-16 h-16 rounded-xl shadow-lg flex items-center justify-center text-2xl flex-shrink-0", uni.gradient)}>
                                     🏛️
                                 </div>
-                                <div className="flex-1 min-w-0">
+                                <div className="relative z-10 flex-1 min-w-0">
                                     <h4 className="font-bold text-white text-lg mb-0.5 truncate">{uni.name}</h4>
-                                    <p className="text-blue-300/80 flex items-center gap-1.5 text-sm"><MapPin className="w-3.5 h-3.5"/> {uni.city}</p>
+                                    <p className="text-white/60 flex items-center gap-1.5 text-sm"><MapPin className="w-3.5 h-3.5"/> {uni.city}</p>
                                 </div>
                             </motion.div>
                         ))}
@@ -195,15 +245,15 @@ export function SwipeDeck({ filters }: { filters: Record<string, string | string
                         </Button>
                         <Button 
                             onClick={shareOnEmail}
-                            className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold h-14 rounded-xl text-lg flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20 transition-all hover:scale-[1.02]"
+                            className="w-full bg-[#182335] hover:bg-[#182335]/80 text-white font-bold h-14 rounded-xl text-lg flex items-center justify-center gap-2 shadow-lg shadow-[#182335]/20 transition-all hover:scale-[1.02]"
                         >
                             <Mail className="w-5 h-5" />
                             Enviar por E-mail
                         </Button>
                         <Button 
                             variant="ghost" 
-                            onClick={() => window.location.reload()} 
-                            className="w-full text-blue-300 hover:text-white hover:bg-white/10 h-14 rounded-xl text-lg font-semibold border border-white/5 hover:border-white/10 transition-all group"
+                            onClick={onRestart} 
+                            className="w-full text-white/60 hover:text-white hover:bg-white/10 h-14 rounded-xl text-lg font-semibold border border-white/5 hover:border-white/10 transition-all group"
                         >
                             <RotateCcw className="w-5 h-5 mr-2 group-hover:rotate-[-120deg] transition-transform duration-500" /> Recomeçar Exploração
                         </Button>
@@ -215,14 +265,14 @@ export function SwipeDeck({ filters }: { filters: Record<string, string | string
                         <RotateCcw className="w-10 h-10 text-white/50" />
                     </div>
                     <h2 className="text-3xl font-bold text-white mb-4">Nenhum Match? 😢</h2>
-                    <p className="text-blue-200/70 mb-8 text-lg leading-relaxed max-w-md">
+                    <p className="text-white/60 mb-8 text-lg leading-relaxed max-w-md">
                         Você passou por todas as opções e não curtiu nenhuma. Que tal tentar filtros diferentes ou dar uma segunda chance?
                     </p>
                     <Button 
-                        onClick={() => window.location.reload()} 
-                        className="group relative bg-white text-[#1D3557] hover:bg-white hover:scale-105 font-bold px-10 py-7 rounded-2xl text-xl shadow-[0_20px_50px_rgba(255,255,255,0.1)] transition-all overflow-hidden"
+                        onClick={onRestart} 
+                        className="group relative bg-white text-[#182335] hover:bg-white hover:scale-105 font-bold px-10 py-7 rounded-2xl text-xl shadow-[0_20px_50px_rgba(255,255,255,0.1)] transition-all overflow-hidden"
                     >
-                        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-blue-400/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity translate-x-[-100%] group-hover:translate-x-[100%] duration-1000" />
+                        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-[#BF402A]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity translate-x-[-100%] group-hover:translate-x-[100%] duration-1000" />
                         Tentar Novamente
                     </Button>
                 </div>
@@ -232,10 +282,10 @@ export function SwipeDeck({ filters }: { filters: Record<string, string | string
   }
 
   return (
-    <div className="relative w-full max-w-md md:max-w-lg lg:max-w-xl mx-auto h-[80vh] flex flex-col items-center justify-center">
+    <div ref={deckRef} className="relative w-full max-w-md md:max-w-lg lg:max-w-xl mx-auto h-[78vh] flex flex-col items-center justify-center">
       
       {/* Card Stack - LARGER CONTAINER */}
-      <div className="relative w-full h-[65vh] md:h-[70vh] perspective-1000 mb-8">
+      <div className="relative w-full h-[68vh] perspective-1000 mb-8">
         {deck.map((uni, index) => (
           <Card 
             key={uni.id} 
@@ -248,11 +298,11 @@ export function SwipeDeck({ filters }: { filters: Record<string, string | string
       </div>
 
       {/* Controls - LARGER & SPACED */}
-      <div className="flex items-center gap-8 z-20">
+      <div className="flex items-center gap-8 z-20 mb-12">
         <Button 
             size="icon" 
             variant="ghost" 
-            className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-yellow-400 hover:bg-yellow-400 hover:text-black hover:scale-110 transition-all shadow-[0_0_30px_rgba(250,204,21,0.2)] disabled:opacity-30 disabled:hover:scale-100 relative overflow-hidden group"
+            className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[#567190] hover:bg-white hover:text-[#182335] hover:scale-110 transition-all shadow-[0_0_30px_rgba(255,255,255,0.1)] disabled:opacity-30 disabled:hover:scale-100 relative overflow-hidden group"
             onClick={undoSwipe}
             disabled={history.length === 0}
         >
@@ -262,85 +312,26 @@ export function SwipeDeck({ filters }: { filters: Record<string, string | string
         
         <Button 
             size="icon" 
-            className="w-20 h-20 rounded-full bg-gradient-to-br from-red-500/10 to-red-600/30 backdrop-blur-2xl border border-red-500/40 text-red-500 hover:from-red-500 hover:to-red-600 hover:text-white hover:scale-110 hover:shadow-[0_0_50px_rgba(239,68,68,0.6)] transition-all shadow-[0_10px_40px_rgba(239,68,68,0.25)] relative overflow-hidden group active:scale-95"
+            className="w-20 h-20 rounded-full bg-gradient-to-br from-red-600/20 to-red-800/40 backdrop-blur-2xl border-2 border-red-600/60 text-red-600 hover:from-red-600 hover:to-red-700 hover:text-white hover:scale-110 hover:shadow-[0_0_50px_rgba(220,38,38,0.6)] transition-all shadow-[0_10px_40px_rgba(220,38,38,0.25)] relative overflow-hidden group active:scale-95"
             onClick={() => removeCard(deck[deck.length - 1].id, 'nope')}
         >
-            <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/30 to-white/50 opacity-40" />
-            <div className="absolute inset-0 bg-red-400 blur-2xl opacity-0 group-hover:opacity-60 transition-opacity duration-500" />
+            <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/10 to-white/20 opacity-40" />
+            <div className="absolute inset-0 bg-red-600 blur-2xl opacity-0 group-hover:opacity-60 transition-opacity duration-500" />
             <X className="w-10 h-10 stroke-[3] group-hover:rotate-90 transition-transform duration-300 relative z-10 drop-shadow-md" />
         </Button>
 
         <Button 
             size="icon" 
-            className="w-20 h-20 rounded-full bg-gradient-to-br from-green-500/10 to-green-600/30 backdrop-blur-2xl border border-green-500/40 text-green-500 hover:from-green-500 hover:to-green-600 hover:text-white hover:scale-110 hover:shadow-[0_0_50px_rgba(34,197,94,0.6)] transition-all shadow-[0_10px_40px_rgba(34,197,94,0.25)] relative overflow-hidden group active:scale-95"
+            className="w-20 h-20 rounded-full bg-gradient-to-br from-green-600/20 to-green-800/40 backdrop-blur-2xl border-2 border-green-600/60 text-green-600 hover:from-green-600 hover:to-green-700 hover:text-white hover:scale-110 hover:shadow-[0_0_50px_rgba(22,163,74,0.6)] transition-all shadow-[0_10px_40px_rgba(22,163,74,0.25)] relative overflow-hidden group active:scale-95"
             onClick={() => removeCard(deck[deck.length - 1].id, 'like')}
         >
-            <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/30 to-white/50 opacity-40" />
-            <div className="absolute inset-0 bg-emerald-300 blur-2xl opacity-0 group-hover:opacity-70 transition-opacity duration-500" />
+            <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/10 to-white/20 opacity-40" />
+            <div className="absolute inset-0 bg-green-600 blur-2xl opacity-0 group-hover:opacity-70 transition-opacity duration-500" />
             <GraduationCap className="w-10 h-10 stroke-[3] group-hover:-rotate-12 group-hover:scale-110 transition-transform duration-300 relative z-10 drop-shadow-md" />
         </Button>
       </div>
 
-      {/* Wishlist Drawer */}
-      <div className={cn(
-          "fixed bottom-0 left-0 right-0 bg-[#0F172A]/95 backdrop-blur-2xl rounded-t-[2.5rem] shadow-[0_-10px_40px_rgba(0,0,0,0.5)] transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] z-40 border-t border-white/10",
-          wishlistOpen ? "h-[85vh]" : "h-20 hover:h-24"
-      )}>
-          <div 
-            className="w-full h-full flex flex-col pt-2 cursor-pointer"
-            onClick={() => setWishlistOpen(!wishlistOpen)}
-          >
-              <div className="w-16 h-1.5 bg-white/20 rounded-full mx-auto mb-4" />
-              <div className="flex items-center justify-between px-8 pb-4">
-                  <div className="flex items-center gap-4">
-                      <div className="bg-gradient-to-br from-pink-500 to-rose-600 p-2 rounded-xl shadow-lg shadow-pink-500/20">
-                          <GraduationCap className="w-5 h-5 text-white fill-white" />
-                      </div>
-                      <p className="font-bold text-white text-lg">Lista de Sonhos <span className="text-white/50 text-sm ml-2">({liked.length})</span></p>
-                  </div>
-                  <ChevronUp className={cn("text-white/50 transition-transform duration-500", wishlistOpen && "rotate-180")} />
-              </div>
-              
-              {wishlistOpen && (
-                 <motion.div 
-                    initial={{ opacity: 0 }} 
-                    animate={{ opacity: 1 }} 
-                    className="flex-1 overflow-y-auto px-6 pb-8 space-y-3"
-                 >
-                    {liked.length === 0 ? (
-                        <div className="text-center py-20">
-                           <p className="text-blue-300/50 text-xl">Nenhum match ainda... continue deslizando! 🤞</p>
-                        </div>
-                    ) : (
-                        <>
-                            {liked.map(uni => (
-                                <div key={uni.id} className="flex items-center gap-5 p-4 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/10 transition-colors group">
-                                    <div className={cn("w-20 h-20 rounded-xl shadow-lg flex items-center justify-center bg-gradient-to-br text-2xl flex-shrink-0", getGradient(uni.id))}>
-                                        🏛️
-                                    </div>
-                                    <div className="flex-1">
-                                        <h4 className="font-bold text-white text-lg group-hover:text-blue-300 transition-colors line-clamp-2">{uni.name}</h4>
-                                        <p className="text-blue-300/60 flex items-center gap-1"><MapPin className="w-3 h-3"/> {uni.city}</p>
-                                    </div>
-                                    <Button className="bg-white/10 hover:bg-white text-white hover:text-blue-900 rounded-xl h-10 px-4">Ver</Button>
-                                </div>
-                            ))}
-                            
-                            <div className="sticky bottom-0 pt-4 bg-gradient-to-t from-[#0F172A] to-transparent">
-                                <Button 
-                                    onClick={shareOnWhatsApp}
-                                    className="w-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold h-14 rounded-xl text-lg flex items-center justify-center gap-2 shadow-lg shadow-green-500/20 transition-all hover:scale-[1.02]"
-                                >
-                                    <Share2 className="w-5 h-5" />
-                                    Compartilhar no WhatsApp
-                                </Button>
-                            </div>
-                        </>
-                    )}
-                 </motion.div>
-              )}
-          </div>
-      </div>
+
     </div>
   );
 }
@@ -354,22 +345,6 @@ function pseudoRandom(seed: string) {
         hash = hash & hash; // Convert to 32bit integer
     }
     return (Math.abs(hash) % 1000) / 1000;
-}
-
-// Helper to get a consistent gradient based on ID
-function getGradient(id: string) {
-    const gradients = [
-        "from-[#1D3557] to-[#112240]", // Navy Brand
-        "from-[#0F172A] to-[#334155]", // Slate
-        "from-[#312E81] to-[#4338CA]", // Indigo
-        "from-[#BE123C] to-[#881337]", // Rose
-        "from-[#047857] to-[#065F46]", // Emerald
-        "from-[#7C3AED] to-[#5B21B6]", // Violet
-        "from-[#C2410C] to-[#9A3412]", // Orange
-    ];
-    // Simple hash of the numeric ID or string
-    const index = Math.abs(id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)) % gradients.length;
-    return gradients[index];
 }
 
 // Disciplines Grid Component
@@ -421,7 +396,7 @@ function DisciplinesGrid({ data }: { data: University }) {
 
 // Single Card Component - FULL SIZE
 function Card({ data, active, removeCard, index }: { 
-    data: University; 
+    data: UniversityWithGradient; 
     active: boolean; 
     removeCard: (id: string, action: 'like' | 'nope') => void;
     index: number;
@@ -440,7 +415,6 @@ function Card({ data, active, removeCard, index }: {
     const randomRotate = (randomVal * 4) - 2; 
     const randomExitX = randomVal > 0.5 ? 800 : -800;
     
-    const bgGradient = useMemo(() => getGradient(data.id), [data.id]);
     const likeLabel = LIKE_LABELS[0];
     const nopeLabel = NOPE_LABELS[0];
 
@@ -457,13 +431,15 @@ function Card({ data, active, removeCard, index }: {
                 rotate: active ? rotate : 0,
                 zIndex: index
             }}
-            initial={{ scale: 0.95, y: 20, opacity: 0 }}
+            initial={{ scale: 0.95, y: 30, opacity: 0, filter: "blur(10px)" }}
             animate={{ 
                 scale: 1, 
                 y: 0, 
                 opacity: 1,
+                filter: "blur(0px)",
                 rotate: active ? 0 : randomRotate
             }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             exit={{ x: randomExitX, opacity: 0, transition: { duration: 0.4 } }}
             drag={active ? "x" : false}
             dragConstraints={{ left: 0, right: 0 }}
@@ -496,7 +472,7 @@ function Card({ data, active, removeCard, index }: {
             )}
 
             {/* Content Container with Dynamic Gradient */}
-            <div className={cn("h-full w-full relative flex flex-col p-8 bg-gradient-to-br", bgGradient)}>
+            <div className={cn("h-full w-full relative flex flex-col p-8", data.gradient)}>
                 
                 {/* Abstract Decorative Circles */}
                 <div className="absolute top-[-20%] right-[-20%] w-[300px] h-[300px] bg-white/5 rounded-full blur-3xl pointer-events-none" />
@@ -506,8 +482,8 @@ function Card({ data, active, removeCard, index }: {
                 <div className="flex justify-between items-start z-20 mb-6 flex-shrink-0">
                     <div className="flex-1 pr-6">
                         {/* Location Label - moved above title for hierarchy or keep below? User liked title legible. */}
-                        <div className="flex items-center gap-2 text-blue-200/80 mb-3 uppercase tracking-wider font-semibold text-xs">
-                            <MapPin className="w-3 h-3" />
+                        <div className="flex items-center gap-2 text-white/90 mb-3 uppercase tracking-wider font-semibold text-xs drop-shadow-sm">
+                            <MapPin className={cn("w-3 h-3", data.highlight)} />
                             <span>{data.city} • {data.region === 'north' ? 'Norte' : data.region === 'center' ? 'Centro' : 'Sul'}</span>
                         </div>
                         
@@ -530,14 +506,14 @@ function Card({ data, active, removeCard, index }: {
                         className="h-full pl-4 border-l-2 border-white/20 overflow-y-auto custom-scrollbar pr-2"
                         onPointerDown={(e) => e.stopPropagation()}
                     >
-                         <p className="text-blue-50/90 text-lg md:text-xl leading-relaxed font-normal pb-4">
+                         <p className="text-white text-lg md:text-xl leading-relaxed font-medium pb-4 drop-shadow-sm">
                             {data.description.split(/(Curiosidade:?)/g).map((part, i) => {
                                 if (part.match(/Curiosidade:?/)) {
-                                    return <><br/><br/><strong key={i} className="text-white font-bold">{part}</strong></>;
+                                    return <span key={i}><br/><br/><strong className={cn("font-black tracking-wide", data.highlight)}>{part}</strong></span>;
                                 }
-                                return part.split(/(\*\*.*?\*\*)/g).map((subPart, j) => {
+                                return part.split(/(\*\*[\s\S]*?\*\*)/g).map((subPart, j) => {
                                     if (subPart.startsWith('**') && subPart.endsWith('**')) {
-                                        return <strong key={`${i}-${j}`} className="text-white font-bold">{subPart.slice(2, -2)}</strong>;
+                                        return <strong key={`${i}-${j}`} className={cn("font-bold", data.highlight)}>{subPart.slice(2, -2)}</strong>;
                                     }
                                     return subPart;
                                 });
@@ -550,24 +526,5 @@ function Card({ data, active, removeCard, index }: {
                 <div className="h-px w-full bg-gradient-to-r from-transparent via-white/20 to-transparent mt-4 flex-shrink-0" />
             </div>
         </motion.div>
-    );
-}
-
-function Badge({ text, icon, color }: { text: string; icon: React.ReactNode; color: string }) {
-    const styles = {
-        blue: "bg-blue-500/20 text-blue-100 border-blue-400/20",
-        green: "bg-emerald-500/20 text-emerald-100 border-emerald-400/20",
-        purple: "bg-purple-500/20 text-purple-100 border-purple-400/20",
-        pink: "bg-pink-500/20 text-pink-100 border-pink-400/20",
-        orange: "bg-orange-500/20 text-orange-100 border-orange-400/20",
-        cyan: "bg-cyan-500/20 text-cyan-100 border-cyan-400/20",
-    };
-    // @ts-expect-error - color is a string
-    const activeStyle = styles[color] || styles.blue;
-
-    return (
-        <span className={cn("px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wide flex items-center gap-1.5 border backdrop-blur-md", activeStyle)}>
-            {icon} {text}
-        </span>
     );
 }

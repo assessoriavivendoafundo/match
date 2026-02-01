@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -16,37 +16,49 @@ export default function UniMatchPage() {
   const [filters, setFilters] = useState<Record<string, string | string[]>>({});
   const [showHowItWorks, setShowHowItWorks] = useState(false);
 
+  // Instant scroll reset when entering the deck view
+  useEffect(() => {
+    if (step === 'deck') {
+      window.scrollTo(0, 0);
+    }
+  }, [step]);
+
   const handleQuizComplete = (answers: Record<string, string | string[]>) => {
     setFilters(answers);
     setStep('deck');
   };
 
   return (
-    <div className="min-h-screen bg-[#0F172A] flex flex-col items-center p-4 relative overflow-hidden font-sans selection:bg-green-500/30">
+    <div className="min-h-screen bg-[#182335] flex flex-col items-center p-4 relative overflow-hidden font-sans selection:bg-[#BF402A]/30">
       
       {/* --- Dynamic Background --- */}
       <div className="absolute inset-0 z-0">
         {/* Grid Pattern */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#56719012_1px,transparent_1px),linear-gradient(to_bottom,#56719012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
         
         {/* Deep Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-blue-950/80 via-[#0F172A]/90 to-[#0F172A]"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-[#182335]/95 via-[#182335]/90 to-[#182335]"></div>
 
         {/* Animated Orbs */}
-        <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-green-500/20 rounded-full blur-[100px] animate-blob"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-red-500/20 rounded-full blur-[100px] animate-blob animation-delay-2000"></div>
-        <div className="absolute top-[40%] left-[50%] transform -translate-x-1/2 w-[300px] h-[300px] bg-white/5 rounded-full blur-[80px] animate-blob animation-delay-4000"></div>
+        <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-[#2C5C44]/20 rounded-full blur-[100px] animate-blob"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-[#BF402A]/20 rounded-full blur-[100px] animate-blob animation-delay-2000"></div>
+        <div className="absolute top-[40%] left-[50%] transform -translate-x-1/2 w-[300px] h-[300px] bg-[#567190]/10 rounded-full blur-[80px] animate-blob animation-delay-4000"></div>
       </div>
 
-      <div className="w-full max-w-5xl z-10 relative flex flex-col min-h-screen pt-12 pb-20">
+      <div className="w-full max-w-5xl z-10 relative flex flex-col min-h-screen justify-center py-6">
         
         {/* --- Header Section --- */}
-        <header className={cn(
-          "transition-all duration-500 ease-in-out relative z-50",
-          step !== 'intro' 
-            ? "w-full max-w-[95%] mx-auto px-8 py-4 mb-10 rounded-full border border-white/10 bg-[#0F172A]/40 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.2)]" 
-            : "text-center mb-12 flex flex-col items-center gap-2"
-        )}>
+        <motion.header 
+          layout
+          initial={false}
+          transition={{ duration: 0.5, ease: "easeInOut" }}
+          className={cn(
+            "relative z-50 transition-[background-color,border-color,backdrop-filter,shadow] ease-in-out shrink-0",
+            step !== 'intro' 
+              ? "w-full max-w-[95%] mx-auto px-8 py-4 mb-8 md:mb-12 rounded-full border border-white/10 bg-[#182335]/40 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.2)] duration-500" 
+              : "text-center mb-12 flex flex-col items-center gap-2 duration-300"
+          )}
+        >
             {/* Title & Logo Wrapper */}
             <div className={cn(
                 "flex items-center transition-all duration-500", 
@@ -57,9 +69,12 @@ export default function UniMatchPage() {
                 layout
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
+                whileHover={{ scale: step === 'intro' ? 1.02 : 1.01 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => setStep('intro')}
                 className={cn(
-                  "font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-white/70 to-white/20 drop-shadow-2xl transition-all duration-500 relative z-10 cursor-default",
-                  step !== 'intro' ? "text-3xl md:text-5xl pr-2 pb-1" : "text-6xl md:text-8xl p-2 text-center"
+                  "font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-white/70 to-white/20 drop-shadow-2xl transition-all duration-500 relative z-10 cursor-pointer",
+                  step === 'intro' ? "text-6xl md:text-8xl p-2 text-center hover:drop-shadow-[0_0_12px_rgba(255,255,255,0.25)]" : "text-3xl md:text-5xl pr-2 pb-1"
                 )}
                 style={{ WebkitTextStroke: step !== 'intro' ? '1px rgba(255,255,255,0.7)' : '1.5px rgba(255,255,255,0.7)' }}
               >
@@ -109,20 +124,20 @@ export default function UniMatchPage() {
                >
                  <div className="relative group">
                     {/* Decorative Blur Background */}
-                    <div className="absolute inset-0 bg-blue-500/10 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+                    <div className="absolute inset-0 bg-[#2C5C44]/20 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
                     
-                    <p className="relative text-blue-100/90 font-sans text-sm md:text-base tracking-[0.4em] uppercase font-light bg-gradient-to-r from-transparent via-white/5 to-transparent px-12 py-3 border-y border-white/10 backdrop-blur-sm">
+                    <p className="relative text-[#567190] font-sans text-sm md:text-base tracking-[0.4em] uppercase font-light bg-gradient-to-r from-transparent via-white/5 to-transparent px-12 py-3 border-y border-white/10 backdrop-blur-sm">
                       As Universidades Estatais Italianas
                     </p>
                     
                     {/* Glow Points */}
-                    <div className="absolute top-1/2 left-0 -translate-y-1/2 w-1 h-1 bg-blue-400 rounded-full shadow-[0_0_10px_#60a5fa] animate-pulse" />
-                    <div className="absolute top-1/2 right-0 -translate-y-1/2 w-1 h-1 bg-blue-400 rounded-full shadow-[0_0_10px_#60a5fa] animate-pulse" />
+                    <div className="absolute top-1/2 left-0 -translate-y-1/2 w-1 h-1 bg-[#2C5C44] rounded-full shadow-[0_0_10px_#2C5C44] animate-pulse" />
+                    <div className="absolute top-1/2 right-0 -translate-y-1/2 w-1 h-1 bg-[#2C5C44] rounded-full shadow-[0_0_10px_#2C5C44] animate-pulse" />
                  </div>
                </motion.div>
              )}
            </AnimatePresence>
-        </header>
+        </motion.header>
 
         {/* --- Main Content Area --- */}
         <div className="flex-1 flex flex-col justify-center">
@@ -132,10 +147,10 @@ export default function UniMatchPage() {
             {step === 'intro' && (
               <motion.div 
                 key="intro"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
+                initial={{ opacity: 0, scale: 0.95, filter: "blur(10px)" }}
+                animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
                 exit={{ opacity: 0, scale: 1.05, filter: "blur(10px)" }}
-                transition={{ duration: 0.5 }}
+                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                 className="w-full max-w-4xl mx-auto"
               >
                 <div className="grid md:grid-cols-2 gap-8 items-center">
@@ -143,15 +158,15 @@ export default function UniMatchPage() {
                   {/* Left: Text & CTA */}
                   <div className="space-y-8 text-center md:text-left order-2 md:order-1">
                     <div className="space-y-4">
-                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-medium">
-                        <Sparkles className="w-4 h-4" />
-                        <span>Nova Versão 2026</span>
+                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#2C5C44]/20 border border-[#2C5C44]/40 text-[#2C5C44] text-sm font-medium">
+                        <Sparkles className="w-4 h-4 text-[#2C5C44]" />
+                        <span className="text-white/90">Nova Versão 2026</span>
                       </div>
                       <h2 className="text-3xl md:text-5xl font-bold text-white leading-tight">
                         Encontre o seu <br/>
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Match Acadêmico</span>
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#BF402A] to-[#F4A261]">Match Acadêmico</span>
                       </h2>
-                      <p className="text-lg text-blue-100/70 leading-relaxed max-w-md mx-auto md:mx-0">
+                      <p className="text-lg text-[#567190] leading-relaxed max-w-md mx-auto md:mx-0 font-medium">
                         São apenas <strong>3 perguntas</strong>! Descubra e escolha as suas universidades estatais favoritas. O UniMatch analisa todas as opções para você encontrar o seu lugar perfeito.
                       </p>
                     </div>
@@ -160,10 +175,10 @@ export default function UniMatchPage() {
                         <Button 
                           size="lg" 
                           onClick={() => setStep('quiz')}
-                          className="group relative overflow-hidden bg-white text-blue-950 hover:text-white font-black rounded-2xl text-2xl md:text-3xl h-28 md:h-32 px-16 md:px-24 shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:shadow-[0_0_80px_rgba(255,255,255,0.5)] transition-all duration-500 hover:-translate-y-2 active:scale-95 w-full sm:w-auto border-none animate-pulse-subtle"
+                          className="group relative overflow-hidden bg-white text-[#182335] hover:text-white font-black rounded-2xl text-2xl md:text-3xl h-28 md:h-32 px-16 md:px-24 shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:shadow-[0_0_80px_rgba(191,64,42,0.5)] transition-all duration-500 hover:-translate-y-2 active:scale-95 w-full sm:w-auto border-none animate-pulse-subtle"
                         >
                           {/* Hover Gradient Layer */}
-                          <div className="absolute inset-0 bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                          <div className="absolute inset-0 bg-gradient-to-r from-[#BF402A] via-[#A63725] to-[#8C2E1F] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                           
                           <span className="relative z-10 flex flex-col items-center justify-center gap-1 md:gap-2 leading-none">
                             <span className="tracking-tight">Começar</span>
@@ -182,15 +197,15 @@ export default function UniMatchPage() {
                         <Button 
                           variant="ghost" 
                           onClick={() => setShowHowItWorks(true)}
-                          className="text-blue-300 hover:text-white hover:bg-white/5 h-16 px-6 rounded-2xl text-lg font-medium transition-colors"
+                          className="text-[#567190] hover:text-white hover:bg-white/5 h-16 px-6 rounded-2xl text-lg font-medium transition-colors"
                         >
                           Como funciona?
                         </Button>
                       </div>
                     
                     {/* Trust Indicators */}
-                    <div className="pt-6 border-t border-white/10 flex items-center justify-center md:justify-start gap-6 text-sm text-blue-200/50">
-                      <span className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"/> 100% Gratuito</span>
+                    <div className="pt-6 border-t border-white/10 flex items-center justify-center md:justify-start gap-6 text-sm text-[#567190]">
+                      <span className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-[#2C5C44] animate-pulse"/> 100% Gratuito</span>
                       <span>•</span>
                       <span>Todas as 69 universidades estatais</span>
                     </div>
@@ -210,7 +225,7 @@ export default function UniMatchPage() {
                         ease: "easeInOut"
                       }}
                       style={{ transformStyle: "preserve-3d" }}
-                      className="relative w-full max-w-[280px] bg-gradient-to-br from-white/12 to-white/5 backdrop-blur-2xl rounded-3xl p-6 border border-white/20 shadow-[0_40px_80px_-15px_rgba(0,0,0,0.5)]"
+                      className="relative w-full max-w-[280px] bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-2xl rounded-3xl p-6 border border-white/10 shadow-[0_40px_80px_-15px_rgba(0,0,0,0.5)]"
                     >
                       {/* Floating Icons - Deconstructed with Parallax */}
                       <motion.div 
@@ -220,7 +235,7 @@ export default function UniMatchPage() {
                         }}
                         transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
                         style={{ transform: "translateZ(60px)" }}
-                        className="absolute -top-6 -right-6 w-18 h-18 bg-gradient-to-br from-green-400 to-emerald-600 rounded-2xl flex items-center justify-center shadow-2xl z-20 border border-white/20"
+                        className="absolute -top-6 -right-6 w-18 h-18 bg-gradient-to-br from-[#2C5C44] to-[#1E3E2F] rounded-2xl flex items-center justify-center shadow-2xl z-20 border border-white/20"
                       >
                         <GraduationCap className="text-white w-9 h-9 stroke-[3]" />
                       </motion.div>
@@ -232,23 +247,23 @@ export default function UniMatchPage() {
                         }}
                         transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
                         style={{ transform: "translateZ(100px)" }}
-                        className="absolute -bottom-6 -left-6 w-16 h-16 bg-gradient-to-br from-rose-400 to-red-600 rounded-xl flex items-center justify-center shadow-2xl z-30 border border-white/20"
+                        className="absolute -bottom-6 -left-6 w-16 h-16 bg-gradient-to-br from-[#BF402A] to-[#8C2E1F] rounded-xl flex items-center justify-center shadow-2xl z-30 border border-white/20"
                       >
                         <X className="text-white w-8 h-8 stroke-[3]" />
                       </motion.div>
 
                       {/* Content Preview */}
                       <div className="space-y-3" style={{ transform: "translateZ(25px)" }}>
-                        <div className="h-32 rounded-xl bg-gradient-to-br from-blue-500/30 to-purple-500/30 flex items-center justify-center border border-white/10 relative overflow-hidden group">
+                        <div className="h-32 rounded-xl bg-gradient-to-br from-[#182335]/50 to-[#567190]/50 flex items-center justify-center border border-white/10 relative overflow-hidden group">
                            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1529260830199-42c42dda5f2d?q=80&w=600&auto=format&fit=crop')] bg-cover bg-center opacity-70 group-hover:scale-110 transition-transform duration-1000"></div>
-                           <div className="absolute inset-0 bg-black/20"></div>
+                           <div className="absolute inset-0 bg-[#182335]/30"></div>
                            <span className="relative z-10 font-black text-2xl text-white tracking-widest drop-shadow-lg">ITALIA</span>
                         </div>
                         
                         {/* Updated Info Grid */}
                         <div className="grid grid-cols-2 gap-2">
                           <div className="aspect-square rounded-xl bg-white/5 border border-white/10 p-2 flex flex-col justify-between hover:bg-white/10 transition-colors">
-                            <MapPin className="text-blue-300 w-4 h-4" />
+                            <MapPin className="text-[#567190] w-4 h-4" />
                             <div className="space-y-1">
                               <div className="h-1 w-8 bg-white/40 rounded-full"></div>
                               <div className="h-1 w-12 bg-white/20 rounded-full"></div>
@@ -266,7 +281,7 @@ export default function UniMatchPage() {
                       </div>
 
                       {/* Shiny MATCH! Button - Independent Layer */}
-                      <div className="h-10 mt-3 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center relative overflow-hidden group/btn cursor-pointer shadow-lg shadow-blue-500/20 z-20 hover:scale-[1.02] transition-transform" style={{ transform: "translateZ(35px)" }}>
+                      <div className="h-10 mt-3 rounded-xl bg-gradient-to-r from-[#2C5C44] to-[#3D7A5C] flex items-center justify-center relative overflow-hidden group/btn cursor-pointer shadow-lg shadow-[#2C5C44]/20 z-20 hover:scale-[1.02] transition-transform" style={{ transform: "translateZ(35px)" }}>
                           <span className="text-[10px] font-black text-white tracking-[0.3em] z-10">MATCH!</span>
                           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover/btn:animate-shimmer" />
                       </div>
@@ -280,13 +295,21 @@ export default function UniMatchPage() {
             {step === 'quiz' && (
               <motion.div
                 key="quiz"
-                initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, x: -50 }}
-                transition={{ duration: 0.5, type: "spring" }}
+                initial={{ opacity: 0, scale: 0.95, filter: "blur(10px)" }}
+                animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                exit={{ opacity: 0, scale: 1.05, filter: "blur(10px)" }}
+                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                 className="w-full max-w-2xl mx-auto bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 md:p-10 shadow-2xl"
               >
-                <Quiz onComplete={handleQuizComplete} />
+                <Quiz 
+                  onComplete={handleQuizComplete} 
+                  onBack={() => setStep('intro')} 
+                  initialData={filters.userName ? {
+                    name: filters.userName as string,
+                    surname: filters.userSurname as string,
+                    privacy: true
+                  } : undefined}
+                />
               </motion.div>
             )}
 
@@ -294,34 +317,17 @@ export default function UniMatchPage() {
             {step === 'deck' && (
               <motion.div
                 key="deck"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6 }}
-                className="h-[600px] w-full"
+                initial={{ opacity: 0, scale: 0.95, filter: "blur(10px)" }}
+                animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                exit={{ opacity: 0, scale: 1.05, filter: "blur(10px)" }}
+                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                className="w-full"
               >
-                <SwipeDeck filters={filters} />
+                <SwipeDeck filters={filters} onRestart={() => setStep('quiz')} />
               </motion.div>
             )}
           </AnimatePresence>
         </div>
-
-        {/* Footer Link */}
-        <AnimatePresence>
-          {step !== 'intro' && (
-            <motion.div 
-              initial={{ opacity: 0 }} 
-              animate={{ opacity: 1 }}
-              className="mt-8 text-center"
-            >
-              <button 
-                onClick={() => setStep('intro')}
-                className="text-sm text-blue-300 hover:text-white transition-colors flex items-center justify-center gap-2 mx-auto"
-              >
-                ← Voltar para o início
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
 
       </div>
 

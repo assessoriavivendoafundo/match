@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Check, Sparkles, User, ArrowRight, ShieldCheck } from "lucide-react";
@@ -53,16 +53,63 @@ const questions: Question[] = [
   },
 ];
 
-export function Quiz({ onComplete }: { onComplete: (answers: Record<string, string | string[]>) => void }) {
-  const [phase, setPhase] = useState<'details' | 'questions'>('details');
+export function Quiz({ onComplete, onBack, initialData }: { 
+  onComplete: (answers: Record<string, string | string[]>) => void;
+  onBack: () => void;
+  initialData?: { name: string; surname: string; privacy: boolean };
+}) {
+  const [phase, setPhase] = useState<'details' | 'questions'>(initialData?.name ? 'questions' : 'details');
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string[]>>({});
-  const [userData, setUserData] = useState({ name: '', surname: '', privacy: false });
+  const [userData, setUserData] = useState({ 
+    name: initialData?.name || '', 
+    surname: initialData?.surname || '', 
+    privacy: initialData?.privacy || false 
+  });
+
+  const topRef = useRef<HTMLDivElement>(null);
+
+  const scrollToCard = () => {
+    if (topRef.current) {
+        const rect = topRef.current.getBoundingClientRect();
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
+        const viewportHeight = window.innerHeight;
+        
+        // Target 60px above the component to show the container top and header breathing room
+        const targetY = rect.top + scrollTop - 60;
+        
+        window.scrollTo({
+            top: targetY,
+            behavior: "smooth"
+        });
+    }
+  };
+
+  useEffect(() => {
+    // Scroll to card top when phase or step changes (Insert Data -> Questions -> Next Question)
+    // Small timeout ensures layout has stabilized after transitions
+    const t = setTimeout(() => {
+        scrollToCard();
+    }, 100); // Increased timeout slightly to wait for exit animations
+    return () => clearTimeout(t);
+  }, [currentStep, phase]);
 
   const handleDetailsSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (userData.name && userData.surname && userData.privacy) {
       setPhase('questions');
+    }
+  };
+
+  const handleInternalBack = () => {
+    if (phase === 'questions') {
+      if (currentStep > 0) {
+        setCurrentStep(prev => prev - 1);
+      } else {
+        setPhase('details');
+      }
+    } else {
+      onBack();
     }
   };
 
@@ -133,19 +180,19 @@ export function Quiz({ onComplete }: { onComplete: (answers: Record<string, stri
   const hasSelection = currentSelection.length > 0;
 
   return (
-    <div className="w-full relative px-2">
+    <div ref={topRef} className="w-full relative px-2 scroll-mt-32 min-h-[60vh]">
         {phase === 'questions' && (
           <div className="mb-8">
               {/* Header / Progress */}
-              <div className="flex items-center justify-between mb-6 text-blue-200/80 text-sm font-bold tracking-wide uppercase">
+              <div className="flex items-center justify-between mb-6 text-[#567190] text-sm font-bold tracking-wide uppercase">
                   <span>Passo {currentStep + 1} de {questions.length}</span>
-                  <span className="flex items-center gap-1 text-yellow-400 drop-shadow-sm"><Sparkles className="w-3 h-3" /> Personalizando...</span>
+                  <span className="flex items-center gap-1 text-[#BF402A] drop-shadow-sm"><Sparkles className="w-3 h-3" /> Personalizando...</span>
               </div>
               
               {/* Neon Progress Bar - Thicker and Glowier */}
               <div className="h-2 bg-white/10 rounded-full overflow-hidden backdrop-blur-sm border border-white/5 shadow-inner">
                   <motion.div 
-                      className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-[0_0_15px_rgba(168,85,247,0.6)]"
+                      className="h-full bg-gradient-to-r from-[#BF402A] via-[#A63725] to-[#2C5C44] shadow-[0_0_15px_rgba(191,64,42,0.6)]"
                       initial={{ width: 0 }}
                       animate={{ width: `${((currentStep + 1) / questions.length) * 100}%` }}
                       transition={{ type: "spring", stiffness: 100, damping: 20 }}
@@ -158,18 +205,19 @@ export function Quiz({ onComplete }: { onComplete: (answers: Record<string, stri
             {phase === 'details' ? (
               <motion.div
                 key="details"
-                initial={{ x: 20, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                exit={{ x: -20, opacity: 0 }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
+                initial={{ x: 20, opacity: 0, filter: "blur(5px)" }}
+                animate={{ x: 0, opacity: 1, filter: "blur(0px)" }}
+                exit={{ x: -20, opacity: 0, filter: "blur(5px)" }}
+                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                onAnimationComplete={() => scrollToCard()}
                 className="space-y-8"
               >
                 <div className="space-y-3">
                     <h2 className="text-3xl md:text-5xl font-black text-white leading-[1.1] drop-shadow-lg tracking-tight">
                         Quase lá! <br/>
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Como podemos te chamar?</span>
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#BF402A] to-[#F4A261]">Como podemos te chamar?</span>
                     </h2>
-                    <p className="text-lg text-blue-100/60 leading-relaxed font-medium">
+                    <p className="text-lg text-white/70 leading-relaxed font-medium">
                         Queremos tornar sua experiência personalizada e segura.
                     </p>
                 </div>
@@ -177,29 +225,29 @@ export function Quiz({ onComplete }: { onComplete: (answers: Record<string, stri
                 <form onSubmit={handleDetailsSubmit} className="space-y-6">
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <label className="text-sm font-bold text-blue-200/60 uppercase tracking-widest ml-1">Nome</label>
+                      <label className="text-sm font-bold text-white/60 uppercase tracking-widest ml-1">Nome</label>
                       <div className="relative">
-                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-blue-300/40" />
+                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
                         <input 
                           type="text"
                           required
                           value={userData.name}
                           onChange={(e) => setUserData({...userData, name: e.target.value})}
-                          className="w-full bg-white/5 border border-white/10 rounded-2xl px-12 py-4 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all backdrop-blur-md"
+                          className="w-full bg-white/5 border border-white/10 rounded-2xl px-12 py-4 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-[#BF402A]/50 transition-all backdrop-blur-md"
                           placeholder="Seu nome"
                         />
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <label className="text-sm font-bold text-blue-200/60 uppercase tracking-widest ml-1">Sobrenome</label>
+                      <label className="text-sm font-bold text-white/60 uppercase tracking-widest ml-1">Sobrenome</label>
                       <div className="relative">
-                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-blue-300/40" />
+                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
                         <input 
                           type="text"
                           required
                           value={userData.surname}
                           onChange={(e) => setUserData({...userData, surname: e.target.value})}
-                          className="w-full bg-white/5 border border-white/10 rounded-2xl px-12 py-4 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all backdrop-blur-md"
+                          className="w-full bg-white/5 border border-white/10 rounded-2xl px-12 py-4 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-[#BF402A]/50 transition-all backdrop-blur-md"
                           placeholder="Seu sobrenome"
                         />
                       </div>
@@ -216,14 +264,14 @@ export function Quiz({ onComplete }: { onComplete: (answers: Record<string, stri
                           required
                           checked={userData.privacy}
                           onChange={(e) => setUserData({...userData, privacy: e.target.checked})}
-                          className="h-5 w-5 rounded border-white/20 bg-white/5 text-blue-500 focus:ring-blue-500/50 cursor-pointer"
+                          className="h-5 w-5 rounded border-white/20 bg-white/5 text-[#BF402A] focus:ring-[#BF402A]/50 cursor-pointer"
                         />
                       </div>
                       <div className="text-sm leading-6">
-                        <label htmlFor="privacy" className="font-medium text-blue-100/80 cursor-pointer">
+                        <label htmlFor="privacy" className="font-medium text-white/80 cursor-pointer">
                           Aceito o tratamento dos meus dados
                         </label>
-                        <p className="text-blue-100/40">
+                        <p className="text-white/50">
                           Seus dados serão utilizados apenas para personalizar sua experiência de acordo com a <strong>LGPD (Lei Geral de Proteção de Dados)</strong> brasileira. Não compartilhamos suas informações com terceiros.
                         </p>
                       </div>
@@ -238,7 +286,7 @@ export function Quiz({ onComplete }: { onComplete: (answers: Record<string, stri
                     className={cn(
                       "w-full h-16 rounded-2xl font-black text-xl flex items-center justify-center gap-3 transition-all duration-300 shadow-xl",
                       userData.name && userData.surname && userData.privacy
-                        ? "bg-white text-blue-950 shadow-white/10"
+                        ? "bg-white text-[#182335] shadow-white/10"
                         : "bg-white/5 text-white/20 border border-white/5 cursor-not-allowed"
                     )}
                   >
@@ -246,19 +294,31 @@ export function Quiz({ onComplete }: { onComplete: (answers: Record<string, stri
                     <ArrowRight className="w-6 h-6" />
                   </motion.button>
 
-                  <div className="flex items-center justify-center gap-2 text-xs text-blue-200/30 uppercase tracking-[0.2em] font-bold">
+                  <div className="flex items-center justify-center gap-2 text-xs text-white/30 uppercase tracking-[0.2em] font-bold">
                     <ShieldCheck className="w-4 h-4" />
                     Ambiente Seguro & Privado
+                  </div>
+
+                  {/* Back Button for Details */}
+                  <div className="pt-2 text-center">
+                    <button 
+                      type="button"
+                      onClick={handleInternalBack}
+                      className="text-sm text-white/40 hover:text-white transition-colors"
+                    >
+                      ← Voltar para o início
+                    </button>
                   </div>
                 </form>
               </motion.div>
             ) : (
               <motion.div
                   key={currentStep}
-                  initial={{ x: 20, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  exit={{ x: -20, opacity: 0 }}
-                  transition={{ duration: 0.3, ease: "easeOut" }}
+                  initial={{ x: 20, opacity: 0, filter: "blur(5px)" }}
+                  animate={{ x: 0, opacity: 1, filter: "blur(0px)" }}
+                  exit={{ x: -20, opacity: 0, filter: "blur(5px)" }}
+                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                  onAnimationComplete={() => scrollToCard()}
                   className="space-y-8"
               >
                   {/* Question Text */}
@@ -267,7 +327,7 @@ export function Quiz({ onComplete }: { onComplete: (answers: Record<string, stri
                           {currentQ.question}
                       </h2>
                       {currentQ.description && (
-                          <p className="text-lg md:text-xl text-blue-100/80 leading-relaxed font-medium">
+                          <p className="text-lg md:text-xl text-white/80 leading-relaxed font-medium">
                               {currentQ.description}
                           </p>
                       )}
@@ -302,7 +362,7 @@ export function Quiz({ onComplete }: { onComplete: (answers: Record<string, stri
                                     isAnyOption && "mt-2",
                                     // Borders & Backgrounds
                                     isSelected
-                                        ? "bg-white/15 border-purple-400/50 shadow-[0_0_30px_rgba(168,85,247,0.15)]" 
+                                        ? "bg-white/15 border-[#BF402A]/50 shadow-[0_0_30px_rgba(191,64,42,0.15)]" 
                                         : isAnyOption
                                             ? "border-dashed border-white/20 bg-white/5 hover:bg-white/10"
                                             : "bg-gradient-to-r from-white/10 to-transparent border-white/10 hover:border-white/30 hover:bg-white/10",
@@ -318,7 +378,7 @@ export function Quiz({ onComplete }: { onComplete: (answers: Record<string, stri
                                         exit={{ opacity: 0 }}
                                         className={cn(
                                             "absolute inset-0 z-0 transition-opacity duration-500",
-                                            isFocused ? "bg-gradient-to-r from-purple-600/30 to-blue-600/30 opacity-100" : "bg-white/5 opacity-50"
+                                            isFocused ? "bg-gradient-to-r from-[#BF402A]/30 to-[#2C5C44]/30 opacity-100" : "bg-white/5 opacity-50"
                                         )}
                                     />
                                 )}
@@ -331,7 +391,7 @@ export function Quiz({ onComplete }: { onComplete: (answers: Record<string, stri
                                         "flex-shrink-0 rounded-2xl flex items-center justify-center transition-all duration-500 shadow-lg ring-1 ring-white/10",
                                         (isAnyOption && !isAllSelected) || shouldShrink ? "w-10 h-10 text-xl" : "w-14 h-14 text-3xl",
                                         isSelected
-                                            ? "bg-gradient-to-br from-purple-500 to-blue-600 ring-offset-2 ring-offset-purple-500/30" 
+                                            ? "bg-gradient-to-br from-[#BF402A] to-[#8C2E1F] ring-offset-2 ring-offset-[#BF402A]/30" 
                                             : "bg-white/10 group-hover:bg-white/20"
                                     )}>
                                         {option.icon}
@@ -352,7 +412,7 @@ export function Quiz({ onComplete }: { onComplete: (answers: Record<string, stri
                                                 <motion.div initial={{ scale: 0, rotate: -45 }} animate={{ scale: 1, rotate: 0 }}>
                                                     <div className={cn(
                                                         "rounded-full p-1 shadow-lg transition-all duration-500",
-                                                        isFocused ? "bg-green-500 shadow-green-500/20" : "bg-white/20 shadow-none"
+                                                        isFocused ? "bg-[#2C5C44] shadow-[#2C5C44]/20" : "bg-white/20 shadow-none"
                                                     )}>
                                                         <Check className="w-3.5 h-3.5 text-white" strokeWidth={4} />
                                                     </div>
@@ -365,8 +425,8 @@ export function Quiz({ onComplete }: { onComplete: (answers: Record<string, stri
                                                 animate={{ opacity: 1, height: "auto" }}
                                                 className={cn(
                                                 "font-medium tracking-wide transition-all duration-500",
-                                                isAnyOption ? "text-xs text-blue-200/40 mt-0.5" : "text-sm mt-1 text-blue-200/60",
-                                                isSelected && "text-blue-100/80"
+                                                isAnyOption ? "text-xs text-white/40 mt-0.5" : "text-sm mt-1 text-white/60",
+                                                isSelected && "text-white/80"
                                             )}>
                                                 {option.subLabel}
                                             </motion.p>
@@ -390,7 +450,7 @@ export function Quiz({ onComplete }: { onComplete: (answers: Record<string, stri
                         className={cn(
                             "w-full py-4 rounded-2xl font-black text-xl flex items-center justify-center gap-3 transition-all duration-300 shadow-xl",
                             hasSelection
-                                ? "bg-white text-blue-950 hover:scale-[1.02] shadow-white/20"
+                                ? "bg-white text-[#182335] hover:scale-[1.02] shadow-white/20"
                                 : "bg-white/5 text-white/20 border border-white/5 cursor-not-allowed"
                         )}
                     >
@@ -398,6 +458,16 @@ export function Quiz({ onComplete }: { onComplete: (answers: Record<string, stri
                         <ArrowRight className={cn("w-6 h-6", hasSelection && "animate-pulse")} />
                     </button>
                   </motion.div>
+
+                  {/* Back Button for Questions */}
+                  <div className="pt-6 text-center">
+                    <button 
+                      onClick={handleInternalBack}
+                      className="text-sm text-white/40 hover:text-white transition-colors flex items-center justify-center gap-2 mx-auto"
+                    >
+                      ← {currentStep === 0 ? "Voltar para meus dados" : "Voltar para a pergunta anterior"}
+                    </button>
+                  </div>
               </motion.div>
             )}
         </AnimatePresence>
