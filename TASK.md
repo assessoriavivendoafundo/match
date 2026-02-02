@@ -19,6 +19,8 @@
 - [x] Remove live wishlist drawer from SwipeDeck (2026-02-01)
 - [x] Center swiping card page and include title box on load (2026-02-01)
 - [x] Center final list vertical alignment in SwipeDeck (2026-02-01)
+- [x] Graphically optimize UniMatch for mobile and other formats (2026-02-01)
+- [x] Implement dynamic button feedback (scale/opacity) during swipe in UniMatch (2026-02-01)
 
 ## Bug Fixes & Maintenance
 - [x] Fix duplicate universities bug in Unimatch SwipeDeck (2026-01-05)

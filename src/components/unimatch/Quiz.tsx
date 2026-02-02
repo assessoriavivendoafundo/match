@@ -73,10 +73,10 @@ export function Quiz({ onComplete, onBack, initialData }: {
     if (topRef.current) {
         const rect = topRef.current.getBoundingClientRect();
         const scrollTop = window.scrollY || document.documentElement.scrollTop;
-        const viewportHeight = window.innerHeight;
         
-        // Target 60px above the component to show the container top and header breathing room
-        const targetY = rect.top + scrollTop - 60;
+        // Target 20px above the component on mobile, 60px on desktop
+        const offset = window.innerWidth < 768 ? 20 : 60;
+        const targetY = rect.top + scrollTop - offset;
         
         window.scrollTo({
             top: targetY,
@@ -86,11 +86,9 @@ export function Quiz({ onComplete, onBack, initialData }: {
   };
 
   useEffect(() => {
-    // Scroll to card top when phase or step changes (Insert Data -> Questions -> Next Question)
-    // Small timeout ensures layout has stabilized after transitions
     const t = setTimeout(() => {
         scrollToCard();
-    }, 100); // Increased timeout slightly to wait for exit animations
+    }, 150);
     return () => clearTimeout(t);
   }, [currentStep, phase]);
 
@@ -123,36 +121,23 @@ export function Quiz({ onComplete, onBack, initialData }: {
     let newSelection: string[];
 
     if (optionId === "any") {
-      // Toggle "Any": If already selected (or partially selected), deselect all. 
-      // If not selected, select ALL specific options + "any".
-      // Wait, standard behavior for "Select All" button:
-      // If "Any" is strictly in the list, clicking it removes everything.
-      // If "Any" is NOT in the list, clicking it adds everything + "Any".
-      
       const isAnySelected = currentSelection.includes("any");
-      
       if (isAnySelected) {
           newSelection = [];
       } else {
           newSelection = [...specificOptions, "any"];
       }
     } else {
-      // Specific Option Logic
       const isSelected = currentSelection.includes(optionId);
       let nextSpecifics: string[];
 
       if (isSelected) {
-         // Remove option
          nextSpecifics = currentSelection.filter(id => id !== optionId && id !== "any");
       } else {
-         // Add option
-         // Filter out "any" first to be safe, then add new ID
          nextSpecifics = [...currentSelection.filter(id => id !== "any"), optionId];
       }
 
-      // Check if ALL specific options are now selected
       const allSelected = specificOptions.every(id => nextSpecifics.includes(id));
-      
       if (allSelected) {
           newSelection = [...nextSpecifics, "any"];
       } else {
@@ -180,17 +165,17 @@ export function Quiz({ onComplete, onBack, initialData }: {
   const hasSelection = currentSelection.length > 0;
 
   return (
-    <div ref={topRef} className="w-full relative px-2 scroll-mt-32 min-h-[60vh]">
+    <div ref={topRef} className="w-full relative px-1 md:px-2 scroll-mt-20 md:scroll-mt-32 min-h-[50vh] md:min-h-[60vh]">
         {phase === 'questions' && (
-          <div className="mb-8">
+          <div className="mb-6 md:mb-8">
               {/* Header / Progress */}
-              <div className="flex items-center justify-between mb-6 text-[#567190] text-sm font-bold tracking-wide uppercase">
+              <div className="flex items-center justify-between mb-4 md:mb-6 text-[#567190] text-[10px] md:text-sm font-bold tracking-wide uppercase">
                   <span>Passo {currentStep + 1} de {questions.length}</span>
                   <span className="flex items-center gap-1 text-[#BF402A] drop-shadow-sm"><Sparkles className="w-3 h-3" /> Personalizando...</span>
               </div>
               
-              {/* Neon Progress Bar - Thicker and Glowier */}
-              <div className="h-2 bg-white/10 rounded-full overflow-hidden backdrop-blur-sm border border-white/5 shadow-inner">
+              {/* Neon Progress Bar */}
+              <div className="h-1.5 md:h-2 bg-white/10 rounded-full overflow-hidden backdrop-blur-sm border border-white/5 shadow-inner">
                   <motion.div 
                       className="h-full bg-gradient-to-r from-[#BF402A] via-[#A63725] to-[#2C5C44] shadow-[0_0_15px_rgba(191,64,42,0.6)]"
                       initial={{ width: 0 }}
@@ -210,52 +195,52 @@ export function Quiz({ onComplete, onBack, initialData }: {
                 exit={{ x: -20, opacity: 0, filter: "blur(5px)" }}
                 transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                 onAnimationComplete={() => scrollToCard()}
-                className="space-y-8"
+                className="space-y-6 md:space-y-8"
               >
-                <div className="space-y-3">
-                    <h2 className="text-3xl md:text-5xl font-black text-white leading-[1.1] drop-shadow-lg tracking-tight">
+                <div className="space-y-2 md:space-y-3">
+                    <h2 className="text-2xl md:text-5xl font-black text-white leading-[1.1] drop-shadow-lg tracking-tight">
                         Quase lá! <br/>
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#BF402A] to-[#F4A261]">Como podemos te chamar?</span>
                     </h2>
-                    <p className="text-lg text-white/70 leading-relaxed font-medium">
+                    <p className="text-base md:text-lg text-white/70 leading-relaxed font-medium">
                         Queremos tornar sua experiência personalizada e segura.
                     </p>
                 </div>
 
-                <form onSubmit={handleDetailsSubmit} className="space-y-6">
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <label className="text-sm font-bold text-white/60 uppercase tracking-widest ml-1">Nome</label>
+                <form onSubmit={handleDetailsSubmit} className="space-y-4 md:space-y-6">
+                  <div className="grid md:grid-cols-2 gap-3 md:gap-4">
+                    <div className="space-y-1.5 md:space-y-2">
+                      <label className="text-[10px] md:text-sm font-bold text-white/60 uppercase tracking-widest ml-1">Nome</label>
                       <div className="relative">
-                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
+                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-white/40" />
                         <input 
                           type="text"
                           required
                           value={userData.name}
                           onChange={(e) => setUserData({...userData, name: e.target.value})}
-                          className="w-full bg-white/5 border border-white/10 rounded-2xl px-12 py-4 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-[#BF402A]/50 transition-all backdrop-blur-md"
+                          className="w-full bg-white/5 border border-white/10 rounded-xl md:rounded-2xl px-10 md:px-12 py-3.5 md:py-4 text-sm md:text-base text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-[#BF402A]/50 transition-all backdrop-blur-md"
                           placeholder="Seu nome"
                         />
                       </div>
                     </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-bold text-white/60 uppercase tracking-widest ml-1">Sobrenome</label>
+                    <div className="space-y-1.5 md:space-y-2">
+                      <label className="text-[10px] md:text-sm font-bold text-white/60 uppercase tracking-widest ml-1">Sobrenome</label>
                       <div className="relative">
-                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
+                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-white/40" />
                         <input 
                           type="text"
                           required
                           value={userData.surname}
                           onChange={(e) => setUserData({...userData, surname: e.target.value})}
-                          className="w-full bg-white/5 border border-white/10 rounded-2xl px-12 py-4 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-[#BF402A]/50 transition-all backdrop-blur-md"
+                          className="w-full bg-white/5 border border-white/10 rounded-xl md:rounded-2xl px-10 md:px-12 py-3.5 md:py-4 text-sm md:text-base text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-[#BF402A]/50 transition-all backdrop-blur-md"
                           placeholder="Seu sobrenome"
                         />
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4 backdrop-blur-sm">
-                    <div className="flex items-start gap-4">
+                  <div className="bg-white/5 border border-white/10 rounded-xl md:rounded-2xl p-4 md:p-6 space-y-4 backdrop-blur-sm">
+                    <div className="flex items-start gap-3 md:gap-4">
                       <div className="relative flex items-center h-6">
                         <input
                           id="privacy"
@@ -264,15 +249,15 @@ export function Quiz({ onComplete, onBack, initialData }: {
                           required
                           checked={userData.privacy}
                           onChange={(e) => setUserData({...userData, privacy: e.target.checked})}
-                          className="h-5 w-5 rounded border-white/20 bg-white/5 text-[#BF402A] focus:ring-[#BF402A]/50 cursor-pointer"
+                          className="h-4 w-4 md:h-5 md:w-5 rounded border-white/20 bg-white/5 text-[#BF402A] focus:ring-[#BF402A]/50 cursor-pointer"
                         />
                       </div>
-                      <div className="text-sm leading-6">
+                      <div className="text-[11px] md:text-sm leading-snug md:leading-6">
                         <label htmlFor="privacy" className="font-medium text-white/80 cursor-pointer">
                           Aceito o tratamento dos meus dados
                         </label>
-                        <p className="text-white/50">
-                          Seus dados serão utilizados apenas para personalizar sua experiência de acordo com a <strong>LGPD (Lei Geral de Proteção de Dados)</strong> brasileira. Não compartilhamos suas informações com terceiros.
+                        <p className="text-white/40 mt-1">
+                          Seus dados serão utilizados apenas para personalizar sua experiência de acordo com a <strong>LGPD</strong> brasileira.
                         </p>
                       </div>
                     </div>
@@ -281,21 +266,21 @@ export function Quiz({ onComplete, onBack, initialData }: {
                   <motion.button
                     type="submit"
                     disabled={!userData.name || !userData.surname || !userData.privacy}
-                    whileHover={{ scale: 1.02 }}
+                    whileHover={{ scale: 1.01 }}
                     whileTap={{ scale: 0.98 }}
                     className={cn(
-                      "w-full h-16 rounded-2xl font-black text-xl flex items-center justify-center gap-3 transition-all duration-300 shadow-xl",
+                      "w-full h-14 md:h-16 rounded-xl md:rounded-2xl font-black text-lg md:text-xl flex items-center justify-center gap-2 md:gap-3 transition-all duration-300 shadow-xl",
                       userData.name && userData.surname && userData.privacy
                         ? "bg-white text-[#182335] shadow-white/10"
                         : "bg-white/5 text-white/20 border border-white/5 cursor-not-allowed"
                     )}
                   >
                     <span>Continuar para o Quiz</span>
-                    <ArrowRight className="w-6 h-6" />
+                    <ArrowRight className="w-5 h-5 md:w-6 md:h-6" />
                   </motion.button>
 
-                  <div className="flex items-center justify-center gap-2 text-xs text-white/30 uppercase tracking-[0.2em] font-bold">
-                    <ShieldCheck className="w-4 h-4" />
+                  <div className="flex items-center justify-center gap-2 text-[9px] md:text-xs text-white/20 uppercase tracking-[0.2em] font-bold">
+                    <ShieldCheck className="w-3.5 h-3.5" />
                     Ambiente Seguro & Privado
                   </div>
 
@@ -304,7 +289,7 @@ export function Quiz({ onComplete, onBack, initialData }: {
                     <button 
                       type="button"
                       onClick={handleInternalBack}
-                      className="text-sm text-white/40 hover:text-white transition-colors"
+                      className="text-xs md:text-sm text-white/40 hover:text-white transition-colors"
                     >
                       ← Voltar para o início
                     </button>
@@ -319,30 +304,27 @@ export function Quiz({ onComplete, onBack, initialData }: {
                   exit={{ x: -20, opacity: 0, filter: "blur(5px)" }}
                   transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                   onAnimationComplete={() => scrollToCard()}
-                  className="space-y-8"
+                  className="space-y-6 md:space-y-8"
               >
                   {/* Question Text */}
-                  <div className="space-y-3">
-                      <h2 className="text-3xl md:text-5xl font-black text-white leading-[1.1] drop-shadow-lg tracking-tight">
+                  <div className="space-y-2 md:space-y-3">
+                      <h2 className="text-2xl md:text-5xl font-black text-white leading-[1.1] drop-shadow-lg tracking-tight">
                           {currentQ.question}
                       </h2>
                       {currentQ.description && (
-                          <p className="text-lg md:text-xl text-white/80 leading-relaxed font-medium">
+                          <p className="text-base md:text-xl text-white/80 leading-relaxed font-medium">
                               {currentQ.description}
                           </p>
                       )}
                   </div>
 
                   {/* Options Grid */}
-                  <div className="grid gap-3">
+                  <div className="grid gap-2 md:gap-3">
                       {currentQ.options.map((option) => {
                           const isSelected = currentSelection.includes(option.id);
                           const isAnyOption = option.id === "any";
                           const isAllSelected = currentSelection.includes("any");
                           
-                          // Focus logic: 
-                          // If all are selected, the "any" button is the main focus.
-                          // Otherwise, specific buttons are the main focus.
                           const isFocused = isAnyOption ? isAllSelected : (isSelected && !isAllSelected);
                           const shouldShrink = isAllSelected && !isAnyOption;
 
@@ -351,15 +333,15 @@ export function Quiz({ onComplete, onBack, initialData }: {
                                 key={option.id}
                                 layout
                                 onClick={() => handleSelect(option.id)}
-                                whileHover={{ scale: isFocused ? 1.02 : 1 }}
+                                whileHover={{ scale: isFocused ? 1.01 : 1 }}
                                 whileTap={{ scale: 0.98 }}
                                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
                                 className={cn(
-                                    "relative w-full text-left rounded-2xl border transition-all duration-500 group overflow-hidden backdrop-blur-md",
+                                    "relative w-full text-left rounded-xl md:rounded-2xl border transition-all duration-500 group overflow-hidden backdrop-blur-md",
                                     // Sizing & Padding
-                                    (isAnyOption && !isAllSelected) || shouldShrink ? "p-3 px-5" : "p-6",
+                                    (isAnyOption && !isAllSelected) || shouldShrink ? "p-3 px-4 md:p-3 md:px-5" : "p-4 md:p-6",
                                     // Spacing
-                                    isAnyOption && "mt-2",
+                                    isAnyOption && "mt-1 md:mt-2",
                                     // Borders & Backgrounds
                                     isSelected
                                         ? "bg-white/15 border-[#BF402A]/50 shadow-[0_0_30px_rgba(191,64,42,0.15)]" 
@@ -383,13 +365,13 @@ export function Quiz({ onComplete, onBack, initialData }: {
                                     />
                                 )}
 
-                                <div className="relative z-10 flex items-center gap-5">
+                                <div className="relative z-10 flex items-center gap-3 md:gap-5">
                                     {/* Icon Container */}
                                     <motion.div 
                                         layout
                                         className={cn(
-                                        "flex-shrink-0 rounded-2xl flex items-center justify-center transition-all duration-500 shadow-lg ring-1 ring-white/10",
-                                        (isAnyOption && !isAllSelected) || shouldShrink ? "w-10 h-10 text-xl" : "w-14 h-14 text-3xl",
+                                        "flex-shrink-0 rounded-lg md:rounded-2xl flex items-center justify-center transition-all duration-500 shadow-lg ring-1 ring-white/10",
+                                        (isAnyOption && !isAllSelected) || shouldShrink ? "w-8 h-8 md:w-10 md:h-10 text-lg" : "w-11 h-11 md:w-14 md:h-14 text-2xl md:text-3xl",
                                         isSelected
                                             ? "bg-gradient-to-br from-[#BF402A] to-[#8C2E1F] ring-offset-2 ring-offset-[#BF402A]/30" 
                                             : "bg-white/10 group-hover:bg-white/20"
@@ -403,7 +385,7 @@ export function Quiz({ onComplete, onBack, initialData }: {
                                                 layout
                                                 className={cn(
                                                 "font-bold transition-all duration-500",
-                                                (isAnyOption && !isAllSelected) || shouldShrink ? "text-base text-white/70" : "text-xl text-white/95",
+                                                (isAnyOption && !isAllSelected) || shouldShrink ? "text-sm md:text-base text-white/70" : "text-lg md:text-xl text-white/95",
                                                 isSelected && "text-white"
                                             )}>
                                                 {option.label}
@@ -411,10 +393,10 @@ export function Quiz({ onComplete, onBack, initialData }: {
                                             {isSelected && (
                                                 <motion.div initial={{ scale: 0, rotate: -45 }} animate={{ scale: 1, rotate: 0 }}>
                                                     <div className={cn(
-                                                        "rounded-full p-1 shadow-lg transition-all duration-500",
+                                                        "rounded-full p-0.5 md:p-1 shadow-lg transition-all duration-500",
                                                         isFocused ? "bg-[#2C5C44] shadow-[#2C5C44]/20" : "bg-white/20 shadow-none"
                                                     )}>
-                                                        <Check className="w-3.5 h-3.5 text-white" strokeWidth={4} />
+                                                        <Check className="w-3 h-3 md:w-3.5 md:h-3.5 text-white" strokeWidth={4} />
                                                     </div>
                                                 </motion.div>
                                             )}
@@ -425,7 +407,7 @@ export function Quiz({ onComplete, onBack, initialData }: {
                                                 animate={{ opacity: 1, height: "auto" }}
                                                 className={cn(
                                                 "font-medium tracking-wide transition-all duration-500",
-                                                isAnyOption ? "text-xs text-white/40 mt-0.5" : "text-sm mt-1 text-white/60",
+                                                isAnyOption ? "text-[10px] text-white/40 mt-0.5" : "text-[11px] md:text-sm mt-0.5 md:mt-1 text-white/60",
                                                 isSelected && "text-white/80"
                                             )}>
                                                 {option.subLabel}
@@ -442,28 +424,28 @@ export function Quiz({ onComplete, onBack, initialData }: {
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="pt-4"
+                    className="pt-2 md:pt-4"
                   >
                     <button
                         onClick={handleNext}
                         disabled={!hasSelection}
                         className={cn(
-                            "w-full py-4 rounded-2xl font-black text-xl flex items-center justify-center gap-3 transition-all duration-300 shadow-xl",
+                            "w-full py-4 md:py-4 rounded-xl md:rounded-2xl font-black text-lg md:text-xl flex items-center justify-center gap-2 md:gap-3 transition-all duration-300 shadow-xl",
                             hasSelection
-                                ? "bg-white text-[#182335] hover:scale-[1.02] shadow-white/20"
+                                ? "bg-white text-[#182335] hover:scale-[1.01] shadow-white/20"
                                 : "bg-white/5 text-white/20 border border-white/5 cursor-not-allowed"
                         )}
                     >
                         <span>{currentStep < questions.length - 1 ? "Próximo Passo" : "Ver meus Matches!"}</span>
-                        <ArrowRight className={cn("w-6 h-6", hasSelection && "animate-pulse")} />
+                        <ArrowRight className={cn("w-5 h-5 md:w-6 md:h-6", hasSelection && "animate-pulse")} />
                     </button>
                   </motion.div>
 
                   {/* Back Button for Questions */}
-                  <div className="pt-6 text-center">
+                  <div className="pt-4 md:pt-6 text-center">
                     <button 
                       onClick={handleInternalBack}
-                      className="text-sm text-white/40 hover:text-white transition-colors flex items-center justify-center gap-2 mx-auto"
+                      className="text-xs md:text-sm text-white/40 hover:text-white transition-colors flex items-center justify-center gap-2 mx-auto"
                     >
                       ← {currentStep === 0 ? "Voltar para meus dados" : "Voltar para a pergunta anterior"}
                     </button>
