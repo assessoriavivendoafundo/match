@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useMemo, MutableRefObject } from "react";
-import { motion, useMotionValue, useTransform, PanInfo, MotionValue, animate, AnimatePresence, motionValue, Variants } from "framer-motion";
+import { motion, useMotionValue, useTransform, PanInfo, MotionValue, animate, AnimatePresence, motionValue, Variants, useMotionValueEvent } from "framer-motion";
 import { University, getUniversities } from "@/lib/data";
 import { X, GraduationCap, RotateCcw, MapPin, Loader2, Share2, Mail, Palette, TrendingUp, Stethoscope, Atom } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -57,11 +57,35 @@ export function SwipeDeck({ filters, onRestart }: { filters: Record<string, stri
   
   // Ref to track exit directions reliably for animation variants
   const exitDirectionsRef = useRef<Record<string, 'like' | 'nope'>>({});
+  
+  // Track each card's individual motion value to avoid sharing/snapping issues
+  const cardMotionValues = useRef<Map<string, MotionValue<number>>>(new Map());
 
   const swipeRef = useRef<string | null>(null);
   const deckRef = useRef<HTMLDivElement>(null);
+  const topCardIdRef = useRef<string | null>(null);
+  
+  // Keep ref in sync with state for use in callbacks
+  topCardIdRef.current = deck[deck.length - 1]?.id || null;
 
   const activeX = useMemo(() => motionValue(0), []);
+
+  const updateGlobalX = (val: number, id: string) => {
+    // Only update global UI feedback (backgrounds/buttons) if it's the current top card
+    // Using a ref here is CRITICAL because exiting cards in AnimatePresence 
+    // hold onto old closures of this function where they WERE the top card.
+    if (id === topCardIdRef.current) {
+        activeX.set(val);
+    }
+  };
+
+  const registerCard = (id: string, mv: MotionValue<number>) => {
+    cardMotionValues.current.set(id, mv);
+  };
+
+  const unregisterCard = (id: string) => {
+    cardMotionValues.current.delete(id);
+  };
 
   useEffect(() => {
       if (lastSwipe) {
@@ -143,6 +167,7 @@ export function SwipeDeck({ filters, onRestart }: { filters: Record<string, stri
       setUniversities(filtered);
       setDeck(filtered);
       exitDirectionsRef.current = {};
+      activeX.set(0); // Reset UI
       setLoading(false);
     }
     loadData();
@@ -159,6 +184,8 @@ export function SwipeDeck({ filters, onRestart }: { filters: Record<string, stri
     exitDirectionsRef.current[id] = action;
     
     setDeck((current) => current.slice(0, -1));
+    activeX.set(0); // Reset UI for the next card immediately
+
     if (action === 'like') {
       setLiked(prev => {
         if (prev.some(u => u.id === id)) return prev;
@@ -171,16 +198,23 @@ export function SwipeDeck({ filters, onRestart }: { filters: Record<string, stri
   const handleChoice = (action: 'like' | 'nope') => {
     if (loading || deck.length === 0) return;
     const topCard = deck[deck.length - 1];
+    const mv = cardMotionValues.current.get(topCard.id);
     
-    // Animate activeX to simulate swipe and trigger button feedback
-    animate(activeX, action === 'like' ? 160 : -160, {
-      type: "spring",
-      stiffness: 200,
-      damping: 25,
-      onComplete: () => {
+    if (mv) {
+        // Animate the SPECIFIC card's motion value
+        animate(mv, action === 'like' ? 160 : -160, {
+          type: "spring",
+          stiffness: 200,
+          damping: 25,
+          onComplete: () => {
+            activeX.set(0); 
+            removeCard(topCard.id, action);
+          }
+        });
+    } else {
+        // Fallback if MV not registered
         removeCard(topCard.id, action);
-      }
-    });
+    }
   };
 
   const undoSwipe = () => {
@@ -195,6 +229,7 @@ export function SwipeDeck({ filters, onRestart }: { filters: Record<string, stri
         setLiked(prev => prev.filter(u => u.id !== lastCard.id));
     }
     setDeck(prev => [...prev, lastCard]);
+    activeX.set(0);
   };
 
   const shareOnWhatsApp = () => {
@@ -339,8 +374,10 @@ export function SwipeDeck({ filters, onRestart }: { filters: Record<string, stri
               active={index === deck.length - 1}
               removeCard={removeCard}
               index={index}
-              dragX={index === deck.length - 1 ? activeX : undefined}
               exitDirectionsRef={exitDirectionsRef}
+              registerCard={registerCard}
+              unregisterCard={unregisterCard}
+              onSwipeUpdate={updateGlobalX}
             />
           ))}
         </AnimatePresence>
@@ -447,16 +484,30 @@ function DisciplinesGrid({ data }: { data: University }) {
 }
 
 // Single Card Component - FULL SIZE
-function Card({ data, active, removeCard, index, dragX, exitDirectionsRef }: { 
+function Card({ data, active, removeCard, index, exitDirectionsRef, registerCard, unregisterCard, onSwipeUpdate }: { 
     data: UniversityWithGradient; 
     active: boolean; 
     removeCard: (id: string, action: 'like' | 'nope') => void;
     index: number;
-    dragX?: MotionValue<number>;
     exitDirectionsRef: MutableRefObject<Record<string, 'like' | 'nope'>>;
+    registerCard: (id: string, mv: MotionValue<number>) => void;
+    unregisterCard: (id: string) => void;
+    onSwipeUpdate: (val: number, id: string) => void;
 }) {
-    const localX = useMotionValue(0);
-    const x = dragX || localX;
+    const x = useMotionValue(0);
+
+    // Register this card's motion value with parent for button control
+    useEffect(() => {
+        registerCard(data.id, x);
+        return () => unregisterCard(data.id);
+    }, [data.id, registerCard, unregisterCard, x]);
+
+    // Sync local x to parent's global feedback state (only if active)
+    useMotionValueEvent(x, "change", (latest) => {
+        if (active) {
+            onSwipeUpdate(latest, data.id);
+        }
+    });
     
     // --- Active Card Animations ---
     const rotate = useTransform(x, [-200, 200], [-18, 18]); 
