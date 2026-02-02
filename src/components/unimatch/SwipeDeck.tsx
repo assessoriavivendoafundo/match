@@ -142,7 +142,6 @@ export function SwipeDeck({ filters, onRestart }: { filters: Record<string, stri
 
       setUniversities(filtered);
       setDeck(filtered);
-      setExitDirections({});
       exitDirectionsRef.current = {};
       setLoading(false);
     }
@@ -158,7 +157,6 @@ export function SwipeDeck({ filters, onRestart }: { filters: Record<string, stri
     
     // Update ref immediately for reliable exit animation
     exitDirectionsRef.current[id] = action;
-    setExitDirections(prev => ({ ...prev, [id]: action }));
     
     setDeck((current) => current.slice(0, -1));
     if (action === 'like') {

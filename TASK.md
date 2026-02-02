@@ -25,3 +25,4 @@
 ## Bug Fixes & Maintenance
 - [x] Fix duplicate universities bug in Unimatch SwipeDeck (2026-01-05)
 - [x] Fix linting errors and hydration mismatches in SwipeDeck (2026-01-05)
+- [x] Fix undefined `setExitDirections` causing Vercel build failure (2026-02-02)
