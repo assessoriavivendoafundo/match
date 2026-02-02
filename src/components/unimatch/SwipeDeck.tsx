@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useMemo, MutableRefObject } from "react";
-import { motion, useMotionValue, useTransform, PanInfo, MotionValue, animate, AnimatePresence, motionValue } from "framer-motion";
+import { motion, useMotionValue, useTransform, PanInfo, MotionValue, animate, AnimatePresence, motionValue, Variants } from "framer-motion";
 import { University, getUniversities } from "@/lib/data";
 import { X, GraduationCap, RotateCcw, MapPin, Loader2, Share2, Mail, Palette, TrendingUp, Stethoscope, Atom } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -54,7 +54,6 @@ export function SwipeDeck({ filters, onRestart }: { filters: Record<string, stri
   const [liked, setLiked] = useState<UniversityWithGradient[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastSwipe, setLastSwipe] = useState<'like' | 'nope' | null>(null);
-  const [exitDirections, setExitDirections] = useState<Record<string, 'like' | 'nope'>>({});
   
   // Ref to track exit directions reliably for animation variants
   const exitDirectionsRef = useRef<Record<string, 'like' | 'nope'>>({});
@@ -62,8 +61,7 @@ export function SwipeDeck({ filters, onRestart }: { filters: Record<string, stri
   const swipeRef = useRef<string | null>(null);
   const deckRef = useRef<HTMLDivElement>(null);
 
-  const topCard = deck[deck.length - 1];
-  const activeX = useMemo(() => motionValue(0), [topCard?.id]);
+  const activeX = useMemo(() => motionValue(0), []);
 
   useEffect(() => {
       if (lastSwipe) {
@@ -488,7 +486,7 @@ function Card({ data, active, removeCard, index, dragX, exitDirectionsRef }: {
         else if (info.offset.x < -threshold) removeCard(data.id, 'nope');
     };
 
-    const variants = {
+    const variants: Variants = {
         active: {
             scale: 1,
             y: 0,
