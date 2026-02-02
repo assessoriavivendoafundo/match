@@ -54,18 +54,10 @@ export default function UniMatchPage() {
           className={cn(
             "relative z-50 shrink-0 transition-all duration-500 ease-in-out",
             step !== 'intro' 
-              ? "w-full max-w-[98%] md:max-w-[95%] mx-auto px-4 md:px-6 lg:px-8 py-3 md:py-4 mb-6 md:mb-12 rounded-[2rem] md:rounded-full overflow-hidden" 
+              ? "w-full max-w-[98%] md:max-w-[95%] mx-auto px-4 md:px-6 lg:px-8 py-2 md:py-3 mb-2 md:mb-6 rounded-[2rem] md:rounded-full bg-white/5 backdrop-blur-2xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)]" 
               : "w-full text-center mb-8 md:mb-12 flex flex-col items-center pt-8 md:pt-12"
           )}
         >
-            {/* Glass Background - Fades in ONLY for compact mode */}
-            <motion.div 
-              className="absolute inset-0 z-0 bg-[#182335]/40 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.2)]"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: step !== 'intro' ? 1 : 0 }}
-              transition={{ duration: 0.5, delay: step !== 'intro' ? 0.3 : 0 }}
-            />
-
             {/* Content Wrapper - Adapts Layout */}
             <motion.div 
               layout
@@ -81,12 +73,12 @@ export default function UniMatchPage() {
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setStep('intro')}
                 className={cn(
-                  "font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-white/70 to-white/20 drop-shadow-2xl cursor-pointer flex-shrink min-w-0 transition-all duration-500",
+                  "font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white via-white/70 to-white/20 drop-shadow-2xl cursor-pointer flex-shrink min-w-0 transition-all duration-500 py-4 px-2",
                   step === 'intro' 
-                    ? "text-5xl md:text-8xl p-2 text-center hover:drop-shadow-[0_0_12px_rgba(255,255,255,0.25)]" 
-                    : "text-base md:text-3xl lg:text-5xl leading-[1.1] max-w-[140px] md:max-w-none break-words"
+                    ? "text-5xl md:text-8xl text-center hover:drop-shadow-[0_0_12px_rgba(255,255,255,0.25)]" 
+                    : "text-base md:text-3xl lg:text-5xl leading-[1.2] max-w-[140px] md:max-w-none break-words"
                 )}
-                style={{ WebkitTextStroke: step !== 'intro' ? '1px rgba(255,255,255,0.7)' : '1.5px rgba(255,255,255,0.7)' }}
+                style={{ WebkitTextStroke: '1px rgba(255,255,255,0.7)' }}
               >
                 Match Universitário
               </motion.h1>
