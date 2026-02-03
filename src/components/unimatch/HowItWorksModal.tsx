@@ -66,7 +66,7 @@ export function HowItWorksModal({ isOpen, onClose, onStartQuiz }: HowItWorksModa
             animate={{ opacity: 1, scale: 1, y: 0, filter: "blur(0px)" }}
             exit={{ opacity: 0, scale: 0.95, y: 20, filter: "blur(10px)" }}
             transition={{ type: "spring", duration: 0.5, bounce: 0.3 }}
-            className="relative w-full max-w-md bg-white/5 backdrop-blur-3xl border border-white/10 rounded-[2rem] shadow-[0_0_80px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden max-h-[90vh]"
+            className="relative w-full max-w-md bg-white/5 backdrop-blur-3xl border border-white/10 rounded-[2rem] shadow-[0_0_80px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden max-h-[90vh] will-change-transform"
           >
             {/* Header */}
             <div className="relative pt-6 pb-2 px-6 text-center shrink-0">

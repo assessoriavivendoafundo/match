@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useMemo, MutableRefObject } from "react";
+import { useState, useEffect, useRef, useMemo, MutableRefObject, memo } from "react";
 import { motion, useMotionValue, useTransform, PanInfo, MotionValue, animate, AnimatePresence, motionValue, Variants, useMotionValueEvent } from "framer-motion";
 import { University, getUniversities } from "@/lib/data";
 import { X, GraduationCap, RotateCcw, MapPin, Loader2, Share2, Mail, Palette, TrendingUp, Stethoscope, Atom } from "lucide-react";
@@ -367,11 +367,11 @@ export function SwipeDeck({ filters, onRestart }: { filters: Record<string, stri
       {/* Card Stack */}
       <div className="relative w-full h-[62dvh] md:h-[68vh] perspective-1000 mb-10 md:mb-14">
         <AnimatePresence initial={false}>
-          {deck.map((uni, index) => (
+          {deck.slice(-3).map((uni, index, arr) => (
             <Card 
               key={uni.id} 
               data={uni} 
-              active={index === deck.length - 1}
+              active={index === arr.length - 1}
               removeCard={removeCard}
               index={index}
               exitDirectionsRef={exitDirectionsRef}
@@ -437,7 +437,7 @@ function pseudoRandom(seed: string) {
 }
 
 // Disciplines Grid Component
-function DisciplinesGrid({ data }: { data: University }) {
+const DisciplinesGrid = memo(function DisciplinesGrid({ data }: { data: University }) {
     return (
         <div className="bg-white/20 backdrop-blur-xl rounded-2xl p-2.5 grid grid-cols-2 gap-2.5 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] ring-1 ring-white/20">
             {/* Top Left: Humanities */}
@@ -481,7 +481,7 @@ function DisciplinesGrid({ data }: { data: University }) {
             </div>
         </div>
     );
-}
+});
 
 // Single Card Component - FULL SIZE
 function Card({ data, active, removeCard, index, exitDirectionsRef, registerCard, unregisterCard, onSwipeUpdate }: { 
@@ -539,13 +539,11 @@ function Card({ data, active, removeCard, index, exitDirectionsRef, registerCard
         active: {
             scale: 1,
             y: 0,
-            filter: "blur(0px)",
             opacity: 1
         },
         inactive: {
             scale: 0.95,
             y: 30,
-            filter: "blur(4px)",
             opacity: 0.6
         },
         exit: (customRef: MutableRefObject<Record<string, 'like' | 'nope'>>) => {
@@ -600,7 +598,7 @@ function Card({ data, active, removeCard, index, exitDirectionsRef, registerCard
             dragConstraints={{ left: 0, right: 0 }}
             onDragEnd={handleDragEnd}
             className={cn(
-                "absolute top-0 left-0 w-full h-full bg-white rounded-[2rem] shadow-2xl overflow-hidden cursor-grab active:cursor-grabbing border border-white/20 select-none",
+                "absolute top-0 left-0 w-full h-full bg-white rounded-[2rem] shadow-2xl overflow-hidden cursor-grab active:cursor-grabbing border border-white/20 select-none will-change-transform",
                 !active && "pointer-events-none"
             )}
         >
