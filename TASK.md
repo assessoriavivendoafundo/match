@@ -36,3 +36,10 @@
 - [x] Fix swiping card z-index layering (ensure exit on top) (2026-02-03)
 - [x] Fix jerky undo animation on rapid clicks (remove conditional style snaps) (2026-02-03)
 - [x] Fix swiping card z-index exit glitch (force zIndex=500 in variant) (2026-02-03)
+- [x] Fix 'stuck' match/nope buttons and disable button activation during undo (UniMatch SwipeDeck) (2026-02-03)
+- [x] Fix 'green sliver' card stacking bug with progressive depth scaling (UniMatch SwipeDeck) (2026-02-03)
+- [x] Fix SwipeDeck exit animation incorrectly snapping back instead of flying out (UniMatch SwipeDeck) (2026-02-03)
+
+## Bug Fixes & Maintenance
+
+## Bug Fixes & Maintenance

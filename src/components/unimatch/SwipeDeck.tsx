@@ -76,6 +76,13 @@ export function SwipeDeck({ filters, onRestart }: { filters: Record<string, stri
   const activeX = useMemo(() => motionValue(0), []);
 
   const updateGlobalX = (val: number, id: string) => {
+    // Prevent updates during undo operations to avoid button flashing
+    if (isUndoingRef.current) return;
+
+    // Prevent updates from cards that are currently being removed/swiped out
+    // This fixes the "stuck button" glitch where an exiting card overwrites the reset state
+    if (swipeRef.current === id) return;
+
     // Only update global UI feedback (backgrounds/buttons) if it's the current top card
     // Using a ref here is CRITICAL because exiting cards in AnimatePresence 
     // hold onto old closures of this function where they WERE the top card.
@@ -390,6 +397,7 @@ export function SwipeDeck({ filters, onRestart }: { filters: Record<string, stri
               active={index === arr.length - 1}
               removeCard={removeCard}
               index={index}
+              stackIndex={arr.length - 1 - index}
               exitDirectionsRef={exitDirectionsRef}
               registerCard={registerCard}
               unregisterCard={unregisterCard}
@@ -500,11 +508,12 @@ const DisciplinesGrid = memo(function DisciplinesGrid({ data }: { data: Universi
 });
 
 // Single Card Component - FULL SIZE
-function Card({ data, active, removeCard, index, exitDirectionsRef, registerCard, unregisterCard, onSwipeUpdate }: { 
+function Card({ data, active, removeCard, index, stackIndex, exitDirectionsRef, registerCard, unregisterCard, onSwipeUpdate }: { 
     data: UniversityWithGradient; 
     active: boolean; 
     removeCard: (id: string, action: 'like' | 'nope') => void;
     index: number;
+    stackIndex: number;
     exitDirectionsRef: MutableRefObject<Record<string, 'like' | 'nope'>>;
     registerCard: (id: string, mv: MotionValue<number>) => void;
     unregisterCard: (id: string) => void;
@@ -550,7 +559,11 @@ function Card({ data, active, removeCard, index, exitDirectionsRef, registerCard
             transition: { type: "spring", stiffness: 200, damping: 25 } 
         },
         inactive: {
-            scale: 0.95, y: 30, opacity: 1, x: 0, rotate: randomRotate,
+            scale: 1 - stackIndex * 0.05,
+            y: stackIndex * 15,
+            opacity: 1, 
+            x: 0, 
+            rotate: randomRotate,
             transition: { duration: 0.3, ease: "easeOut" } // Added transition for inactive state
         },
         enter: (customRef: MutableRefObject<Record<string, 'like' | 'nope'>>) => {
@@ -562,22 +575,27 @@ function Card({ data, active, removeCard, index, exitDirectionsRef, registerCard
             };
         },
         exit: (customRef: MutableRefObject<Record<string, 'like' | 'nope'>>) => {
-            // If the card is NOT active (i.e. it's at the bottom of the stack and falling out of the slice window),
-            // it should just fade out instantly in place.
-            if (!active) return { x: 0, y: 0, opacity: 0, transition: { duration: 0 } };
-
             const dir = customRef.current[data.id];
-            const xVal = x.get();
-            let tx = randomExitX, tr = randomExitRotate;
-            
-            if (xVal > 50 || dir === 'like') { tx = 1000; tr = 45; }
-            else if (xVal < -50 || dir === 'nope') { tx = -1000; tr = -45; }
-            
-            return {
-                x: tx, rotate: tr, opacity: 0,
-                zIndex: 500, // Force exiting card on top
-                transition: { duration: 0.4, ease: "easeIn" }
-            };
+
+            // If a direction exists, the card was explicitly swiped (or button clicked).
+            // It MUST fly out, regardless of the 'active' prop status.
+            if (dir) {
+                const xVal = x.get();
+                let tx = randomExitX, tr = randomExitRotate;
+                
+                if (xVal > 50 || dir === 'like') { tx = 1000; tr = 45; }
+                else if (xVal < -50 || dir === 'nope') { tx = -1000; tr = -45; }
+                
+                return {
+                    x: tx, rotate: tr, opacity: 0,
+                    zIndex: 500, // Force exiting card on top
+                    transition: { duration: 0.4, ease: "easeIn" }
+                };
+            }
+
+            // Fallback: Card falling out of the stack window (e.g. when Undo adds a card on top, pushing this one out)
+            // It should just vanish instantly to avoid visual clutter.
+            return { x: 0, y: 0, opacity: 0, transition: { duration: 0 } };
         }
     };
 
