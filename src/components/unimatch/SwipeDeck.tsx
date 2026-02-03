@@ -575,15 +575,15 @@ function Card({ data, active, removeCard, index, exitDirectionsRef, registerCard
             
             return {
                 x: tx, rotate: tr, opacity: 0,
+                zIndex: 500, // Force exiting card on top
                 transition: { duration: 0.4, ease: "easeIn" }
             };
         }
     };
 
-    // Fix: Only exiting ACTIVE cards should be on top. 
-    // Exiting background cards (slice shift) should stay behind.
-    // We boost the exiting active card to 200 to ensure it stays strictly above the new active card (which will be 100).
-    const finalZIndex = (!isPresent && active) ? 200 : (active ? 100 : index);
+    // Fix: Always force EXITING cards to be on top (500). 
+    // This prevents them from falling behind the new active card (100) if 'active' prop is stale/false.
+    const finalZIndex = !isPresent ? 500 : (active ? 100 : index);
 
     return (
         <motion.div
