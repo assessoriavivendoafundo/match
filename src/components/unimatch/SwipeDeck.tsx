@@ -44,6 +44,8 @@ const LIKE_HOVER_STATE = {
 interface UniversityWithGradient extends University {
     gradient: string;
     highlight: string;
+    isRestored?: boolean;
+    exitDirection?: 'like' | 'nope';
 }
 
 export function SwipeDeck({ filters, onRestart }: { filters: Record<string, string | string[]>; onRestart: () => void }) {
@@ -57,6 +59,7 @@ export function SwipeDeck({ filters, onRestart }: { filters: Record<string, stri
   
   // Ref to track exit directions reliably for animation variants
   const exitDirectionsRef = useRef<Record<string, 'like' | 'nope'>>({});
+  const isUndoingRef = useRef(false);
   
   // Track each card's individual motion value to avoid sharing/snapping issues
   const cardMotionValues = useRef<Map<string, MotionValue<number>>>(new Map());
@@ -194,7 +197,8 @@ export function SwipeDeck({ filters, onRestart }: { filters: Record<string, stri
         return [...prev, currentCard];
       });
     }
-    setHistory(prev => [...prev, currentCard]);
+    // Store direction in history for robust undo
+    setHistory(prev => [...prev, { ...currentCard, exitDirection: action }]);
   };
 
   const handleChoice = (action: 'like' | 'nope') => {
@@ -220,8 +224,12 @@ export function SwipeDeck({ filters, onRestart }: { filters: Record<string, stri
   };
 
   const undoSwipe = () => {
+    if (history.length === 0 || isUndoingRef.current) return;
+    
+    isUndoingRef.current = true;
+    // Lock for slightly less than animation duration to allow fluid but safe rapid clicks
+    setTimeout(() => { isUndoingRef.current = false; }, 350);
 
-    if (history.length === 0) return;
     const lastCard = history[history.length - 1];
     if (swipeRef.current === lastCard.id) {
         swipeRef.current = null;
@@ -230,7 +238,13 @@ export function SwipeDeck({ filters, onRestart }: { filters: Record<string, stri
     if (liked.find(u => u.id === lastCard.id)) {
         setLiked(prev => prev.filter(u => u.id !== lastCard.id));
     }
-    setDeck(prev => [...prev, lastCard]);
+    
+    // Restore exit direction to ref in case it was lost (e.g. filter change)
+    if (lastCard.exitDirection) {
+        exitDirectionsRef.current[lastCard.id] = lastCard.exitDirection;
+    }
+
+    setDeck(prev => [...prev, { ...lastCard, isRestored: true }]);
     activeX.set(0);
   };
 
@@ -498,170 +512,137 @@ function Card({ data, active, removeCard, index, exitDirectionsRef, registerCard
 }) {
     const x = useMotionValue(0);
     const isPresent = useIsPresent();
+    const [labelsVisible, setLabelsVisible] = useState(!data.isRestored);
+    // Ref to block global x updates during the initial enter animation
+    const isEnteringRef = useRef(data.isRestored);
 
-    // Register this card's motion value with parent for button control
     useEffect(() => {
         registerCard(data.id, x);
         return () => unregisterCard(data.id);
     }, [data.id, registerCard, unregisterCard, x]);
 
-    // Sync local x to parent's global feedback state (only if active)
     useMotionValueEvent(x, "change", (latest) => {
-        if (active) {
+        // Only update global UI if active AND not currently flying in from Undo
+        if (active && !isEnteringRef.current) {
             onSwipeUpdate(latest, data.id);
         }
     });
     
-    // --- Active Card Animations ---
     const rotate = useTransform(x, [-200, 200], [-18, 18]); 
-    
-    // Opacity: Keep it visible LONGER. Only fade out when it's really gone. 
     const opacity = useTransform(x, [-300, -200, 0, 200, 300], [0, 1, 1, 1, 0]); 
-
-    // Stamps
     const likeOpacity = useTransform(x, [20, 100], [0, 1]);
     const nopeOpacity = useTransform(x, [-20, -100], [0, 1]);
 
-    // Random Exit Physics
     const randomVal = useMemo(() => pseudoRandom(data.id), [data.id]);
     const randomRotate = (randomVal * 6) - 3; 
     const randomExitX = randomVal > 0.5 ? 1000 : -1000; 
     const randomExitRotate = randomVal > 0.5 ? 45 : -45; 
-    
-    const likeLabel = LIKE_LABELS[0];
-    const nopeLabel = NOPE_LABELS[0];
 
     const handleDragEnd = (_: unknown, info: PanInfo) => {
         if (!active) return;
-        const threshold = 100;
-        if (info.offset.x > threshold) removeCard(data.id, 'like');
-        else if (info.offset.x < -threshold) removeCard(data.id, 'nope');
+        if (info.offset.x > 100) removeCard(data.id, 'like');
+        else if (info.offset.x < -100) removeCard(data.id, 'nope');
     };
 
     const variants: Variants = {
         active: {
-            scale: 1,
-            y: 0,
-            opacity: 1
+            x: 0, y: 0, rotate: 0, scale: 1, opacity: 1,
+            transition: { type: "spring", stiffness: 200, damping: 25 } 
         },
         inactive: {
-            scale: 0.95,
-            y: 30,
-            opacity: 1
+            scale: 0.95, y: 30, opacity: 1,
+            transition: { duration: 0.3, ease: "easeOut" } // Added transition for inactive state
+        },
+        enter: (customRef: MutableRefObject<Record<string, 'like' | 'nope'>>) => {
+            const dir = customRef.current[data.id] || 'nope';
+            return {
+                x: dir === 'like' ? 1000 : -1000,
+                rotate: dir === 'like' ? 45 : -45,
+                opacity: 1
+            };
         },
         exit: (customRef: MutableRefObject<Record<string, 'like' | 'nope'>>) => {
+            // If the card is NOT active (i.e. it's at the bottom of the stack and falling out of the slice window),
+            // it should just fade out instantly in place.
+            if (!active) return { x: 0, y: 0, opacity: 0, transition: { duration: 0 } };
+
             const dir = customRef.current[data.id];
             const xVal = x.get();
+            let tx = randomExitX, tr = randomExitRotate;
             
-            // Logic:
-            // If xVal is significant (>50 or <-50), use it (respect swipe direction).
-            // If not (e.g. snapped back or button click with weird timing), use explicit dir from Ref.
-            // If dir is missing, use random.
-            
-            let targetX = randomExitX;
-            let targetRotate = randomExitRotate;
-            
-            if (xVal > 50) {
-                 targetX = 1000;
-                 targetRotate = 45;
-            } else if (xVal < -50) {
-                 targetX = -1000;
-                 targetRotate = -45;
-            } else if (dir === 'like') {
-                 targetX = 1000;
-                 targetRotate = 45;
-            } else if (dir === 'nope') {
-                 targetX = -1000;
-                 targetRotate = -45;
-            }
+            if (xVal > 50 || dir === 'like') { tx = 1000; tr = 45; }
+            else if (xVal < -50 || dir === 'nope') { tx = -1000; tr = -45; }
             
             return {
-                x: targetX,
-                rotate: targetRotate,
-                opacity: 0,
+                x: tx, rotate: tr, opacity: 0,
                 transition: { duration: 0.4, ease: "easeIn" }
             };
         }
     };
+
+    // Fix: Only exiting ACTIVE cards should be on top. 
+    // Exiting background cards (slice shift) should stay behind.
+    const finalZIndex = active || (!isPresent && active) ? 100 : index;
 
     return (
         <motion.div
             style={{ 
                 x: active ? x : 0, 
                 rotate: active ? rotate : randomRotate,
-                zIndex: !isPresent ? 100 : index, // Exiting cards must be on top
-                opacity: active ? opacity : 1, // Background cards solid
+                zIndex: finalZIndex,
+                opacity: active ? opacity : 1,
             }}
-            initial={false}
-            custom={exitDirectionsRef} // Pass ref for variant to access
+            initial={data.isRestored ? "enter" : false}
+            custom={exitDirectionsRef}
             variants={variants}
             animate={active ? "active" : "inactive"}
             exit="exit"
             drag={active ? "x" : false}
             dragConstraints={{ left: 0, right: 0 }}
             onDragEnd={handleDragEnd}
+            onAnimationComplete={(definition) => {
+                if (definition === "active") {
+                    isEnteringRef.current = false;
+                    if (!labelsVisible) setLabelsVisible(true);
+                }
+            }}
             className={cn(
                 "absolute top-0 left-0 w-full h-full bg-white rounded-[2rem] shadow-2xl overflow-hidden cursor-grab active:cursor-grabbing border border-white/20 select-none will-change-transform",
                 !active && "pointer-events-none"
             )}
         >
-            {/* Feedback Overlays */}
-            {active && (
+            {active && labelsVisible && (
                 <>
                     <motion.div style={{ opacity: likeOpacity }} className="absolute top-12 left-8 z-30 pointer-events-none origin-center">
-                         <div 
-                            className="border-[6px] border-green-500/50 text-green-600 rounded-3xl px-8 py-4 -rotate-12 bg-white/90 backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.3)] ring-1 ring-black/5 transition-transform"
-                         >
-                             <span className="font-black text-6xl md:text-7xl tracking-tighter uppercase drop-shadow-sm">
-                                {likeLabel}
-                             </span>
+                         <div className="border-[6px] border-green-500/50 text-green-600 rounded-3xl px-8 py-4 -rotate-12 bg-white/90 backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.3)] ring-1 ring-black/5 transition-transform">
+                             <span className="font-black text-6xl md:text-7xl tracking-tighter uppercase drop-shadow-sm">{LIKE_LABELS[0]}</span>
                          </div>
                     </motion.div>
                     <motion.div style={{ opacity: nopeOpacity }} className="absolute top-12 right-8 z-30 pointer-events-none origin-center">
                          <div className="border-[6px] border-red-500/50 text-red-600 rounded-3xl px-8 py-4 rotate-12 bg-white/90 backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.3)] ring-1 ring-black/5 transition-transform">
-                             <span className="font-black text-6xl md:text-7xl tracking-tighter uppercase drop-shadow-sm">
-                                {nopeLabel}
-                             </span>
+                             <span className="font-black text-6xl md:text-7xl tracking-tighter uppercase drop-shadow-sm">{NOPE_LABELS[0]}</span>
                          </div>
                     </motion.div>
                 </>
             )}
 
-            {/* Content Container with Dynamic Gradient */}
             <div className={cn("h-full w-full relative flex flex-col p-8", data.gradient)}>
-                
-                {/* Abstract Decorative Circles */}
                 <div className="absolute top-[-20%] right-[-20%] w-[300px] h-[300px] bg-white/5 rounded-full blur-3xl pointer-events-none" />
                 <div className="absolute bottom-[-10%] left-[-10%] w-[250px] h-[250px] bg-black/20 rounded-full blur-3xl pointer-events-none" />
 
-                {/* Header Row: Title/Location (Left) & Radar (Right) */}
                 <div className="flex justify-between items-start z-20 mb-6 flex-shrink-0">
                     <div className="flex-1 pr-6">
-                        {/* Location Label - moved above title for hierarchy or keep below? User liked title legible. */}
                         <div className="flex items-center gap-2 text-white/90 mb-3 uppercase tracking-wider font-semibold text-xs drop-shadow-sm">
                             <MapPin className={cn("w-3 h-3", data.highlight)} />
                             <span>{data.city} • {data.region === 'north' ? 'Norte' : data.region === 'center' ? 'Centro' : 'Sul'}</span>
                         </div>
-                        
-                        {/* BIG TITLE */}
-                        <h2 className="text-3xl md:text-4xl font-black text-white leading-[1.05] drop-shadow-md">
-                            {data.name}
-                        </h2>
+                        <h2 className="text-3xl md:text-4xl font-black text-white leading-[1.05] drop-shadow-md">{data.name}</h2>
                     </div>
-
-                    {/* Radar - Top Right */}
-                    <div className="flex-shrink-0 pt-1">
-                        <DisciplinesGrid data={data} />
-                    </div>
+                    <div className="flex-shrink-0 pt-1"><DisciplinesGrid data={data} /></div>
                 </div>
 
-                {/* Main Content Area - Scrollable Description */}
                 <div className="flex-1 min-h-0 z-10 relative">
-                     {/* Scrollable Description */}
-                    <div 
-                        className="h-full pl-4 border-l-2 border-white/20 overflow-y-auto custom-scrollbar pr-2"
-                        onPointerDown={(e) => e.stopPropagation()}
-                    >
+                    <div className="h-full pl-4 border-l-2 border-white/20 overflow-y-auto custom-scrollbar pr-2" onPointerDown={(e) => e.stopPropagation()}>
                          <p className="text-white text-lg md:text-xl leading-relaxed font-medium pb-4 drop-shadow-sm">
                             {data.description.split(/(Curiosidade:?)/g).map((part, i) => {
                                 if (part.match(/Curiosidade:?/)) {
@@ -677,8 +658,6 @@ function Card({ data, active, removeCard, index, exitDirectionsRef, registerCard
                         </p>
                     </div>
                 </div>
-
-                {/* Bottom - Empty or Decorative Footer Line */}
                 <div className="h-px w-full bg-gradient-to-r from-transparent via-white/20 to-transparent mt-4 flex-shrink-0" />
             </div>
         </motion.div>

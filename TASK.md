@@ -22,6 +22,11 @@
 - [x] Graphically optimize UniMatch for mobile and other formats (2026-02-01)
 - [x] Implement dynamic button feedback (scale/opacity) during swipe in UniMatch (2026-02-01)
 
+- [x] Implement deterministic reverse animation for Undo (2026-02-03)
+- [x] Refine undo animation (smoother springs, fix bottom card exit glitch) (2026-02-03)
+- [x] Fix double-undo glitch (race condition lock & state restore) (2026-02-03)
+- [x] Fix undo global state flash (suppress activeX update during entry) (2026-02-03)
+
 ## Bug Fixes & Maintenance
 - [x] Fix duplicate universities bug in Unimatch SwipeDeck (2026-01-05)
 - [x] Fix linting errors and hydration mismatches in SwipeDeck (2026-01-05)
