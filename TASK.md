@@ -34,3 +34,4 @@
 - [x] Optimize SwipeDeck performance on mobile (virtualization + remove heavy filters) (2026-02-03)
 - [x] Fix card stack transparency in UniMatch SwipeDeck (2026-02-03)
 - [x] Fix swiping card z-index layering (ensure exit on top) (2026-02-03)
+- [x] Fix jerky undo animation on rapid clicks (remove conditional style snaps) (2026-02-03)

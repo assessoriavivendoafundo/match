@@ -550,7 +550,7 @@ function Card({ data, active, removeCard, index, exitDirectionsRef, registerCard
             transition: { type: "spring", stiffness: 200, damping: 25 } 
         },
         inactive: {
-            scale: 0.95, y: 30, opacity: 1,
+            scale: 0.95, y: 30, opacity: 1, x: 0, rotate: randomRotate,
             transition: { duration: 0.3, ease: "easeOut" } // Added transition for inactive state
         },
         enter: (customRef: MutableRefObject<Record<string, 'like' | 'nope'>>) => {
@@ -588,10 +588,10 @@ function Card({ data, active, removeCard, index, exitDirectionsRef, registerCard
     return (
         <motion.div
             style={{ 
-                x: active ? x : 0, 
-                rotate: active ? rotate : randomRotate,
+                x, 
+                rotate: active ? rotate : undefined,
                 zIndex: finalZIndex,
-                opacity: active ? opacity : 1,
+                opacity,
             }}
             initial={data.isRestored ? "enter" : false}
             custom={exitDirectionsRef}
