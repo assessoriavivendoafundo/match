@@ -582,7 +582,8 @@ function Card({ data, active, removeCard, index, exitDirectionsRef, registerCard
 
     // Fix: Only exiting ACTIVE cards should be on top. 
     // Exiting background cards (slice shift) should stay behind.
-    const finalZIndex = active || (!isPresent && active) ? 100 : index;
+    // We boost the exiting active card to 200 to ensure it stays strictly above the new active card (which will be 100).
+    const finalZIndex = (!isPresent && active) ? 200 : (active ? 100 : index);
 
     return (
         <motion.div
