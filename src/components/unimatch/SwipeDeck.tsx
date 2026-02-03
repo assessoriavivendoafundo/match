@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useMemo, MutableRefObject, memo } from "react";
-import { motion, useMotionValue, useTransform, PanInfo, MotionValue, animate, AnimatePresence, motionValue, Variants, useMotionValueEvent } from "framer-motion";
+import { motion, useMotionValue, useTransform, PanInfo, MotionValue, animate, AnimatePresence, motionValue, Variants, useMotionValueEvent, useIsPresent } from "framer-motion";
 import { University, getUniversities } from "@/lib/data";
 import { X, GraduationCap, RotateCcw, MapPin, Loader2, Share2, Mail, Palette, TrendingUp, Stethoscope, Atom } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -66,7 +66,9 @@ export function SwipeDeck({ filters, onRestart }: { filters: Record<string, stri
   const topCardIdRef = useRef<string | null>(null);
   
   // Keep ref in sync with state for use in callbacks
-  topCardIdRef.current = deck[deck.length - 1]?.id || null;
+  useEffect(() => {
+    topCardIdRef.current = deck[deck.length - 1]?.id || null;
+  }, [deck]);
 
   const activeX = useMemo(() => motionValue(0), []);
 
@@ -171,7 +173,7 @@ export function SwipeDeck({ filters, onRestart }: { filters: Record<string, stri
       setLoading(false);
     }
     loadData();
-  }, [filters]);
+  }, [filters, activeX]);
 
   const removeCard = (id: string, action: 'like' | 'nope') => {
     if (swipeRef.current === id) return;
@@ -495,6 +497,7 @@ function Card({ data, active, removeCard, index, exitDirectionsRef, registerCard
     onSwipeUpdate: (val: number, id: string) => void;
 }) {
     const x = useMotionValue(0);
+    const isPresent = useIsPresent();
 
     // Register this card's motion value with parent for button control
     useEffect(() => {
@@ -544,7 +547,7 @@ function Card({ data, active, removeCard, index, exitDirectionsRef, registerCard
         inactive: {
             scale: 0.95,
             y: 30,
-            opacity: 0.6
+            opacity: 1
         },
         exit: (customRef: MutableRefObject<Record<string, 'like' | 'nope'>>) => {
             const dir = customRef.current[data.id];
@@ -586,8 +589,8 @@ function Card({ data, active, removeCard, index, exitDirectionsRef, registerCard
             style={{ 
                 x: active ? x : 0, 
                 rotate: active ? rotate : randomRotate,
-                zIndex: index,
-                opacity: active ? opacity : 0.6, // Background cards dimmed
+                zIndex: !isPresent ? 100 : index, // Exiting cards must be on top
+                opacity: active ? opacity : 1, // Background cards solid
             }}
             initial={false}
             custom={exitDirectionsRef} // Pass ref for variant to access

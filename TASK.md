@@ -27,3 +27,5 @@
 - [x] Fix linting errors and hydration mismatches in SwipeDeck (2026-01-05)
 - [x] Fix undefined `setExitDirections` causing Vercel build failure (2026-02-02)
 - [x] Optimize SwipeDeck performance on mobile (virtualization + remove heavy filters) (2026-02-03)
+- [x] Fix card stack transparency in UniMatch SwipeDeck (2026-02-03)
+- [x] Fix swiping card z-index layering (ensure exit on top) (2026-02-03)

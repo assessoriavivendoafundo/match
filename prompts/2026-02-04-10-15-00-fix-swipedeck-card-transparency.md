@@ -1,0 +1,1 @@
+I dont like the fact that the cards behind the swiped one are transparent. fix it @.gemini/agents/ui-designer.md
