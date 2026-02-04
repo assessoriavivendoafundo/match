@@ -385,10 +385,10 @@ export function SwipeDeck({ filters, onRestart }: { filters: Record<string, stri
   }
 
   return (
-    <div ref={deckRef} className="relative w-full max-w-md md:max-w-lg lg:max-w-xl mx-auto h-[75dvh] md:h-[78vh] flex flex-col items-center justify-center px-1 md:px-0">
+    <div ref={deckRef} className="relative w-full max-w-md md:max-w-lg lg:max-w-xl mx-auto h-[82dvh] md:h-[78vh] flex flex-col items-center justify-between md:justify-center px-1 md:px-0 py-2 md:py-0">
       
       {/* Card Stack */}
-      <div className="relative w-full h-[62dvh] md:h-[68vh] perspective-1000 mb-10 md:mb-14">
+      <div className="relative w-full h-[60dvh] md:h-[68vh] perspective-1000 mt-2 md:mt-0 md:mb-14">
         <AnimatePresence initial={false}>
           {deck.slice(-3).map((uni, index, arr) => (
             <Card 
@@ -412,22 +412,22 @@ export function SwipeDeck({ filters, onRestart }: { filters: Record<string, stri
         <motion.button 
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
-            className={cn(buttonVariants({ size: "icon", variant: "ghost" }), "w-12 h-12 md:w-16 md:h-16 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[#567190] hover:bg-white hover:text-[#182335] transition-all shadow-xl disabled:opacity-20 relative overflow-hidden group")}
+            className={cn(buttonVariants({ size: "icon", variant: "ghost" }), "w-14 h-14 md:w-16 md:h-16 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[#567190] hover:bg-white hover:text-[#182335] transition-all shadow-xl disabled:opacity-20 relative overflow-hidden group")}
             onClick={undoSwipe}
             disabled={history.length === 0}
         >
-            <RotateCcw className="w-5 h-5 md:w-7 md:h-7 relative z-10 group-hover:rotate-[-120deg] transition-transform duration-500" />
+            <RotateCcw className="w-6 h-6 md:w-7 md:h-7 relative z-10 group-hover:rotate-[-120deg] transition-transform duration-500" />
         </motion.button>
         
         <motion.button 
             style={{ scale: nopeScale, opacity: nopeOpacity, background: nopeBg, color: nopeColor, borderColor: nopeBorder, boxShadow: nopeShadow, willChange: "transform, opacity, box-shadow" }}
             whileHover={NOPE_HOVER_STATE}
             whileTap={{ scale: 0.95 }}
-            className={cn(buttonVariants({ size: "icon", variant: "ghost" }), "w-16 h-16 md:w-20 md:h-20 rounded-full backdrop-blur-2xl border-2 shadow-xl relative overflow-hidden group transform-gpu")}
+            className={cn(buttonVariants({ size: "icon", variant: "ghost" }), "w-20 h-20 md:w-24 md:h-24 rounded-full backdrop-blur-2xl border-2 shadow-xl relative overflow-hidden group transform-gpu")}
             onClick={() => handleChoice('nope')}
         >
             <motion.div style={{ rotate: nopeIconRotate }} className="relative z-10">
-                <X className="w-8 h-8 md:w-10 md:h-10 stroke-[3]" />
+                <X className="w-10 h-10 md:w-12 md:h-12 stroke-[3]" />
             </motion.div>
         </motion.button>
 
@@ -435,11 +435,11 @@ export function SwipeDeck({ filters, onRestart }: { filters: Record<string, stri
             style={{ scale: likeScale, opacity: likeOpacity, background: likeBg, color: likeColor, borderColor: likeBorder, boxShadow: likeShadow, willChange: "transform, opacity, box-shadow" }}
             whileHover={LIKE_HOVER_STATE}
             whileTap={{ scale: 0.95 }}
-            className={cn(buttonVariants({ size: "icon", variant: "ghost" }), "w-16 h-16 md:w-20 md:h-20 rounded-full backdrop-blur-2xl border-2 shadow-xl relative overflow-hidden group transform-gpu")}
+            className={cn(buttonVariants({ size: "icon", variant: "ghost" }), "w-20 h-20 md:w-24 md:h-24 rounded-full backdrop-blur-2xl border-2 shadow-xl relative overflow-hidden group transform-gpu")}
             onClick={() => handleChoice('like')}
         >
             <motion.div style={{ rotate: likeIconRotate }} className="relative z-10">
-                <GraduationCap className="w-8 h-8 md:w-10 md:h-10 stroke-[3]" />
+                <GraduationCap className="w-10 h-10 md:w-12 md:h-12 stroke-[3]" />
             </motion.div>
         </motion.button>
       </div>
@@ -645,12 +645,12 @@ function Card({ data, active, removeCard, index, stackIndex, exitDirectionsRef, 
                 </>
             )}
 
-            <div className={cn("h-full w-full relative flex flex-col p-8", data.gradient)}>
+            <div className={cn("h-full w-full relative flex flex-col p-6 md:p-8", data.gradient)}>
                 <div className="absolute top-[-20%] right-[-20%] w-[300px] h-[300px] bg-white/5 rounded-full blur-3xl pointer-events-none transform-gpu" />
                 <div className="absolute bottom-[-10%] left-[-10%] w-[250px] h-[250px] bg-black/20 rounded-full blur-3xl pointer-events-none transform-gpu" />
 
-                <div className="flex justify-between items-start z-20 mb-6 flex-shrink-0">
-                    <div className="flex-1 pr-6">
+                <div className="flex justify-between items-start z-20 mb-4 md:mb-6 flex-shrink-0">
+                    <div className="flex-1 pr-4 md:pr-6">
                         <div className="flex items-center gap-2 text-white/90 mb-3 uppercase tracking-wider font-semibold text-xs drop-shadow-sm">
                             <MapPin className={cn("w-3 h-3", data.highlight)} />
                             <span>{data.city} • {data.region === 'north' ? 'Norte' : data.region === 'center' ? 'Centro' : 'Sul'}</span>
