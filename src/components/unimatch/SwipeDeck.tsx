@@ -420,10 +420,10 @@ export function SwipeDeck({ filters, onRestart }: { filters: Record<string, stri
         </motion.button>
         
         <motion.button 
-            style={{ scale: nopeScale, opacity: nopeOpacity, background: nopeBg, color: nopeColor, borderColor: nopeBorder, boxShadow: nopeShadow }}
+            style={{ scale: nopeScale, opacity: nopeOpacity, background: nopeBg, color: nopeColor, borderColor: nopeBorder, boxShadow: nopeShadow, willChange: "transform, opacity, box-shadow" }}
             whileHover={NOPE_HOVER_STATE}
             whileTap={{ scale: 0.95 }}
-            className={cn(buttonVariants({ size: "icon", variant: "ghost" }), "w-16 h-16 md:w-20 md:h-20 rounded-full backdrop-blur-2xl border-2 shadow-xl relative overflow-hidden group")}
+            className={cn(buttonVariants({ size: "icon", variant: "ghost" }), "w-16 h-16 md:w-20 md:h-20 rounded-full backdrop-blur-2xl border-2 shadow-xl relative overflow-hidden group transform-gpu")}
             onClick={() => handleChoice('nope')}
         >
             <motion.div style={{ rotate: nopeIconRotate }} className="relative z-10">
@@ -432,10 +432,10 @@ export function SwipeDeck({ filters, onRestart }: { filters: Record<string, stri
         </motion.button>
 
         <motion.button 
-            style={{ scale: likeScale, opacity: likeOpacity, background: likeBg, color: likeColor, borderColor: likeBorder, boxShadow: likeShadow }}
+            style={{ scale: likeScale, opacity: likeOpacity, background: likeBg, color: likeColor, borderColor: likeBorder, boxShadow: likeShadow, willChange: "transform, opacity, box-shadow" }}
             whileHover={LIKE_HOVER_STATE}
             whileTap={{ scale: 0.95 }}
-            className={cn(buttonVariants({ size: "icon", variant: "ghost" }), "w-16 h-16 md:w-20 md:h-20 rounded-full backdrop-blur-2xl border-2 shadow-xl relative overflow-hidden group")}
+            className={cn(buttonVariants({ size: "icon", variant: "ghost" }), "w-16 h-16 md:w-20 md:h-20 rounded-full backdrop-blur-2xl border-2 shadow-xl relative overflow-hidden group transform-gpu")}
             onClick={() => handleChoice('like')}
         >
             <motion.div style={{ rotate: likeIconRotate }} className="relative z-10">
@@ -463,7 +463,7 @@ function pseudoRandom(seed: string) {
 // Disciplines Grid Component
 const DisciplinesGrid = memo(function DisciplinesGrid({ data }: { data: University }) {
     return (
-        <div className="bg-white/20 backdrop-blur-xl rounded-2xl p-2.5 grid grid-cols-2 gap-2.5 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] ring-1 ring-white/20">
+        <div className="bg-white/20 backdrop-blur-md rounded-2xl p-2.5 grid grid-cols-2 gap-2.5 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] ring-1 ring-white/20 transform-gpu">
             {/* Top Left: Humanities */}
             <div className={cn(
                 "w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-500", 
@@ -626,19 +626,19 @@ function Card({ data, active, removeCard, index, stackIndex, exitDirectionsRef, 
                 }
             }}
             className={cn(
-                "absolute top-0 left-0 w-full h-full bg-white rounded-[2rem] shadow-2xl overflow-hidden cursor-grab active:cursor-grabbing border border-white/20 select-none will-change-transform",
+                "absolute top-0 left-0 w-full h-full bg-white rounded-[2rem] shadow-2xl overflow-hidden cursor-grab active:cursor-grabbing border border-white/20 select-none transform-gpu will-change-transform",
                 !active && "pointer-events-none"
             )}
         >
             {active && labelsVisible && (
                 <>
                     <motion.div style={{ opacity: likeOpacity }} className="absolute top-12 left-8 z-30 pointer-events-none origin-center">
-                         <div className="border-[6px] border-green-500/50 text-green-600 rounded-3xl px-8 py-4 -rotate-12 bg-white/90 backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.3)] ring-1 ring-black/5 transition-transform">
+                         <div className="border-[6px] border-green-500/50 text-green-600 rounded-3xl px-8 py-4 -rotate-12 bg-white/90 backdrop-blur-md shadow-[0_20px_60px_rgba(0,0,0,0.3)] ring-1 ring-black/5 transition-transform">
                              <span className="font-black text-6xl md:text-7xl tracking-tighter uppercase drop-shadow-sm">{LIKE_LABELS[0]}</span>
                          </div>
                     </motion.div>
                     <motion.div style={{ opacity: nopeOpacity }} className="absolute top-12 right-8 z-30 pointer-events-none origin-center">
-                         <div className="border-[6px] border-red-500/50 text-red-600 rounded-3xl px-8 py-4 rotate-12 bg-white/90 backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.3)] ring-1 ring-black/5 transition-transform">
+                         <div className="border-[6px] border-red-500/50 text-red-600 rounded-3xl px-8 py-4 rotate-12 bg-white/90 backdrop-blur-md shadow-[0_20px_60px_rgba(0,0,0,0.3)] ring-1 ring-black/5 transition-transform">
                              <span className="font-black text-6xl md:text-7xl tracking-tighter uppercase drop-shadow-sm">{NOPE_LABELS[0]}</span>
                          </div>
                     </motion.div>
@@ -646,8 +646,8 @@ function Card({ data, active, removeCard, index, stackIndex, exitDirectionsRef, 
             )}
 
             <div className={cn("h-full w-full relative flex flex-col p-8", data.gradient)}>
-                <div className="absolute top-[-20%] right-[-20%] w-[300px] h-[300px] bg-white/5 rounded-full blur-3xl pointer-events-none" />
-                <div className="absolute bottom-[-10%] left-[-10%] w-[250px] h-[250px] bg-black/20 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute top-[-20%] right-[-20%] w-[300px] h-[300px] bg-white/5 rounded-full blur-3xl pointer-events-none transform-gpu" />
+                <div className="absolute bottom-[-10%] left-[-10%] w-[250px] h-[250px] bg-black/20 rounded-full blur-3xl pointer-events-none transform-gpu" />
 
                 <div className="flex justify-between items-start z-20 mb-6 flex-shrink-0">
                     <div className="flex-1 pr-6">

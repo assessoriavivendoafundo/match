@@ -40,9 +40,9 @@ export default function UniMatchPage() {
         <div className="absolute inset-0 bg-gradient-to-b from-[#182335]/95 via-[#182335]/90 to-[#182335]"></div>
 
         {/* Animated Orbs */}
-        <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-[#2C5C44]/20 rounded-full blur-[100px] animate-blob"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-[#BF402A]/20 rounded-full blur-[100px] animate-blob animation-delay-2000"></div>
-        <div className="absolute top-[40%] left-[50%] transform -translate-x-1/2 w-[300px] h-[300px] bg-[#567190]/10 rounded-full blur-[80px] animate-blob animation-delay-4000"></div>
+        <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-[#2C5C44]/20 rounded-full blur-[100px] animate-blob will-change-transform transform-gpu"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-[#BF402A]/20 rounded-full blur-[100px] animate-blob animation-delay-2000 will-change-transform transform-gpu"></div>
+        <div className="absolute top-[40%] left-[50%] transform -translate-x-1/2 w-[300px] h-[300px] bg-[#567190]/10 rounded-full blur-[80px] animate-blob animation-delay-4000 will-change-transform transform-gpu"></div>
       </div>
 
       <div className="w-full max-w-5xl z-10 relative flex flex-col min-h-full justify-center py-4 md:py-6">

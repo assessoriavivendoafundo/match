@@ -39,6 +39,7 @@
 - [x] Fix 'stuck' match/nope buttons and disable button activation during undo (UniMatch SwipeDeck) (2026-02-03)
 - [x] Fix 'green sliver' card stacking bug with progressive depth scaling (UniMatch SwipeDeck) (2026-02-03)
 - [x] Fix SwipeDeck exit animation incorrectly snapping back instead of flying out (UniMatch SwipeDeck) (2026-02-03)
+- [x] 2026-02-04 Optimize SwipeDeck rendering: added will-change, transform-gpu, reduced backdrop-blur
 
 ## Bug Fixes & Maintenance
 
