@@ -54,7 +54,7 @@ export default function UniMatchPage() {
           className={cn(
             "relative z-50 shrink-0 transition-all duration-500 ease-in-out",
             step !== 'intro' 
-              ? "w-full max-w-[98%] md:max-w-[95%] mx-auto px-4 md:px-6 lg:px-8 py-2 md:py-3 mb-2 md:mb-6 rounded-[2rem] md:rounded-full bg-white/5 backdrop-blur-2xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)]" 
+              ? "w-full max-w-[98%] md:max-w-[95%] mx-auto px-5 md:px-6 lg:px-8 py-2 md:py-3 mb-4 md:mb-6 rounded-full bg-white/5 backdrop-blur-2xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)]" 
               : "w-full text-center mb-8 md:mb-12 flex flex-col items-center pt-8 md:pt-12"
           )}
         >
@@ -63,7 +63,7 @@ export default function UniMatchPage() {
               layout
               className={cn(
                 "relative z-10 flex items-center transition-all duration-500", 
-                step !== 'intro' ? "w-full justify-between gap-2 md:gap-3 lg:gap-4" : "flex-col gap-2"
+                step !== 'intro' ? "w-full justify-between gap-3 md:gap-6" : "flex-col gap-2"
               )}
             >
               {/* Title */}
@@ -73,10 +73,10 @@ export default function UniMatchPage() {
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setStep('intro')}
                 className={cn(
-                  "font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white via-white/70 to-white/20 drop-shadow-2xl cursor-pointer flex-shrink min-w-0 transition-all duration-500 py-4 px-2",
+                  "font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white via-white/70 to-white/20 drop-shadow-2xl cursor-pointer flex-shrink min-w-0 transition-all duration-500 py-3 md:py-4 px-1",
                   step === 'intro' 
                     ? "text-5xl md:text-8xl text-center hover:drop-shadow-[0_0_12px_rgba(255,255,255,0.25)]" 
-                    : "text-base md:text-3xl lg:text-5xl leading-[1.2] max-w-[140px] md:max-w-none break-words"
+                    : "text-lg xs:text-xl md:text-3xl lg:text-5xl leading-[1.1] max-w-[150px] xs:max-w-[200px] md:max-w-none break-words"
                 )}
                 style={{ WebkitTextStroke: '1px rgba(255,255,255,0.7)' }}
               >
@@ -88,14 +88,14 @@ export default function UniMatchPage() {
                 layout
                 className={cn(
                   "flex items-center transition-all duration-500 flex-shrink-0", 
-                  step !== 'intro' ? "flex-row gap-2 md:gap-3 lg:gap-4" : "flex-col mt-4 gap-2 md:gap-3"
+                  step !== 'intro' ? "flex-row gap-2.5 md:gap-4" : "flex-col mt-4 gap-2 md:gap-3"
                 )}
               >
                 <motion.span 
                   layout
                   className={cn(
-                    "font-medium text-white tracking-[0.2em] md:tracking-[0.3em] uppercase select-none whitespace-nowrap opacity-40 transition-all duration-500",
-                    step !== 'intro' ? "text-[7px] md:text-[9px] lg:text-[10px]" : "text-[10px] md:text-xs"
+                    "font-medium text-white tracking-[0.1em] md:tracking-[0.3em] uppercase select-none whitespace-nowrap opacity-40 transition-all duration-500",
+                    step !== 'intro' ? "text-[9px] xs:text-[10px] md:text-[10px]" : "text-[10px] md:text-xs"
                   )}
                 >
                   Um projeto de
@@ -105,9 +105,9 @@ export default function UniMatchPage() {
                   <motion.div
                     layout
                     whileHover={{ scale: 1.05 }}
-                    className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-lg md:rounded-xl px-2 py-1 md:px-4 md:py-2 lg:px-6 lg:py-3 shadow-2xl transition-all cursor-pointer group"
+                    className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-lg md:rounded-xl px-2 py-1.5 md:px-4 md:py-2 lg:px-6 lg:py-3 shadow-2xl transition-all cursor-pointer group"
                   >
-                    <div className={cn("relative transition-all duration-500", step !== 'intro' ? "w-16 h-3.5 md:w-32 md:h-6 lg:w-40 lg:h-8" : "w-40 h-8 md:w-48 md:h-10")}>
+                    <div className={cn("relative transition-all duration-500", step !== 'intro' ? "w-24 h-5 xs:w-28 xs:h-6 md:w-32 md:h-6 lg:w-40 lg:h-8" : "w-40 h-8 md:w-48 md:h-10")}>
                       <Image 
                         src="/LOGO HORIZONTAL BRANCO - ACDY.svg" 
                         alt="AcademItaly Logo" 
