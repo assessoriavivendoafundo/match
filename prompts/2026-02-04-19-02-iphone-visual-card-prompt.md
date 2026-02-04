@@ -1,0 +1,1 @@
+i want you to change the animated card in the landing page: keep the actual style, but i want it to look like an iphone @.gemini/agents/ui-designer.md
