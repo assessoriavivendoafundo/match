@@ -24,6 +24,7 @@ const caveat = Caveat({
 export const metadata: Metadata = {
   title: "Vivendo a Fundo LTDA | Estudar na Itália",
   description: "Quer estudar na Itália? Oferecemos consultoria especializada, suporte completo para bolsas de estudo, documentação, visto e acomodação.",
+  themeColor: "#182335",
 };
 
 export default function RootLayout({

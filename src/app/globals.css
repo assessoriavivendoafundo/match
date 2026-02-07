@@ -5,9 +5,9 @@
   --color-primary: #182335; /* Navy Blue */
   --color-secondary: #457B9D; /* Steel Blue */
   --color-accent: #FFD054; /* Yellow/Gold */
-  --color-background: #ffffff;
-  --color-foreground: #1D3557;
-  --color-surface: #F8F9FA;
+  --color-background: #182335; /* Matching project theme */
+  --color-foreground: #ffffff;
+  --color-surface: #1D3557;
   --color-text-muted: #666666;
   --color-line-red: #E63946; /* Red vertical line */
 }
