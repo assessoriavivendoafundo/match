@@ -136,48 +136,22 @@ export function SwipeDeck({ filters, onRestart }: { filters: Record<string, stri
   // Load and Filter Data
   useEffect(() => {
     async function loadData() {
-      const data = await getUniversities();
+      // Use API for filtering (Secure CSV handling)
+      const data = await getUniversities(filters);
       
-      const filtered = data.filter(uni => {
-        if (!uni.id) return false;
-        const regionFilter = Array.isArray(filters.region) ? filters.region : (filters.region ? [filters.region] : []);
-        if (regionFilter.length > 0 && !regionFilter.includes('any')) {
-            if (!regionFilter.includes(uni.region)) return false;
-        }
-        const areaFilter = Array.isArray(filters.area) ? filters.area : (filters.area ? [filters.area] : []);
-        if (areaFilter.length > 0 && !areaFilter.includes('any')) {
-           const matchesArea = areaFilter.some(area => {
-               if (area === 'humanities') return uni.humanities;
-               if (area === 'social') return uni.social;
-               if (area === 'health') return uni.health;
-               if (area === 'stem') return uni.stem;
-               return false;
-           });
-           if (!matchesArea) return false;
-        }
-        const citySizeFilter = Array.isArray(filters.citySize) ? filters.citySize : (filters.citySize ? [filters.citySize] : []);
-        if (citySizeFilter.length > 0 && !citySizeFilter.includes('any')) {
-            const matchesSize = citySizeFilter.some(size => {
-                if (size === 'big') return uni.is_big_city;
-                if (size === 'small') return !uni.is_big_city;
-                return false;
-            });
-            if (!matchesSize) return false;
-        }
-        return true;
-      })
-      .sort(() => Math.random() - 0.5)
-      .map((uni, index) => {
-          const theme = THEMES[index % THEMES.length];
-          return {
-            ...uni,
-            gradient: `${DIRECTIONS[index % DIRECTIONS.length]} ${theme.gradient}`,
-            highlight: theme.highlight
-          };
-      });
+      const processed = data
+        .sort(() => Math.random() - 0.5)
+        .map((uni, index) => {
+            const theme = THEMES[index % THEMES.length];
+            return {
+              ...uni,
+              gradient: `${DIRECTIONS[index % DIRECTIONS.length]} ${theme.gradient}`,
+              highlight: theme.highlight
+            };
+        });
 
-      setUniversities(filtered);
-      setDeck(filtered);
+      setUniversities(processed);
+      setDeck(processed);
       exitDirectionsRef.current = {};
       activeX.set(0); // Reset UI
       setLoading(false);
@@ -255,23 +229,27 @@ export function SwipeDeck({ filters, onRestart }: { filters: Record<string, stri
     activeX.set(0);
   };
 
+  const sanitize = (str: string) => str ? str.replace(/[^a-zA-Z0-9À-ÿ ]/g, "").trim() : "";
+
   const shareOnWhatsApp = () => {
     if (liked.length === 0) return;
-    const uName = filters.userName as string;
-    const uSurname = filters.userSurname as string;
+    const uName = sanitize(filters.userName as string);
+    const uSurname = sanitize(filters.userSurname as string);
     const fullName = uName && uSurname ? `${uName} ${uSurname}` : uName || "Estudante";
     const firstName = uName || "Estudante";
     const header = `🇮🇹 *Match Universitário - ${fullName}* 🇮🇹\n\nCiao! Me chamo ${firstName}, explorei as opções e estas são as universidades que deram match comigo. *Gostaria de receber more informações sobre elas e como começar meu processo:*\n\n`;
     const list = liked.map(u => `🏛️ *${u.name}*\n   📍 ${u.city}\n`).join("\n");
     const footer = "\n💬 *Você pode me ajudar com mais detalhes sobre essas opções?*\n🔗 Descubra seu match em: https://academitaly.com.br";
     const text = encodeURIComponent(header + list + footer);
-    window.open(`https://api.whatsapp.com/send?phone=393516274752&text=${text}`, '_blank');
+    
+    const win = window.open(`https://api.whatsapp.com/send?phone=393516274752&text=${text}`, '_blank');
+    if (win) win.opener = null;
   };
 
   const shareOnEmail = () => {
     if (liked.length === 0) return;
-    const uName = filters.userName as string;
-    const uSurname = filters.userSurname as string;
+    const uName = sanitize(filters.userName as string);
+    const uSurname = sanitize(filters.userSurname as string);
     const fullName = uName && uSurname ? `${uName} ${uSurname}` : uName || "Estudante";
     const firstName = uName || "Estudante";
     const subject = `Meu Match Universitário - ${fullName}`;
@@ -279,7 +257,9 @@ export function SwipeDeck({ filters, onRestart }: { filters: Record<string, stri
     const list = liked.map(u => `🏛️ ${u.name}\n   📍 ${u.city}\n`).join("\n");
     const footer = "\n\nVocê pode me ajudar com mais detalhes sobre essas opções?\n\n🔗 Descubra seu match em: https://academitaly.com.br";
     const body = encodeURIComponent(header + list + footer);
-    window.open(`mailto:assessoria@vivendoafundo.com.br?subject=${encodeURIComponent(subject)}&body=${body}`, '_blank');
+    
+    const win = window.open(`mailto:assessoria@vivendoafundo.com.br?subject=${encodeURIComponent(subject)}&body=${body}`, '_blank');
+    if (win) win.opener = null;
   };
 
   if (loading) {
