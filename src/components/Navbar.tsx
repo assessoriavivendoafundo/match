@@ -22,7 +22,7 @@ export function Navbar() {
     <header className="sticky top-0 z-50 w-full bg-white shadow-sm">
       <div className="container mx-auto px-4 h-24 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex-shrink-0">
+        <Link href="https://academitaly.com.br" className="flex-shrink-0">
           <div className="relative w-48 h-16">
             <Image
               src="https://static.wixstatic.com/media/633a67_be4f04e97582467cbc66dc96e46e658a~mv2.png/v1/crop/x_319,y_234,w_613,h_597/fill/w_46,h_42,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Blue%20and%20White%20Simple%20Education%20Logo.png"

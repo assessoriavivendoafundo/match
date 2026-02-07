@@ -105,7 +105,7 @@ export default function MatchPage() {
                   Um projeto de
                 </motion.span>
                 
-                <Link href="/">
+                <Link href="https://academitaly.com.br">
                   <motion.div
                     layout="position"
                     whileHover={{ scale: 1.05 }}

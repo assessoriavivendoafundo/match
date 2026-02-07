@@ -20,7 +20,8 @@
 - [x] Center swiping card page and include title box on load (2026-02-01)
 - [x] Center final list vertical alignment in SwipeDeck (2026-02-01)
 - [x] Rebrand `/unimatch` to `/match` and optimize SEO (2026-02-07)
-- [x] Rebrand `/unimatch` to `/match` route
+- [x] Update AcademItaly logo links to `academitaly.com.br`
+- [x] Update WhatsApp/Email sharing texts and recipient email to `academitaly.com.br` domain
 - [x] Add comprehensive SEO metadata (Title, OG, Twitter) for `/match`
 - [x] Ensure proper redirects or link updates to the new route
 - [x] Graphically optimize UniMatch for mobile and other formats (2026-02-01)
