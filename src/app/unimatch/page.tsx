@@ -76,7 +76,7 @@ export default function UniMatchPage() {
                   "font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white via-white/70 to-white/20 drop-shadow-2xl cursor-pointer flex-shrink min-w-0 transition-all duration-500 py-3 md:py-4 px-1",
                   step === 'intro' 
                     ? "text-5xl md:text-8xl text-center hover:drop-shadow-[0_0_12px_rgba(255,255,255,0.25)]" 
-                    : "text-lg xs:text-xl md:text-3xl lg:text-5xl leading-[1.1] max-w-[150px] xs:max-w-[200px] md:max-w-none break-words"
+                    : "text-lg xs:text-xl md:text-3xl lg:text-5xl leading-[1.1] max-w-[180px] xs:max-w-[240px] md:max-w-none break-words"
                 )}
                 style={{ WebkitTextStroke: '1px rgba(255,255,255,0.7)' }}
               >
@@ -87,15 +87,17 @@ export default function UniMatchPage() {
               <motion.div 
                 layout
                 className={cn(
-                  "flex items-center transition-all duration-500 flex-shrink-0", 
-                  step !== 'intro' ? "flex-row gap-2.5 md:gap-4" : "flex-col mt-4 gap-2 md:gap-3"
+                  "flex transition-all duration-500 flex-shrink-0", 
+                  step !== 'intro' 
+                    ? "flex-col items-center xs:flex-row xs:items-center gap-1 xs:gap-2.5 md:gap-4" 
+                    : "flex-col items-center mt-4 gap-2 md:gap-3"
                 )}
               >
                 <motion.span 
                   layout
                   className={cn(
-                    "font-medium text-white tracking-[0.1em] md:tracking-[0.3em] uppercase select-none whitespace-nowrap opacity-40 transition-all duration-500",
-                    step !== 'intro' ? "text-[9px] xs:text-[10px] md:text-[10px]" : "text-[10px] md:text-xs"
+                    "font-medium text-white tracking-[0.1em] md:tracking-[0.2em] uppercase select-none whitespace-nowrap opacity-40 transition-all duration-500",
+                    step !== 'intro' ? "text-[8px] md:text-[10px]" : "text-[10px] md:text-xs"
                   )}
                 >
                   Um projeto de
@@ -105,9 +107,12 @@ export default function UniMatchPage() {
                   <motion.div
                     layout
                     whileHover={{ scale: 1.05 }}
-                    className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-lg md:rounded-xl px-2 py-1.5 md:px-4 md:py-2 lg:px-6 lg:py-3 shadow-2xl transition-all cursor-pointer group"
+                    className={cn(
+                      "bg-white/5 backdrop-blur-xl border border-white/10 rounded-lg md:rounded-xl shadow-2xl transition-all cursor-pointer group",
+                      step !== 'intro' ? "px-1.5 py-1 md:px-3 md:py-1.5" : "px-2 py-1.5 md:px-4 md:py-2 lg:px-6 lg:py-3"
+                    )}
                   >
-                    <div className={cn("relative transition-all duration-500", step !== 'intro' ? "w-24 h-5 xs:w-28 xs:h-6 md:w-32 md:h-6 lg:w-40 lg:h-8" : "w-40 h-8 md:w-48 md:h-10")}>
+                    <div className={cn("relative transition-all duration-500", step !== 'intro' ? "w-20 h-4 xs:w-24 xs:h-5 md:w-28 md:h-5 lg:w-32 lg:h-6" : "w-40 h-8 md:w-48 md:h-10")}>
                       <Image 
                         src="/LOGO HORIZONTAL BRANCO - ACDY.svg" 
                         alt="AcademItaly Logo" 
@@ -256,11 +261,11 @@ export default function UniMatchPage() {
 
                           {/* App Header Sketch - Floating Pill Style */}
                           <div className="mt-8 mb-4 px-2">
-                            <div className="w-full h-7 rounded-full bg-white/5 border border-white/10 flex items-center justify-between px-3 opacity-60">
+                            <div className="w-full h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-between px-3 opacity-60">
                               <div className="h-1.5 w-16 bg-white/40 rounded-full" /> {/* Title placeholder */}
-                              <div className="flex items-center gap-1.5">
-                                <div className="h-1 w-6 bg-white/20 rounded-full" /> {/* "Um projeto de" */}
-                                <div className="h-3 w-8 bg-white/10 rounded-sm" /> {/* Logo placeholder */}
+                              <div className="flex flex-col items-center gap-0.5">
+                                <div className="h-[3px] w-6 bg-white/20 rounded-full" /> {/* "Um projeto de" */}
+                                <div className="h-2 w-8 bg-white/10 rounded-sm" /> {/* Logo placeholder */}
                               </div>
                             </div>
                           </div>
