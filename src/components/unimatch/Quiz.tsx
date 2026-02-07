@@ -218,7 +218,7 @@ export function Quiz({ onComplete, onBack, initialData }: {
                           required
                           value={userData.name}
                           onChange={(e) => setUserData({...userData, name: e.target.value})}
-                          className="w-full bg-white/5 border border-white/10 rounded-xl md:rounded-2xl px-10 md:px-12 py-3.5 md:py-4 text-sm md:text-base text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-[#BF402A]/50 transition-all backdrop-blur-md"
+                          className="w-full bg-white/5 border border-white/10 rounded-xl md:rounded-2xl px-10 md:px-12 py-3.5 md:py-4 text-base text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-[#BF402A]/50 transition-all backdrop-blur-md"
                           placeholder="Seu nome"
                         />
                       </div>
@@ -232,7 +232,7 @@ export function Quiz({ onComplete, onBack, initialData }: {
                           required
                           value={userData.surname}
                           onChange={(e) => setUserData({...userData, surname: e.target.value})}
-                          className="w-full bg-white/5 border border-white/10 rounded-xl md:rounded-2xl px-10 md:px-12 py-3.5 md:py-4 text-sm md:text-base text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-[#BF402A]/50 transition-all backdrop-blur-md"
+                          className="w-full bg-white/5 border border-white/10 rounded-xl md:rounded-2xl px-10 md:px-12 py-3.5 md:py-4 text-base text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-[#BF402A]/50 transition-all backdrop-blur-md"
                           placeholder="Seu sobrenome"
                         />
                       </div>
