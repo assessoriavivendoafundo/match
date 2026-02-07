@@ -45,7 +45,7 @@ const questions: Question[] = [
     description: "Para te mostrarmos as universidades que brilham na sua área.",
     options: [
       { id: "humanities", label: "Artística, Literária e Educação", subLabel: "Design, História, Letras, Pedagogia...", icon: "🎨" },
-      { id: "social", label: "Econômica, Jurídica e Social", subLabel: "Direito, Economia, Relações Internacionais...", icon: "📈" },
+      { id: "social", label: "Econômica, Juriddica e Social", subLabel: "Direito, Economia, Relações Internacionais...", icon: "📈" },
       { id: "health", label: "Saúde e Agro-Veterinária", subLabel: "Medicina, Psicologia, Veterinária...", icon: "🧬" },
       { id: "stem", label: "STEM", subLabel: "Ciência, Tecnologia, Engenharia e Matemática", icon: "🚀" },
       { id: "any", label: "Ainda não sei", subLabel: "Estou aberto a todas as possibilidades", icon: "💡" },

@@ -276,7 +276,7 @@ export function SwipeDeck({ filters, onRestart }: { filters: Record<string, stri
 
   if (deck.length === 0) {
       return (
-          <div ref={deckRef} className="flex flex-col h-auto max-h-[85dvh] w-full max-w-2xl mx-auto bg-white/5 backdrop-blur-xl border border-white/10 rounded-[2rem] overflow-hidden shadow-2xl relative mb-8 md:mb-12">
+          <div ref={deckRef} className="flex flex-col h-auto max-h-[75dvh] w-full max-w-2xl mx-auto bg-white/5 backdrop-blur-xl border border-white/10 rounded-[2rem] overflow-hidden shadow-2xl relative mb-4 md:mb-2">
               
               {liked.length > 0 ? (
                 <>
@@ -365,10 +365,10 @@ export function SwipeDeck({ filters, onRestart }: { filters: Record<string, stri
   }
 
   return (
-    <div ref={deckRef} className="relative w-full max-w-md md:max-w-lg lg:max-w-xl mx-auto h-[82dvh] md:h-[78vh] flex flex-col items-center justify-between md:justify-center px-1 md:px-0 py-2 md:py-0">
+    <div ref={deckRef} className="relative w-full max-w-md md:max-w-lg lg:max-w-xl mx-auto h-[82dvh] md:h-[75vh] flex flex-col items-center justify-between md:justify-center px-1 md:px-0 py-2 md:py-0">
       
       {/* Card Stack */}
-      <div className="relative w-full h-[60dvh] md:h-[68vh] perspective-1000 mt-2 md:mt-0 md:mb-14">
+      <div className="relative w-full h-[60dvh] md:h-[66vh] perspective-1000 mt-2 md:mt-0 md:mb-8">
         <AnimatePresence initial={false}>
           {deck.slice(-3).map((uni, index, arr) => (
             <Card 
@@ -388,7 +388,7 @@ export function SwipeDeck({ filters, onRestart }: { filters: Record<string, stri
       </div>
 
       {/* Controls */}
-      <div className="flex items-center gap-6 md:gap-8 z-20 mb-4 md:mb-12">
+      <div className="flex items-center gap-6 md:gap-8 z-20 mb-2 md:mb-4">
         <motion.button 
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}

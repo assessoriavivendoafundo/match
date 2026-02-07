@@ -29,7 +29,7 @@ export default function MatchPage() {
   };
 
   return (
-    <div className="min-h-[100dvh] bg-[#182335] flex flex-col items-center p-3 md:p-4 pb-8 md:pb-24 relative overflow-hidden font-sans selection:bg-[#BF402A]/30">
+    <div className="min-h-[100dvh] bg-[#182335] flex flex-col items-center p-3 md:p-4 pb-4 md:pb-6 relative overflow-hidden font-sans selection:bg-[#BF402A]/30">
       
       {/* --- Dynamic Background --- */}
       <div className="absolute inset-0 z-0">
@@ -436,7 +436,7 @@ export default function MatchPage() {
                 animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
                 exit={{ opacity: 0, scale: 1.05, filter: "blur(10px)" }}
                 transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                className="w-full"
+                className="w-full h-[80dvh] md:h-auto"
               >
                 <SwipeDeck filters={filters} onRestart={() => setStep('quiz')} />
               </motion.div>
