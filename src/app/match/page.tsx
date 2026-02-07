@@ -4,14 +4,14 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Quiz } from "@/components/unimatch/Quiz";
-import { SwipeDeck } from "@/components/unimatch/SwipeDeck";
-import { HowItWorksModal } from "@/components/unimatch/HowItWorksModal";
+import { Quiz } from "@/components/match/Quiz";
+import { SwipeDeck } from "@/components/match/SwipeDeck";
+import { HowItWorksModal } from "@/components/match/HowItWorksModal";
 import { motion, AnimatePresence } from "framer-motion";
 import { GraduationCap, MapPin, Plane, RotateCcw, Sparkles, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export default function UniMatchPage() {
+export default function MatchPage() {
   const [step, setStep] = useState<'intro' | 'quiz' | 'deck'>('intro');
   const [filters, setFilters] = useState<Record<string, string | string[]>>({});
   const [showHowItWorks, setShowHowItWorks] = useState(false);
@@ -120,7 +120,7 @@ export default function UniMatchPage() {
                     >
                       <Image 
                         src="/LOGO HORIZONTAL BRANCO - ACDY.svg" 
-                        alt="AcademItaly Logo" 
+                        alt="Logo da AcademItaly - Especialista em Estudar na Itália" 
                         fill
                         className="object-contain"
                         priority

@@ -19,6 +19,10 @@
 - [x] Remove live wishlist drawer from SwipeDeck (2026-02-01)
 - [x] Center swiping card page and include title box on load (2026-02-01)
 - [x] Center final list vertical alignment in SwipeDeck (2026-02-01)
+- [x] Rebrand `/unimatch` to `/match` and optimize SEO (2026-02-07)
+- [x] Rebrand `/unimatch` to `/match` route
+- [x] Add comprehensive SEO metadata (Title, OG, Twitter) for `/match`
+- [x] Ensure proper redirects or link updates to the new route
 - [x] Graphically optimize UniMatch for mobile and other formats (2026-02-01)
 - [x] Implement dynamic button feedback (scale/opacity) during swipe in UniMatch (2026-02-01)
 

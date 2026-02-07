@@ -67,7 +67,7 @@ export function Hero() {
           transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
           className="flex flex-col sm:flex-row gap-6 justify-center items-center"
         >
-          <Link href="/unimatch" className="w-full sm:w-auto">
+          <Link href="/match" className="w-full sm:w-auto">
             <Button 
               variant="default" 
               size="lg" 
