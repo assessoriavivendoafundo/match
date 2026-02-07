@@ -227,19 +227,20 @@ export default function UniMatchPage() {
 
                   {/* Right: Visual Card - iPhone Mockup */}
                   <div className="order-1 md:order-2 perspective-1000 flex justify-center md:justify-end pr-4">
-                    <motion.div 
-                      animate={{ 
-                        y: [0, -10, 2, -5, 0],
-                        rotateY: [-5, 5, -2, 8, -5],
-                        rotateX: [4, -4, 2, -1, 4]
-                      }}
+                    <div className="relative">
+                      <motion.div 
+                        animate={{ 
+                          y: [0, -10, 2, -5, 0],
+                          rotateY: [-5, 5, -2, 8, -5],
+                          rotateX: [4, -4, 2, -1, 4]
+                        }}
                       transition={{ 
                         duration: 20, 
                         repeat: Infinity, 
                         ease: "easeInOut"
                       }}
                       style={{ transformStyle: "preserve-3d" }}
-                      className="relative group"
+                      className="relative cursor-default"
                     >
                       {/* iPhone Chassis - Realistic Metallic Frame */}
                       <div className="relative w-[200px] md:w-[240px] aspect-[9/19.5] bg-black rounded-[3rem] border-[6px] md:border-[7px] border-slate-800 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.7)] ring-1 ring-white/20 ring-inset">
@@ -261,13 +262,16 @@ export default function UniMatchPage() {
 
                           {/* App Header Sketch - Floating Pill Style */}
                           <div className="mt-8 mb-4 px-2">
-                            <div className="w-full h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-between px-3 opacity-60">
+                            <motion.div 
+                              whileHover={{ scale: 1.05, opacity: 1, backgroundColor: "rgba(255,255,255,0.1)" }}
+                              className="w-full h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-between px-3 opacity-60 cursor-pointer transition-colors"
+                            >
                               <div className="h-1.5 w-16 bg-white/40 rounded-full" /> {/* Title placeholder */}
                               <div className="flex flex-col items-center gap-0.5">
                                 <div className="h-[3px] w-6 bg-white/20 rounded-full" /> {/* "Um projeto de" */}
                                 <div className="h-2 w-8 bg-white/10 rounded-sm" /> {/* Logo placeholder */}
                               </div>
-                            </div>
+                            </motion.div>
                           </div>
 
                           {/* Simplified Card Stack Sketch */}
@@ -278,7 +282,10 @@ export default function UniMatchPage() {
                             <div className="absolute inset-x-1 top-2 bottom-0 bg-white/5 rounded-[1.8rem] border border-white/10 scale-[0.95] opacity-40" />
                             
                             {/* Active Card Sketch */}
-                            <div className="absolute inset-0 bg-gradient-to-br from-[#BF402A]/40 via-[#182335] to-[#182335] rounded-[1.8rem] border border-white/20 p-4 flex flex-col shadow-2xl overflow-hidden">
+                            <motion.div 
+                              whileHover={{ scale: 1.02, y: -5, borderColor: "rgba(255,255,255,0.4)" }}
+                              className="absolute inset-0 bg-gradient-to-br from-[#BF402A]/40 via-[#182335] to-[#182335] rounded-[1.8rem] border border-white/20 p-4 flex flex-col shadow-2xl overflow-hidden cursor-pointer"
+                            >
                               {/* Card Header */}
                               <div className="flex justify-between items-start gap-2 mb-4">
                                 <div className="space-y-2 flex-1">
@@ -313,23 +320,42 @@ export default function UniMatchPage() {
                               
                               {/* Bottom Gradient Fade */}
                               <div className="absolute bottom-0 inset-x-0 h-14 bg-gradient-to-t from-[#182335] to-transparent" />
-                            </div>
+                            </motion.div>
                           </div>
 
                           {/* Control Buttons Row Sketch */}
                           <div className="pb-4 flex items-center justify-center gap-4">
                             {/* Undo */}
-                            <div className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center opacity-40 hover:bg-white/10 transition-colors">
-                              <RotateCcw className="w-3.5 h-3.5 text-white" />
-                            </div>
+                            <motion.div 
+                              whileHover="hover"
+                              whileTap={{ scale: 0.9 }}
+                              className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center opacity-40 cursor-pointer transition-all"
+                            >
+                              <motion.div
+                                variants={{
+                                  hover: { rotate: -120, scale: 1.2, color: "#fff" }
+                                }}
+                                transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                              >
+                                <RotateCcw className="w-3.5 h-3.5 text-white" />
+                              </motion.div>
+                            </motion.div>
                             {/* Nope */}
-                            <div className="w-12 h-12 rounded-full bg-red-500/5 border-2 border-red-500/20 flex items-center justify-center shadow-lg shadow-red-500/5">
+                            <motion.div 
+                              whileHover={{ scale: 1.15, backgroundColor: "rgba(239,68,68,0.2)", borderColor: "rgba(239,68,68,0.4)" }}
+                              whileTap={{ scale: 0.9 }}
+                              className="w-12 h-12 rounded-full bg-red-500/5 border-2 border-red-500/20 flex items-center justify-center shadow-lg shadow-red-500/5 cursor-pointer transition-colors"
+                            >
                               <X className="w-6 h-6 text-red-500/50 stroke-[2.5]" />
-                            </div>
+                            </motion.div>
                             {/* Like */}
-                            <div className="w-12 h-12 rounded-full bg-green-500/5 border-2 border-green-500/20 flex items-center justify-center shadow-lg shadow-green-500/5">
+                            <motion.div 
+                              whileHover={{ scale: 1.15, backgroundColor: "rgba(34,197,94,0.2)", borderColor: "rgba(34,197,94,0.4)" }}
+                              whileTap={{ scale: 0.9 }}
+                              className="w-12 h-12 rounded-full bg-green-500/5 border-2 border-green-500/20 flex items-center justify-center shadow-lg shadow-green-500/5 cursor-pointer transition-colors"
+                            >
                               <GraduationCap className="w-6 h-6 text-green-500/50" />
-                            </div>
+                            </motion.div>
                           </div>
 
                           {/* Shimmer / Glass Reflection */}
@@ -344,36 +370,36 @@ export default function UniMatchPage() {
                         </div>
                       </div>
                     </div>
-
-                    {/* Floating Parallax Icons - Smaller & Closer */}
-                    <motion.div 
-                      animate={{ 
-                        y: [0, -8, 2, -4, 0],
-                        rotate: [12, 18, 10, 15, 12]
-                      }}
-                      transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-                      style={{ transform: "translateZ(60px)" }}
-                      className="absolute -top-6 -right-6 w-14 h-14 bg-gradient-to-br from-[#2C5C44] to-[#1E3E2F] rounded-2xl flex items-center justify-center shadow-2xl z-50 border border-white/20"
-                    >
-                      <GraduationCap className="text-white w-7 h-7 stroke-[2.5]" />
-                    </motion.div>
-                    
-                    <motion.div 
-                      animate={{ 
-                        y: [0, 8, -2, 4, 0],
-                        rotate: [-6, -12, -4, -10, -6]
-                      }}
-                      transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
-                      style={{ transform: "translateZ(80px)" }}
-                      className="absolute -bottom-6 -left-6 w-12 h-12 bg-gradient-to-br from-[#BF402A] to-[#8C2E1F] rounded-xl flex items-center justify-center shadow-2xl z-50 border border-white/20"
-                    >
-                      <X className="text-white w-6 h-6 stroke-[3]" />
-                    </motion.div>
                   </motion.div>
-                </div>
-              </div>
-            </motion.div>
-          )}
+
+                  {/* Floating Parallax Icons - Smaller & Closer */}
+                  <motion.div 
+                    animate={{ 
+                      y: [0, -8, 2, -4, 0],
+                      rotate: [12, 18, 10, 15, 12]
+                    }}
+                    transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+                    style={{ transform: "translateZ(60px)" }}
+                    className="absolute -top-6 -right-6 w-14 h-14 bg-gradient-to-br from-[#2C5C44] to-[#1E3E2F] rounded-2xl flex items-center justify-center shadow-2xl z-50 border border-white/20"
+                  >
+                    <GraduationCap className="text-white w-7 h-7 stroke-[2.5]" />
+                  </motion.div>
+                  
+                                      <motion.div 
+                                        animate={{ 
+                                          y: [0, 8, -2, 4, 0],
+                                          rotate: [-6, -12, -4, -10, -6]
+                                        }}
+                                        transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
+                                        style={{ transform: "translateZ(80px)" }}
+                                        className="absolute -bottom-6 -left-6 w-12 h-12 bg-gradient-to-br from-[#BF402A] to-[#8C2E1F] rounded-xl flex items-center justify-center shadow-2xl z-50 border border-white/20"
+                                      >
+                                        <X className="text-white w-6 h-6 stroke-[3]" />
+                                      </motion.div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </motion.div>          )}
 
             {/* === STEP 2: QUIZ === */}
             {step === 'quiz' && (
