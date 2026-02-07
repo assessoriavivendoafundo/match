@@ -8,7 +8,7 @@ import { Quiz } from "@/components/unimatch/Quiz";
 import { SwipeDeck } from "@/components/unimatch/SwipeDeck";
 import { HowItWorksModal } from "@/components/unimatch/HowItWorksModal";
 import { motion, AnimatePresence } from "framer-motion";
-import { GraduationCap, MapPin, Plane, Sparkles, X } from "lucide-react";
+import { GraduationCap, MapPin, Plane, RotateCcw, Sparkles, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function UniMatchPage() {
@@ -236,104 +236,139 @@ export default function UniMatchPage() {
                       style={{ transformStyle: "preserve-3d" }}
                       className="relative group"
                     >
-                      {/* iPhone Chassis - Reduced Size */}
-                      <div className="relative w-[200px] md:w-[240px] aspect-[9/19.5] bg-[#0F172A] rounded-[2.8rem] p-2.5 border-[1px] border-white/20 shadow-[0_40px_80px_-15px_rgba(0,0,0,0.6)] ring-1 ring-white/10">
+                      {/* iPhone Chassis - Realistic Metallic Frame */}
+                      <div className="relative w-[200px] md:w-[240px] aspect-[9/19.5] bg-black rounded-[3rem] border-[6px] md:border-[7px] border-slate-800 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.7)] ring-1 ring-white/20 ring-inset">
                         
-                        {/* Side Buttons */}
-                        <div className="absolute -left-[2px] top-24 w-[3px] h-12 bg-gradient-to-b from-white/20 to-transparent rounded-r-sm" /> {/* Action/Silence */}
-                        <div className="absolute -left-[2px] top-44 w-[3px] h-16 bg-gradient-to-b from-white/20 to-transparent rounded-r-sm" /> {/* Vol Up */}
-                        <div className="absolute -left-[2px] top-64 w-[3px] h-16 bg-gradient-to-b from-white/20 to-transparent rounded-r-sm" /> {/* Vol Down */}
-                        <div className="absolute -right-[2px] top-48 w-[3px] h-24 bg-gradient-to-b from-white/20 to-transparent rounded-l-sm" /> {/* Power */}
+                        {/* Side Buttons - Physical Protrusions */}
+                        <div className="absolute -left-[8.5px] top-24 w-[3px] h-10 bg-slate-800 rounded-l-md border-r border-white/10" />
+                        <div className="absolute -left-[8.5px] top-40 w-[3px] h-14 bg-slate-800 rounded-l-md border-r border-white/10" />
+                        <div className="absolute -left-[8.5px] top-58 w-[3px] h-14 bg-slate-800 rounded-l-md border-r border-white/10" />
+                        <div className="absolute -right-[8.5px] top-44 w-[3px] h-20 bg-slate-800 rounded-r-md border-l border-white/10" />
 
-                        {/* Internal Screen Area */}
-                        <div className="relative w-full h-full bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-3xl rounded-[2.2rem] overflow-hidden border border-white/10 flex flex-col">
+                        {/* Internal Screen Area - Realistic Glass Bezel */}
+                        <div className="relative w-full h-full p-[3px] bg-black rounded-[2.6rem] overflow-hidden">
+                          <div className="relative w-full h-full bg-[#182335] rounded-[2.2rem] overflow-hidden flex flex-col p-2.5">
                           
                           {/* Dynamic Island - Scaled */}
                           <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-16 md:w-20 h-5 md:h-6 bg-black rounded-full z-50 flex items-center justify-center border border-white/5 shadow-inner">
-                            <div className="absolute right-3 w-1.5 h-1.5 rounded-full bg-blue-500/20 blur-[1px]" />
+                            <div className="absolute right-3 w-1.5 h-1.5 rounded-full bg-blue-500/10" />
+                          </div>
+
+                          {/* App Header Sketch - Floating Pill Style */}
+                          <div className="mt-8 mb-4 px-2">
+                            <div className="w-full h-7 rounded-full bg-white/5 border border-white/10 flex items-center justify-between px-3 opacity-60">
+                              <div className="h-1.5 w-16 bg-white/40 rounded-full" /> {/* Title placeholder */}
+                              <div className="flex items-center gap-1.5">
+                                <div className="h-1 w-6 bg-white/20 rounded-full" /> {/* "Um projeto de" */}
+                                <div className="h-3 w-8 bg-white/10 rounded-sm" /> {/* Logo placeholder */}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Simplified Card Stack Sketch */}
+                          <div className="flex-1 relative mb-3 mx-1.5">
+                            {/* Background Card 2 */}
+                            <div className="absolute inset-x-2 top-4 bottom-0 bg-white/5 rounded-[1.8rem] border border-white/5 scale-[0.9] opacity-20" />
+                            {/* Background Card 1 */}
+                            <div className="absolute inset-x-1 top-2 bottom-0 bg-white/5 rounded-[1.8rem] border border-white/10 scale-[0.95] opacity-40" />
+                            
+                            {/* Active Card Sketch */}
+                            <div className="absolute inset-0 bg-gradient-to-br from-[#BF402A]/40 via-[#182335] to-[#182335] rounded-[1.8rem] border border-white/20 p-4 flex flex-col shadow-2xl overflow-hidden">
+                              {/* Card Header */}
+                              <div className="flex justify-between items-start gap-2 mb-4">
+                                <div className="space-y-2 flex-1">
+                                  <div className="flex items-center gap-1">
+                                    <MapPin className="w-2.5 h-2.5 text-[#F4A261]" />
+                                    <div className="h-1 w-10 bg-white/40 rounded-full" />
+                                  </div>
+                                  <div className="space-y-1.5">
+                                    <div className="h-2.5 w-full bg-white rounded-full opacity-90" />
+                                    <div className="h-2.5 w-[60%] bg-white rounded-full opacity-90" />
+                                  </div>
+                                </div>
+                                
+                                {/* Disciplines Grid Sketch - Tinted Categories */}
+                                <div className="w-9 h-9 rounded-xl bg-white/10 grid grid-cols-2 gap-1 p-1 flex-shrink-0">
+                                  <div className="bg-pink-500/30 rounded-sm" />
+                                  <div className="bg-orange-500/30 rounded-sm" />
+                                  <div className="bg-emerald-500/30 rounded-sm" />
+                                  <div className="bg-cyan-500/30 rounded-sm" />
+                                </div>
+                              </div>
+
+                              {/* Card Body (Description Lines) */}
+                              <div className="flex-1 flex gap-2 pt-2">
+                                <div className="w-[2px] h-full bg-white/20 rounded-full" />
+                                <div className="flex-1 space-y-2">
+                                  {[1,2,3,4,5,6,7].map(i => (
+                                    <div key={i} style={{ width: `${Math.max(30, 100 - i * 10 + (i % 2 * 15))}%` }} className="h-1 bg-white/15 rounded-full" />
+                                  ))}
+                                </div>
+                              </div>
+                              
+                              {/* Bottom Gradient Fade */}
+                              <div className="absolute bottom-0 inset-x-0 h-14 bg-gradient-to-t from-[#182335] to-transparent" />
+                            </div>
+                          </div>
+
+                          {/* Control Buttons Row Sketch */}
+                          <div className="pb-4 flex items-center justify-center gap-4">
+                            {/* Undo */}
+                            <div className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center opacity-40 hover:bg-white/10 transition-colors">
+                              <RotateCcw className="w-3.5 h-3.5 text-white" />
+                            </div>
+                            {/* Nope */}
+                            <div className="w-12 h-12 rounded-full bg-red-500/5 border-2 border-red-500/20 flex items-center justify-center shadow-lg shadow-red-500/5">
+                              <X className="w-6 h-6 text-red-500/50 stroke-[2.5]" />
+                            </div>
+                            {/* Like */}
+                            <div className="w-12 h-12 rounded-full bg-green-500/5 border-2 border-green-500/20 flex items-center justify-center shadow-lg shadow-green-500/5">
+                              <GraduationCap className="w-6 h-6 text-green-500/50" />
+                            </div>
                           </div>
 
                           {/* Shimmer / Glass Reflection */}
                           <motion.div 
                             animate={{ 
                               x: ["-100%", "200%"],
-                              opacity: [0, 0.2, 0]
+                              opacity: [0, 0.1, 0]
                             }}
                             transition={{ duration: 5, repeat: Infinity, repeatDelay: 3 }}
                             className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent skew-x-[-20deg] pointer-events-none z-40"
                           />
-
-                          {/* Content Wrapper */}
-                          <div className="flex-1 p-4 pt-12 space-y-3 flex flex-col justify-center">
-                            
-                            {/* University Image Preview */}
-                            <div className="h-32 md:h-36 rounded-xl bg-[#182335] flex items-center justify-center border border-white/10 relative overflow-hidden group/img shadow-xl">
-                               <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1529260830199-42c42dda5f2d?q=80&w=600&auto=format&fit=crop')] bg-cover bg-center opacity-60 group-hover/img:scale-110 transition-transform duration-2000"></div>
-                               <div className="absolute inset-0 bg-gradient-to-t from-[#182335] via-transparent to-transparent opacity-80" />
-                               <span className="relative z-10 font-black text-xl md:text-2xl text-white tracking-[0.2em] drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)]">ITALIA</span>
-                            </div>
-                            
-                            {/* Stats Grid */}
-                            <div className="grid grid-cols-2 gap-2">
-                              <div className="aspect-square rounded-xl bg-white/5 border border-white/10 p-2.5 flex flex-col justify-between hover:bg-white/10 transition-colors shadow-lg">
-                                <MapPin className="text-[#BF402A] w-4 h-4 drop-shadow-[0_0_8px_rgba(191,64,42,0.4)]" />
-                                <div className="space-y-1">
-                                  <div className="h-1 w-8 bg-white/40 rounded-full"></div>
-                                  <div className="h-1 w-12 bg-white/20 rounded-full"></div>
-                                </div>
-                              </div>
-                              <div className="aspect-square rounded-xl bg-white/5 border border-white/10 p-2.5 flex flex-col justify-between hover:bg-white/10 transition-colors shadow-lg">
-                                <div className="flex -space-x-1.5">
-                                  {[1,2,3].map(i => (
-                                    <div key={i} className="w-5 h-5 rounded-full bg-gradient-to-br from-white/20 to-white/5 border border-white/20 shadow-sm" />
-                                  ))}
-                                </div>
-                                <div className="h-1 w-10 bg-white/20 rounded-full"></div>
-                              </div>
-                            </div>
-
-                            {/* Action Area */}
-                            <div className="mt-auto pt-2 flex flex-col items-center gap-3">
-                               <div className="w-10 h-1 bg-white/10 rounded-full mb-1" /> {/* Bottom Bar */}
-                               
-                               <div className="w-full h-10 rounded-xl bg-gradient-to-r from-[#2C5C44] to-[#3D7A5C] flex items-center justify-center relative overflow-hidden group/btn cursor-pointer shadow-[0_8px_16px_-4px_rgba(44,92,68,0.4)] active:scale-95 transition-all">
-                                  <span className="text-[9px] font-black text-white tracking-[0.4em] z-10">MATCH!</span>
-                                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover/btn:animate-shimmer" />
-                               </div>
-                            </div>
-                          </div>
                         </div>
                       </div>
+                    </div>
 
-                      {/* Floating Parallax Icons - Smaller & Closer */}
-                      <motion.div 
-                        animate={{ 
-                          y: [0, -8, 2, -4, 0],
-                          rotate: [12, 18, 10, 15, 12]
-                        }}
-                        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-                        style={{ transform: "translateZ(60px)" }}
-                        className="absolute -top-6 -right-6 w-14 h-14 bg-gradient-to-br from-[#2C5C44] to-[#1E3E2F] rounded-2xl flex items-center justify-center shadow-2xl z-50 border border-white/20"
-                      >
-                        <GraduationCap className="text-white w-7 h-7 stroke-[2.5]" />
-                      </motion.div>
-                      
-                      <motion.div 
-                        animate={{ 
-                          y: [0, 8, -2, 4, 0],
-                          rotate: [-6, -12, -4, -10, -6]
-                        }}
-                        transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
-                        style={{ transform: "translateZ(80px)" }}
-                        className="absolute -bottom-6 -left-6 w-12 h-12 bg-gradient-to-br from-[#BF402A] to-[#8C2E1F] rounded-xl flex items-center justify-center shadow-2xl z-50 border border-white/20"
-                      >
-                        <X className="text-white w-6 h-6 stroke-[3]" />
-                      </motion.div>
+                    {/* Floating Parallax Icons - Smaller & Closer */}
+                    <motion.div 
+                      animate={{ 
+                        y: [0, -8, 2, -4, 0],
+                        rotate: [12, 18, 10, 15, 12]
+                      }}
+                      transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+                      style={{ transform: "translateZ(60px)" }}
+                      className="absolute -top-6 -right-6 w-14 h-14 bg-gradient-to-br from-[#2C5C44] to-[#1E3E2F] rounded-2xl flex items-center justify-center shadow-2xl z-50 border border-white/20"
+                    >
+                      <GraduationCap className="text-white w-7 h-7 stroke-[2.5]" />
                     </motion.div>
-                  </div>
+                    
+                    <motion.div 
+                      animate={{ 
+                        y: [0, 8, -2, 4, 0],
+                        rotate: [-6, -12, -4, -10, -6]
+                      }}
+                      transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
+                      style={{ transform: "translateZ(80px)" }}
+                      className="absolute -bottom-6 -left-6 w-12 h-12 bg-gradient-to-br from-[#BF402A] to-[#8C2E1F] rounded-xl flex items-center justify-center shadow-2xl z-50 border border-white/20"
+                    >
+                      <X className="text-white w-6 h-6 stroke-[3]" />
+                    </motion.div>
+                  </motion.div>
                 </div>
-              </motion.div>
-            )}
+              </div>
+            </motion.div>
+          )}
 
             {/* === STEP 2: QUIZ === */}
             {step === 'quiz' && (
