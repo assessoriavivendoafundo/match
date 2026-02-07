@@ -237,9 +237,9 @@ export function SwipeDeck({ filters, onRestart }: { filters: Record<string, stri
     const uSurname = sanitize(filters.userSurname as string);
     const fullName = uName && uSurname ? `${uName} ${uSurname}` : uName || "Estudante";
     const firstName = uName || "Estudante";
-    const header = `🇮🇹 *Match Universitário - ${fullName}* 🇮🇹\n\nCiao! Me chamo ${firstName}, explorei as opções e estas são as universidades que deram match comigo. *Gostaria de receber more informações sobre elas e como começar meu processo:*\n\n`;
+    const header = `🇮🇹 *Match Universitário - ${fullName}* 🇮🇹\n\nCiao! Me chamo ${firstName}, explorei as opções e estas são as universidades que deram match comigo. *Gostaria de entender como vocês podem me ajudar a conquistar minha vaga na Itália e organizar todo o meu processo de estudos.*\n\n`;
     const list = liked.map(u => `🏛️ *${u.name}*\n   📍 ${u.city}\n`).join("\n");
-    const footer = "\n💬 *Você pode me ajudar com mais detalhes sobre essas opções?*\n🔗 Descubra seu match em: https://academitaly.com.br";
+    const footer = "\n💬 *Vocês podem me ajudar a transformar essas opções em um plano real para estudar na Itália?*\n🔗 Descubra seu match em: https://academitaly.com.br";
     const text = encodeURIComponent(header + list + footer);
     
     const win = window.open(`https://api.whatsapp.com/send?phone=393516274752&text=${text}`, '_blank');
@@ -253,9 +253,9 @@ export function SwipeDeck({ filters, onRestart }: { filters: Record<string, stri
     const fullName = uName && uSurname ? `${uName} ${uSurname}` : uName || "Estudante";
     const firstName = uName || "Estudante";
     const subject = `Meu Match Universitário - ${fullName}`;
-    const header = `Ciao! Me chamo ${firstName}, explorei as opções e estas são as universidades que deram match comigo.\n\nGostaria de receber more informações sobre elas e como começar meu processo:\n\n`;
+    const header = `Ciao! Me chamo ${firstName}, explorei as opções e estas são as universidades que deram match comigo.\n\nGostaria de entender como vocês podem me ajudar a conquistar minha vaga na Itália e organizar todo o meu processo de estudos.\n\n`;
     const list = liked.map(u => `🏛️ ${u.name}\n   📍 ${u.city}\n`).join("\n");
-    const footer = "\n\nVocê pode me ajudar com mais detalhes sobre essas opções?\n\n🔗 Descubra seu match em: https://academitaly.com.br";
+    const footer = "\n\nVocês podem me ajudar a transformar essas opções em um plano real para estudar na Itália?\n\n🔗 Descubra seu match em: https://academitaly.com.br";
     const body = encodeURIComponent(header + list + footer);
     
     const win = window.open(`mailto:assessoria@vivendoafundo.com.br?subject=${encodeURIComponent(subject)}&body=${body}`, '_blank');
