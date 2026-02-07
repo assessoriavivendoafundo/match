@@ -29,7 +29,7 @@ export default function UniMatchPage() {
   };
 
   return (
-    <div className="min-h-[100dvh] bg-[#182335] flex flex-col items-center p-3 md:p-4 relative overflow-hidden font-sans selection:bg-[#BF402A]/30">
+    <div className="min-h-[100dvh] bg-[#182335] flex flex-col items-center p-3 md:p-4 pb-8 md:pb-24 relative overflow-hidden font-sans selection:bg-[#BF402A]/30">
       
       {/* --- Dynamic Background --- */}
       <div className="absolute inset-0 z-0">
@@ -55,7 +55,7 @@ export default function UniMatchPage() {
             "relative z-50 shrink-0 transition-all duration-500 ease-in-out",
             step !== 'intro' 
               ? "w-full max-w-[98%] md:max-w-[95%] mx-auto px-5 md:px-6 lg:px-8 py-2 md:py-3 mb-4 md:mb-6 rounded-full bg-white/5 backdrop-blur-2xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)]" 
-              : "w-full text-center mb-8 md:mb-12 flex flex-col items-center pt-8 md:pt-12"
+              : "w-full text-center mb-6 md:mb-8 flex flex-col items-center pt-4 md:pt-6"
           )}
         >
             {/* Content Wrapper - Adapts Layout */}
