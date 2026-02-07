@@ -86,11 +86,9 @@ export function Quiz({ onComplete, onBack, initialData }: {
   };
 
   useEffect(() => {
-    const t = setTimeout(() => {
-        scrollToCard();
-    }, 150);
-    return () => clearTimeout(t);
-  }, [currentStep, phase]);
+    // Scroll handling is now managed by onAnimationComplete in AnimatePresence
+    // to prevent double-scroll jerks during transitions.
+  }, []);
 
   const handleDetailsSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -190,10 +188,10 @@ export function Quiz({ onComplete, onBack, initialData }: {
             {phase === 'details' ? (
               <motion.div
                 key="details"
-                initial={{ x: 20, opacity: 0, filter: "blur(5px)" }}
-                animate={{ x: 0, opacity: 1, filter: "blur(0px)" }}
-                exit={{ x: -20, opacity: 0, filter: "blur(5px)" }}
-                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                initial={{ x: 10, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: -10, opacity: 0 }}
+                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                 onAnimationComplete={() => scrollToCard()}
                 className="space-y-6 md:space-y-8"
               >
@@ -269,7 +267,7 @@ export function Quiz({ onComplete, onBack, initialData }: {
                     whileHover={{ scale: 1.01 }}
                     whileTap={{ scale: 0.98 }}
                     className={cn(
-                      "w-full h-14 md:h-16 rounded-xl md:rounded-2xl font-black text-lg md:text-xl flex items-center justify-center gap-2 md:gap-3 transition-all duration-300 shadow-xl",
+                      "w-full h-14 md:h-16 rounded-xl md:rounded-2xl font-black text-lg md:text-xl flex items-center justify-center gap-2 md:gap-3 shadow-xl transition-colors duration-300",
                       userData.name && userData.surname && userData.privacy
                         ? "bg-white text-[#182335] shadow-white/10"
                         : "bg-white/5 text-white/20 border border-white/5 cursor-not-allowed"
@@ -299,15 +297,20 @@ export function Quiz({ onComplete, onBack, initialData }: {
             ) : (
               <motion.div
                   key={currentStep}
-                  initial={{ x: 20, opacity: 0, filter: "blur(5px)" }}
-                  animate={{ x: 0, opacity: 1, filter: "blur(0px)" }}
-                  exit={{ x: -20, opacity: 0, filter: "blur(5px)" }}
-                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                  initial={{ x: 10, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  exit={{ x: -10, opacity: 0 }}
+                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                   onAnimationComplete={() => scrollToCard()}
                   className="space-y-6 md:space-y-8"
               >
                   {/* Question Text */}
-                  <div className="space-y-2 md:space-y-3">
+                  <motion.div 
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1, duration: 0.4 }}
+                    className="space-y-2 md:space-y-3 will-change-transform"
+                  >
                       <h2 className="text-2xl md:text-5xl font-black text-white leading-[1.1] drop-shadow-lg tracking-tight">
                           {currentQ.question}
                       </h2>
@@ -316,7 +319,7 @@ export function Quiz({ onComplete, onBack, initialData }: {
                               {currentQ.description}
                           </p>
                       )}
-                  </div>
+                  </motion.div>
 
                   {/* Options Grid */}
                   <div className="grid gap-2 md:gap-3">
@@ -334,10 +337,14 @@ export function Quiz({ onComplete, onBack, initialData }: {
                                 layout
                                 onClick={() => handleSelect(option.id)}
                                 whileHover={{ scale: isFocused ? 1.01 : 1 }}
-                                whileTap={{ scale: 0.98 }}
-                                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                whileTap={{ scale: 0.97 }}
+                                transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                                animate={{
+                                    scale: isFocused ? 1 : (isSelected ? 0.98 : 1),
+                                    opacity: isFocused ? 1 : (isSelected ? 0.7 : 1),
+                                }}
                                 className={cn(
-                                    "relative w-full text-left rounded-xl md:rounded-2xl border transition-all duration-500 group overflow-hidden backdrop-blur-md",
+                                    "relative w-full text-left rounded-xl md:rounded-2xl border group overflow-hidden backdrop-blur-sm transition-colors duration-300",
                                     // Sizing & Padding
                                     (isAnyOption && !isAllSelected) || shouldShrink ? "p-3 px-4 md:p-3 md:px-5" : "p-4 md:p-6",
                                     // Spacing
@@ -347,9 +354,7 @@ export function Quiz({ onComplete, onBack, initialData }: {
                                         ? "bg-white/15 border-[#BF402A]/50 shadow-[0_0_30px_rgba(191,64,42,0.15)]" 
                                         : isAnyOption
                                             ? "border-dashed border-white/20 bg-white/5 hover:bg-white/10"
-                                            : "bg-gradient-to-r from-white/10 to-transparent border-white/10 hover:border-white/30 hover:bg-white/10",
-                                    // Evidence Logic
-                                    !isFocused && isSelected && "opacity-60 scale-[0.98] grayscale-[0.3]"
+                                            : "bg-gradient-to-r from-white/10 to-transparent border-white/10 hover:border-white/30 hover:bg-white/10"
                                 )}
                             >
                                 {/* Selection Glow Background */}
@@ -359,7 +364,7 @@ export function Quiz({ onComplete, onBack, initialData }: {
                                         animate={{ opacity: 1 }}
                                         exit={{ opacity: 0 }}
                                         className={cn(
-                                            "absolute inset-0 z-0 transition-opacity duration-500",
+                                            "absolute inset-0 z-0",
                                             isFocused ? "bg-gradient-to-r from-[#BF402A]/30 to-[#2C5C44]/30 opacity-100" : "bg-white/5 opacity-50"
                                         )}
                                     />
@@ -367,33 +372,29 @@ export function Quiz({ onComplete, onBack, initialData }: {
 
                                 <div className="relative z-10 flex items-center gap-3 md:gap-5">
                                     {/* Icon Container */}
-                                    <motion.div 
-                                        layout
-                                        className={cn(
-                                        "flex-shrink-0 rounded-lg md:rounded-2xl flex items-center justify-center transition-all duration-500 shadow-lg ring-1 ring-white/10",
+                                    <div className={cn(
+                                        "flex-shrink-0 rounded-lg md:rounded-2xl flex items-center justify-center transition-all duration-300 shadow-lg ring-1 ring-white/10",
                                         (isAnyOption && !isAllSelected) || shouldShrink ? "w-8 h-8 md:w-10 md:h-10 text-lg" : "w-11 h-11 md:w-14 md:h-14 text-2xl md:text-3xl",
                                         isSelected
                                             ? "bg-gradient-to-br from-[#BF402A] to-[#8C2E1F] ring-offset-2 ring-offset-[#BF402A]/30" 
                                             : "bg-white/10 group-hover:bg-white/20"
                                     )}>
                                         {option.icon}
-                                    </motion.div>
+                                    </div>
 
                                     <div className="flex-1">
                                         <div className="flex items-center justify-between">
-                                            <motion.span 
-                                                layout
-                                                className={cn(
-                                                "font-bold transition-all duration-500",
+                                            <span className={cn(
+                                                "font-bold transition-colors duration-300",
                                                 (isAnyOption && !isAllSelected) || shouldShrink ? "text-sm md:text-base text-white/70" : "text-lg md:text-xl text-white/95",
                                                 isSelected && "text-white"
                                             )}>
                                                 {option.label}
-                                            </motion.span>
+                                            </span>
                                             {isSelected && (
                                                 <motion.div initial={{ scale: 0, rotate: -45 }} animate={{ scale: 1, rotate: 0 }}>
                                                     <div className={cn(
-                                                        "rounded-full p-0.5 md:p-1 shadow-lg transition-all duration-500",
+                                                        "rounded-full p-0.5 md:p-1 shadow-lg transition-colors duration-300",
                                                         isFocused ? "bg-[#2C5C44] shadow-[#2C5C44]/20" : "bg-white/20 shadow-none"
                                                     )}>
                                                         <Check className="w-3 h-3 md:w-3.5 md:h-3.5 text-white" strokeWidth={4} />
@@ -406,7 +407,7 @@ export function Quiz({ onComplete, onBack, initialData }: {
                                                 initial={{ opacity: 0, height: 0 }}
                                                 animate={{ opacity: 1, height: "auto" }}
                                                 className={cn(
-                                                "font-medium tracking-wide transition-all duration-500",
+                                                "font-medium tracking-wide transition-colors duration-300",
                                                 isAnyOption ? "text-[10px] text-white/40 mt-0.5" : "text-[11px] md:text-sm mt-0.5 md:mt-1 text-white/60",
                                                 isSelected && "text-white/80"
                                             )}>
@@ -430,7 +431,7 @@ export function Quiz({ onComplete, onBack, initialData }: {
                         onClick={handleNext}
                         disabled={!hasSelection}
                         className={cn(
-                            "w-full py-4 md:py-4 rounded-xl md:rounded-2xl font-black text-lg md:text-xl flex items-center justify-center gap-2 md:gap-3 transition-all duration-300 shadow-xl",
+                            "w-full py-4 md:py-4 rounded-xl md:rounded-2xl font-black text-lg md:text-xl flex items-center justify-center gap-2 md:gap-3 transition-colors duration-300 shadow-xl",
                             hasSelection
                                 ? "bg-white text-[#182335] hover:scale-[1.01] shadow-white/20"
                                 : "bg-white/5 text-white/20 border border-white/5 cursor-not-allowed"
