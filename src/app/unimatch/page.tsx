@@ -52,30 +52,32 @@ export default function UniMatchPage() {
           layout
           initial={false}
           className={cn(
-            "relative z-50 shrink-0 transition-all duration-500 ease-in-out",
-            step !== 'intro' 
-              ? "w-full max-w-[98%] md:max-w-[95%] mx-auto px-5 md:px-6 lg:px-8 py-2 md:py-3 mb-4 md:mb-6 rounded-full bg-white/5 backdrop-blur-2xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)]" 
-              : "w-full text-center mb-6 md:mb-8 flex flex-col items-center pt-4 md:pt-6"
+            "relative z-50 shrink-0 flex flex-col items-center",
+            step === 'intro' 
+              ? "w-full text-center mb-6 md:mb-8 pt-4 md:pt-6"
+              : "w-full max-w-[98%] md:max-w-[95%] mx-auto mb-4 md:mb-6"
           )}
         >
-            {/* Content Wrapper - Adapts Layout */}
+            {/* Content Wrapper */}
             <motion.div 
               layout
               className={cn(
                 "relative z-10 flex items-center transition-all duration-500", 
-                step !== 'intro' ? "w-full justify-between gap-3 md:gap-6" : "flex-col gap-2"
+                step !== 'intro' 
+                  ? "w-full justify-between gap-3 md:gap-6 px-5 md:px-8 py-2 md:py-3 rounded-full bg-white/5 backdrop-blur-2xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)]" 
+                  : "flex-col gap-2 bg-transparent border-transparent shadow-none backdrop-blur-0"
               )}
             >
               {/* Title */}
               <motion.h1 
-                layout
-                whileHover={{ scale: step === 'intro' ? 1.02 : 1.01 }}
+                layout="position"
+                whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setStep('intro')}
                 className={cn(
-                  "font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white via-white/70 to-white/20 drop-shadow-2xl cursor-pointer flex-shrink min-w-0 transition-all duration-500 py-3 md:py-4 px-1",
+                  "font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white via-white/80 to-white/20 drop-shadow-2xl cursor-pointer flex-shrink min-w-0 transition-all duration-500 py-3 md:py-4 px-1",
                   step === 'intro' 
-                    ? "text-5xl md:text-8xl text-center hover:drop-shadow-[0_0_12px_rgba(255,255,255,0.25)]" 
+                    ? "text-5xl md:text-8xl text-center hover:drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]" 
                     : "text-lg xs:text-xl md:text-3xl lg:text-5xl leading-[1.1] max-w-[180px] xs:max-w-[240px] md:max-w-none break-words"
                 )}
                 style={{ WebkitTextStroke: '1px rgba(255,255,255,0.7)' }}
@@ -85,16 +87,16 @@ export default function UniMatchPage() {
               
               {/* Logo Group */}
               <motion.div 
-                layout
+                layout="position"
                 className={cn(
-                  "flex transition-all duration-500 flex-shrink-0", 
+                  "flex flex-shrink-0 transition-all duration-500", 
                   step !== 'intro' 
                     ? "flex-col items-center xs:flex-row xs:items-center gap-1 xs:gap-2.5 md:gap-4" 
                     : "flex-col items-center mt-4 gap-2 md:gap-3"
                 )}
               >
                 <motion.span 
-                  layout
+                  layout="position"
                   className={cn(
                     "font-medium text-white tracking-[0.1em] md:tracking-[0.2em] uppercase select-none whitespace-nowrap opacity-40 transition-all duration-500",
                     step !== 'intro' ? "text-[8px] md:text-[10px]" : "text-[10px] md:text-xs"
@@ -105,14 +107,17 @@ export default function UniMatchPage() {
                 
                 <Link href="/">
                   <motion.div
-                    layout
+                    layout="position"
                     whileHover={{ scale: 1.05 }}
                     className={cn(
                       "bg-white/5 backdrop-blur-xl border border-white/10 rounded-lg md:rounded-xl shadow-2xl transition-all cursor-pointer group",
                       step !== 'intro' ? "px-1.5 py-1 md:px-3 md:py-1.5" : "px-2 py-1.5 md:px-4 md:py-2 lg:px-6 lg:py-3"
                     )}
                   >
-                    <div className={cn("relative transition-all duration-500", step !== 'intro' ? "w-20 h-4 xs:w-24 xs:h-5 md:w-28 md:h-5 lg:w-32 lg:h-6" : "w-40 h-8 md:w-48 md:h-10")}>
+                    <motion.div 
+                      layout="position"
+                      className={cn("relative transition-all duration-500", step !== 'intro' ? "w-20 h-4 xs:w-24 xs:h-5 md:w-28 md:h-5 lg:w-32 lg:h-6" : "w-40 h-8 md:w-48 md:h-10")}
+                    >
                       <Image 
                         src="/LOGO HORIZONTAL BRANCO - ACDY.svg" 
                         alt="AcademItaly Logo" 
@@ -120,7 +125,7 @@ export default function UniMatchPage() {
                         className="object-contain"
                         priority
                       />
-                    </div>
+                    </motion.div>
                   </motion.div>
                 </Link>
               </motion.div>
