@@ -41,6 +41,7 @@
 - [x] Fix SwipeDeck exit animation incorrectly snapping back instead of flying out (UniMatch SwipeDeck) (2026-02-03)
 - [x] 2026-02-04 Optimize SwipeDeck rendering: added will-change, transform-gpu, reduced backdrop-blur
 - [x] 2026-02-04 Implement iPhone-style mockup for visual preview card in UniMatch landing page (Design First) <!-- id: 6 -->
+- [x] 2026-02-07 Fix 'Match Universitário' title layout on iPhone (max 2 lines, stacked logo group)
 
 ## Bug Fixes & Maintenance
 

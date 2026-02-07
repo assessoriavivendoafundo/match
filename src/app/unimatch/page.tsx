@@ -78,7 +78,7 @@ export default function UniMatchPage() {
                   "font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white via-white/80 to-white/20 drop-shadow-2xl cursor-pointer flex-shrink min-w-0 transition-all duration-500 py-3 md:py-4 px-1",
                   step === 'intro' 
                     ? "text-5xl md:text-8xl text-center hover:drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]" 
-                    : "text-lg xs:text-xl md:text-3xl lg:text-5xl leading-[1.1] max-w-[180px] xs:max-w-[240px] md:max-w-none break-words"
+                    : "text-lg xs:text-xl md:text-3xl lg:text-5xl leading-[1.1] max-w-[260px] md:max-w-none break-words line-clamp-2"
                 )}
                 style={{ WebkitTextStroke: '1px rgba(255,255,255,0.7)' }}
               >
@@ -91,7 +91,7 @@ export default function UniMatchPage() {
                 className={cn(
                   "flex flex-shrink-0 transition-all duration-500", 
                   step !== 'intro' 
-                    ? "flex-col items-center xs:flex-row xs:items-center gap-1 xs:gap-2.5 md:gap-4" 
+                    ? "flex-col items-center md:flex-row md:items-center gap-1 md:gap-4" 
                     : "flex-col items-center mt-4 gap-2 md:gap-3"
                 )}
               >
