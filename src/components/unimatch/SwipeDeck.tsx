@@ -618,6 +618,7 @@ function Card({ data, active, removeCard, index, stackIndex, exitDirectionsRef, 
             exit="exit"
             drag={active ? "x" : false}
             dragConstraints={{ left: 0, right: 0 }}
+            dragDirectionLock
             onDragEnd={handleDragEnd}
             onAnimationComplete={(definition) => {
                 if (definition === "active") {
@@ -626,7 +627,7 @@ function Card({ data, active, removeCard, index, stackIndex, exitDirectionsRef, 
                 }
             }}
             className={cn(
-                "absolute top-0 left-0 w-full h-full bg-white rounded-[2rem] shadow-2xl overflow-hidden cursor-grab active:cursor-grabbing border border-white/20 select-none transform-gpu will-change-transform",
+                "absolute top-0 left-0 w-full h-full bg-white rounded-[2rem] shadow-2xl overflow-hidden cursor-grab active:cursor-grabbing border border-white/20 select-none transform-gpu will-change-transform touch-pan-y",
                 !active && "pointer-events-none"
             )}
         >
@@ -661,7 +662,7 @@ function Card({ data, active, removeCard, index, stackIndex, exitDirectionsRef, 
                 </div>
 
                 <div className="flex-1 min-h-0 z-10 relative">
-                    <div className="h-full pl-4 border-l-2 border-white/20 overflow-y-auto custom-scrollbar pr-2" onPointerDown={(e) => e.stopPropagation()}>
+                    <div className="h-full pl-4 border-l-2 border-white/20 overflow-y-auto custom-scrollbar pr-2 touch-pan-y">
                          <p className="text-white text-lg md:text-xl leading-relaxed font-medium pb-4 drop-shadow-sm">
                             {data.description.split(/(Curiosidade:?)/g).map((part, i) => {
                                 if (part.match(/Curiosidade:?/)) {
